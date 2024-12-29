@@ -1,10 +1,10 @@
-package com.project.wallet_recode;
+package com.project.wallet_keeper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WalletRecodeApplicationTests {
+class WalletKeeperApplicationTests {
 
 	@Test
 	void contextLoads() {

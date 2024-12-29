@@ -1,15 +1,18 @@
-package com.project.wallet_recode.domain;
+package com.project.wallet_keeper.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "user")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -23,11 +26,11 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "nickname")
+    private String nickname;
 
-    @Column(name = "age")
-    private int age;
+    @Column(name = "birth")
+    private LocalDate birth;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -40,12 +43,21 @@ public class User {
 
 
     @Builder
-    public User(String email, String password, String username, int age) {
+    public User(String email, String password, String nickname, LocalDate birth) {
         this.email = email;
         this.password = password;
-        this.username = username;
-        this.age = age;
+        this.nickname = nickname;
+        this.birth = birth;
+    }
+
+    @PrePersist // 영속화 될 때의 시간을 설정하기 위해 사용
+    public void prePersist() {
         this.createdAt = LocalDateTime.now().withNano(0);
+        this.updatedAt = LocalDateTime.now().withNano(0);
+    }
+
+    @PreUpdate
+    public void preUpdate() {
         this.updatedAt = LocalDateTime.now().withNano(0);
     }
 }
