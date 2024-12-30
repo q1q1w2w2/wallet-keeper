@@ -17,20 +17,20 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User signUp(SignupDto dto) {
+    public User signUp(SignupDto signupDto) {
 
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(signupDto.getEmail()).isPresent()) {
             throw new UserAlreadyExistException("이미 가입되어 있는 이메일입니다.");
         }
-        if (userRepository.findByNickname(dto.getNickname()).isPresent()) {
+        if (userRepository.findByNickname(signupDto.getNickname()).isPresent()) {
             throw new UserAlreadyExistException("이미 존재하는 닉네임입니다.");
         }
 
         User user = User.builder()
-                .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .nickname(dto.getNickname())
-                .birth(dto.getBirth())
+                .email(signupDto.getEmail())
+                .password(passwordEncoder.encode(signupDto.getPassword()))
+                .nickname(signupDto.getNickname())
+                .birth(signupDto.getBirth())
                 .build();
         return userRepository.save(user);
     }

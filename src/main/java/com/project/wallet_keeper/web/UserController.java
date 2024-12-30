@@ -22,8 +22,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<SignupResponseDto>> signUp(@Valid @RequestBody SignupDto dto) {
-        User user = userService.signUp(dto);
+    public ResponseEntity<ApiResponse<SignupResponseDto>> signUp(@Valid @RequestBody SignupDto signupDto) {
+        User user = userService.signUp(signupDto);
 
         SignupResponseDto data = new SignupResponseDto(user.getNickname());
         ApiResponse<SignupResponseDto> response = ApiResponse.success(HttpStatus.OK, "회원가입이 완료되었습니다.", data);

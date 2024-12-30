@@ -22,16 +22,16 @@ public class MailController {
     private final MailService mailService;
 
     @PostMapping("/verification")
-    public ResponseEntity<ApiResponse<Object>> sendCode(@Valid @RequestBody EmailDto dto) throws MessagingException {
-        mailService.sendMailForSignup(dto.getEmail());
+    public ResponseEntity<ApiResponse<Object>> sendCode(@Valid @RequestBody EmailDto emailDto) throws MessagingException {
+        mailService.sendMailForSignup(emailDto.getEmail());
 
         ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "인증 메일이 발송되었습니다.");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/verification/code")
-    public ResponseEntity<ApiResponse<Object>> verifyCode(@Valid @RequestBody VerifyCodeDto dto) {
-        mailService.verifyCode(dto.getEmail(), dto.getCode());
+    public ResponseEntity<ApiResponse<Object>> verifyCode(@Valid @RequestBody VerifyCodeDto verifyCodeDto) {
+        mailService.verifyCode(verifyCodeDto.getEmail(), verifyCodeDto.getCode());
 
         ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "인증이 완료되었습니다.");
         return ResponseEntity.status(HttpStatus.OK).body(response);

@@ -21,10 +21,18 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody LoginDto dto) throws Exception {
-        TokenDto tokens = authService.login(dto);
+    public ResponseEntity login(@Valid @RequestBody LoginDto loginDto) throws Exception {
+        TokenDto tokens = authService.login(loginDto);
 
         ApiResponse<TokenDto> response = ApiResponse.success(HttpStatus.OK, "로그인 되었습니다.", tokens);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity logout(@Valid @RequestBody TokenDto tokenDto) throws Exception {
+        authService.logout(tokenDto);
+
+        ApiResponse<TokenDto> response = ApiResponse.success(HttpStatus.OK, "로그아웃 되었습니다.");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

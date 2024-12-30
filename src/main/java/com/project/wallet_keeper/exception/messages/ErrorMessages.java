@@ -11,4 +11,7 @@ public class ErrorMessages {
 
     public static final String INVALID_CREDENTIAL = "아이디 또는 비밀번호가 틀렸습니다.";
 
+    public static final String INVALID_TOKEN = "토큰이 유효하지 않습니다.";
+
+
 }

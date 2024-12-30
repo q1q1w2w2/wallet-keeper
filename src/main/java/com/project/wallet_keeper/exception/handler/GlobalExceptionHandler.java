@@ -1,6 +1,7 @@
 package com.project.wallet_keeper.exception.handler;
 
 import com.project.wallet_keeper.dto.response.ApiResponse;
+import com.project.wallet_keeper.exception.TokenValidationException;
 import com.project.wallet_keeper.exception.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.UserNotFoundException;
 import com.project.wallet_keeper.exception.VerificationCodeMismatchException;
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Object>> handleBadCredentialsException(BadCredentialsException e) {
         return createErrorResponse(e, UNAUTHORIZED, INVALID_CREDENTIAL);
+    }
+
+    @ExceptionHandler(TokenValidationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTokenValidationException(TokenValidationException e) {
+        return createErrorResponse(e, UNAUTHORIZED, e.getMessage());
     }
 
     @ExceptionHandler(MessagingException.class)

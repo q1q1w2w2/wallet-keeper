@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 
@@ -24,6 +25,7 @@ public class MailService {
 
     private static final String AUTH_CODE_PREFIX = "authCode:";
 
+    @Transactional
     public void sendMailForSignup(String email) throws MessagingException {
         String randomNumber = generateNumber();
         String sender = "xmrrhdwjdqls@gmail.com";

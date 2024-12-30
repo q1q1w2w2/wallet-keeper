@@ -19,6 +19,9 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.*;
 
 @Component
 @Slf4j
@@ -26,6 +29,7 @@ public class TokenProvider implements InitializingBean {
 
     public static final String AUTHORITY = "authority";
     public static final String DEFAULT_ROLE = "ROLE_USER";
+    public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
 
     private SecretKey key;
     private SecretKey claimKey;
@@ -69,7 +73,7 @@ public class TokenProvider implements InitializingBean {
         String encryptSubject = AesUtil.encrypt(subject, claimKey);
 
         String refreshToken = createToken(encryptSubject, null, refreshTokenExpireTime);
-        redisTemplate.opsForValue().set("refreshToken:" + subject, refreshToken);
+        redisTemplate.opsForValue().set(REFRESH_TOKEN_PREFIX + subject, refreshToken, refreshTokenExpireTime, MINUTES);
         return refreshToken;
     }
 
@@ -112,7 +116,7 @@ public class TokenProvider implements InitializingBean {
         return false;
     }
 
-    public String extractUserIdFromToken(String token) throws Exception {
+    public String extractEmailFromToken(String token) throws Exception {
         String subject = Jwts.parser()
                 .verifyWith(key)
                 .build()
