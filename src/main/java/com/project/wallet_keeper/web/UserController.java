@@ -1,8 +1,8 @@
 package com.project.wallet_keeper.web;
 
 import com.project.wallet_keeper.domain.User;
-import com.project.wallet_keeper.dto.SignupResponseDto;
-import com.project.wallet_keeper.dto.SignupDto;
+import com.project.wallet_keeper.dto.user.SignupResponseDto;
+import com.project.wallet_keeper.dto.user.SignupDto;
 import com.project.wallet_keeper.dto.response.ApiResponse;
 import com.project.wallet_keeper.service.UserService;
 import jakarta.validation.Valid;
@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.dto;
+package com.project.wallet_keeper.dto.user;
 
 import lombok.Getter;
 

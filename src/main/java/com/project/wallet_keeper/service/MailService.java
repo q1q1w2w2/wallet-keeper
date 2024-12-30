@@ -6,13 +6,11 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.*;
 
@@ -29,7 +27,6 @@ public class MailService {
     public void sendMailForSignup(String email) throws MessagingException {
         String randomNumber = generateNumber();
         String sender = "xmrrhdwjdqls@gmail.com";
-        String receiver = email;
         String title = "[WalletKeeper] 회원 가입 인증 메일입니다.";
         String content =
                         "<html>" +
@@ -40,10 +37,9 @@ public class MailService {
                         "<p style='font-size: 12px; color: #777;'>이 인증 번호는 5분 동안 유효합니다.</p>" +
                         "</html>";
 
-        // ["authCode:test@gmail.com" : "534265"] 형태로 저장
-        redisTemplate.opsForValue().set(AUTH_CODE_PREFIX + receiver, randomNumber, 5, MINUTES);
+        redisTemplate.opsForValue().set(AUTH_CODE_PREFIX + email, randomNumber, 5, MINUTES);
 
-        sendMail(sender, receiver, title, content);
+        sendMail(sender, email, title, content);
     }
 
     private void sendMail(String sender, String receiver, String title, String content) throws MessagingException {

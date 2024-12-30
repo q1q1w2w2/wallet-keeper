@@ -1,16 +1,16 @@
-package com.project.wallet_keeper.dto.mail;
+package com.project.wallet_keeper.dto.auth;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class EmailDto {
+public class LoginDto {
 
-    @Email
     @NotEmpty(message = "이메일은 비어있을 수 없습니다.")
     private String email;
+
+    @NotEmpty(message = "비밀번호는 비어있을 수 없습니다.")
+    private String password;
 }

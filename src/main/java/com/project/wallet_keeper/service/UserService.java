@@ -1,7 +1,7 @@
 package com.project.wallet_keeper.service;
 
 import com.project.wallet_keeper.domain.User;
-import com.project.wallet_keeper.dto.SignupDto;
+import com.project.wallet_keeper.dto.user.SignupDto;
 import com.project.wallet_keeper.exception.UserAlreadyExistException;
 import com.project.wallet_keeper.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
