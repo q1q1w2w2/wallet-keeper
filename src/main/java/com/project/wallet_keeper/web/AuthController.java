@@ -42,7 +42,8 @@ public class AuthController {
     public ResponseEntity<ApiResponse<AccessTokenDto>> refreshToken(@Valid @RequestBody RefreshTokenDto tokenDto) throws Exception {
         String newAccessToken = authService.generateNewAccessTokens(tokenDto);
 
-        ApiResponse<AccessTokenDto> response = ApiResponse.success(HttpStatus.OK, "토큰이 재발급 되었습니다.", new AccessTokenDto(newAccessToken));
+        AccessTokenDto data = new AccessTokenDto(newAccessToken);
+        ApiResponse<AccessTokenDto> response = ApiResponse.success(HttpStatus.OK, "토큰이 재발급 되었습니다.", data);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

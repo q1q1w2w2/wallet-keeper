@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,7 +46,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/users").permitAll()
                                 .requestMatchers("/api/mail/verification", "/api/mail/verification/code").permitAll()
                                 .requestMatchers("/api/users/reset-password").permitAll()
-                                .anyRequest().authenticated() // 다른 URL은 인증 필요
+                                .anyRequest().authenticated()
                 )
 
                 .sessionManagement(session ->
@@ -64,6 +65,10 @@ public class SecurityConfig {
                                 .accessDeniedHandler(customAccessDeniedHandler)
                 );
 
+//                .oauth2Login(oauth ->
+//                        oauth.userInfoEndpoint()
+//                );
+
         return http.build();
     }
 
@@ -76,5 +81,11 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoder());
 
         return authenticationManagerBuilder.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않음
+        return web -> web.ignoring()
+                .requestMatchers("/error", "/favicon.ico");
     }
 }
