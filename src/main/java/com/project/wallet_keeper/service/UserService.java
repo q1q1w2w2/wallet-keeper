@@ -4,10 +4,13 @@ import com.project.wallet_keeper.domain.User;
 import com.project.wallet_keeper.dto.user.SignupDto;
 import com.project.wallet_keeper.exception.UserAlreadyExistException;
 import com.project.wallet_keeper.repository.UserRepository;
+import com.project.wallet_keeper.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.project.wallet_keeper.security.jwt.TokenProvider.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class UserService {
                 .password(passwordEncoder.encode(signupDto.getPassword()))
                 .nickname(signupDto.getNickname())
                 .birth(signupDto.getBirth())
+                .role(DEFAULT_ROLE)
                 .build();
         return userRepository.save(user);
     }

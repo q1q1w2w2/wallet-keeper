@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
         return createErrorResponse(e, INTERNAL_SERVER_ERROR, UNEXPECTED_ERROR);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException e) {
+        return createErrorResponse(e, BAD_REQUEST, e.getMessage());
+    }
+
     @ExceptionHandler(UserAlreadyExistException.class)
     public ResponseEntity<ApiResponse<Object>> handleUserAlreadyExistException(UserAlreadyExistException e) {
         return createErrorResponse(e, CONFLICT, e.getMessage());

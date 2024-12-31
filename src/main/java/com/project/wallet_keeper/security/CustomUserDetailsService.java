@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private org.springframework.security.core.userdetails.User createUser(String email, User user) {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(DEFAULT_ROLE);
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
         return new org.springframework.security.core.userdetails.User(
                 email, user.getPassword(), Collections.singleton(authority)
         );

@@ -32,6 +32,9 @@ public class User {
     @Column(name = "birth")
     private LocalDate birth;
 
+    @Column(name = "role")
+    private String role;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -43,11 +46,12 @@ public class User {
 
 
     @Builder
-    public User(String email, String password, String nickname, LocalDate birth) {
+    public User(String email, String password, String nickname, LocalDate birth, String role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.birth = birth;
+        this.role = role;
     }
 
     @PrePersist // 영속화 될 때의 시간을 설정하기 위해 사용

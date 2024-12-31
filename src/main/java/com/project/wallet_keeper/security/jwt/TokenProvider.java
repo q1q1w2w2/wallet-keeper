@@ -1,5 +1,8 @@
 package com.project.wallet_keeper.security.jwt;
 
+import com.project.wallet_keeper.dto.auth.TokenDto;
+import com.project.wallet_keeper.exception.UserNotFoundException;
+import com.project.wallet_keeper.repository.UserRepository;
 import com.project.wallet_keeper.security.CustomUserDetailsService;
 import com.project.wallet_keeper.security.util.AesUtil;
 import io.jsonwebtoken.*;
@@ -37,7 +40,6 @@ public class TokenProvider implements InitializingBean {
     private final String secret;
     private final long accessTokenExpireTime;
     private final long refreshTokenExpireTime;
-    private final CustomUserDetailsService customUserDetailsService;
     private final RedisTemplate<String, String> redisTemplate;
 
     public TokenProvider(
@@ -45,14 +47,12 @@ public class TokenProvider implements InitializingBean {
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.access-token-expire-time}") long accessTokenExpireTime,
             @Value("${jwt.refresh-token-expire-time}") long refreshTokenExpireTime,
-            CustomUserDetailsService customUserDetailsService,
             RedisTemplate<String, String> redisTemplate
     ) throws Exception {
         this.claimKey = AesUtil.generateKeyForString(claimKey);
         this.secret = secret;
         this.accessTokenExpireTime = accessTokenExpireTime * 1000;
         this.refreshTokenExpireTime = refreshTokenExpireTime * 1000;
-        this.customUserDetailsService = customUserDetailsService;
         this.redisTemplate = redisTemplate;
     }
 
@@ -116,30 +116,21 @@ public class TokenProvider implements InitializingBean {
         return false;
     }
 
-    public String extractEmailFromToken(String token) throws Exception {
-        String subject = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
-        return AesUtil.decrypt(subject, claimKey);
-    }
-
     public Authentication getAuthentication(String token) throws Exception {
         Claims claims = Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+        if (claims == null) {
+            throw new IllegalArgumentException("Claim이 비어있습니다.");
+        }
 
         String subject = AesUtil.decrypt(claims.getSubject(), claimKey);
-
-        String authority = DEFAULT_ROLE;
-        String encryptAuthority = (String) claims.get(AUTHORITY);
-        if (encryptAuthority != null) {
-            authority = AesUtil.decrypt(encryptAuthority, claimKey);
-        }
+        String encryptAuthority = Optional.ofNullable(claims.get(AUTHORITY))
+                .map(Object::toString)
+                .orElse(AesUtil.encrypt(DEFAULT_ROLE, claimKey));
+        String authority = AesUtil.decrypt(encryptAuthority, claimKey);
 
         return createAuthentication(subject, authority, token);
     }
@@ -150,5 +141,24 @@ public class TokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
+    public String extractEmailFromToken(String token) throws Exception {
+        String subject = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+        return AesUtil.decrypt(subject, claimKey);
+    }
+
+    public String extractAuthorityFromToken(String accessToken) throws Exception {
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(accessToken)
+                .getPayload();
+        String encryptAuthority = (String) claims.get(AUTHORITY);
+        return AesUtil.decrypt(encryptAuthority, claimKey);
+    }
 
 }
