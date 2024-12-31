@@ -17,6 +17,7 @@ public class SignupDto {
     private String email;
 
     @NotEmpty(message = "비밀번호는 비어있을 수 없습니다.")
+    @Size(min = 2, max = 30, message = "비밀번호는 2~30자 사이어야 합니다.")
     private String password;
 
     @NotEmpty(message = "닉네임은 비어있을 수 없습니다.")

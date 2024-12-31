@@ -1,11 +1,8 @@
 package com.project.wallet_keeper.web;
 
 import com.project.wallet_keeper.domain.User;
-import com.project.wallet_keeper.dto.user.SignupResponseDto;
-import com.project.wallet_keeper.dto.user.SignupDto;
+import com.project.wallet_keeper.dto.user.*;
 import com.project.wallet_keeper.dto.common.ApiResponse;
-import com.project.wallet_keeper.dto.user.UserProfileUpdateDto;
-import com.project.wallet_keeper.dto.user.UserResponseDto;
 import com.project.wallet_keeper.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +57,21 @@ public class UserController {
 //        ApiResponse<UserResponseDto> response = ApiResponse.success(HttpStatus.OK, "회원 탈퇴가 완료되었습니다.");
 //        return ResponseEntity.status(HttpStatus.OK).body(response);
         return createResponse(HttpStatus.OK, "회원 탈퇴가 완료되었습니다.");
+    }
+
+    @PatchMapping("/me/password")
+    public ResponseEntity updatePassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) {
+        User user = userService.getCurrentUser();
+        userService.updatePassword(user, updatePasswordDto);
+
+        return createResponse(HttpStatus.OK, "비밀번호가 변경되었습니다.");
+    }
+
+    @PatchMapping("/reset-password")
+    public ResponseEntity resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) {
+        userService.resetPassword(resetPasswordDto);
+
+        return createResponse(HttpStatus.OK, "비밀번호가 변경되었습니다.");
     }
 
     // todo 과도한 중복제거인 것 같은 느낌이라 고민중, 오버라이딩해서 한 번밖에 안쓰이는것도 있음

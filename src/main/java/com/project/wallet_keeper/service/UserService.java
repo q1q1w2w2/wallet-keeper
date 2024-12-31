@@ -1,13 +1,16 @@
 package com.project.wallet_keeper.service;
 
 import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.dto.user.ResetPasswordDto;
 import com.project.wallet_keeper.dto.user.SignupDto;
+import com.project.wallet_keeper.dto.user.UpdatePasswordDto;
 import com.project.wallet_keeper.dto.user.UserProfileUpdateDto;
 import com.project.wallet_keeper.exception.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.UserNotFoundException;
 import com.project.wallet_keeper.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -126,5 +129,27 @@ public class UserService {
             }
         }
         throw new UserNotFoundException("현재 로그인한 사용자를 찾을 수 없습니다.");
+    }
+
+    @Transactional
+    public void updatePassword(User user, UpdatePasswordDto passwordDto) {
+        String oldPassword = passwordDto.getOldPassword();
+        String newPassword = passwordDto.getNewPassword();
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
+
+        user.updatePassword(passwordEncoder.encode(newPassword));
+    }
+
+    @Transactional
+    public void resetPassword(ResetPasswordDto passwordDto) {
+        String email = passwordDto.getEmail();
+        String password = passwordDto.getPassword();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
+        user.updatePassword(passwordEncoder.encode(password));
     }
 }

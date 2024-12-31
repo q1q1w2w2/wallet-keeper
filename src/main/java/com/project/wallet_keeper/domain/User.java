@@ -71,4 +71,8 @@ public class User {
         this.birth = birth;
         return this;
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

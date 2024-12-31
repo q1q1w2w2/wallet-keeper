@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/auth/login").permitAll()
                                 .requestMatchers("/api/users").permitAll()
                                 .requestMatchers("/api/mail/verification", "/api/mail/verification/code").permitAll()
+                                .requestMatchers("/api/users/reset-password").permitAll()
                                 .anyRequest().authenticated() // 다른 URL은 인증 필요
                 )
 
