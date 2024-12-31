@@ -26,6 +26,7 @@ import static com.project.wallet_keeper.security.jwt.TokenProvider.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class AuthService {
 
     private final TokenProvider tokenProvider;
@@ -82,7 +83,7 @@ public class AuthService {
         String subject = tokenProvider.extractEmailFromToken(refreshToken);
         User user = userRepository.findByEmail(subject)
                 .orElseThrow(UserNotFoundException::new);
-        return tokenProvider.generateAccessToken(subject, user.getRole());
+        return tokenProvider.generateAccessToken(subject, user.getRole().toString());
     }
 
 }

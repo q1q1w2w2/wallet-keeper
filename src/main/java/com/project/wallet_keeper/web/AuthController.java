@@ -4,7 +4,7 @@ import com.project.wallet_keeper.dto.auth.AccessTokenDto;
 import com.project.wallet_keeper.dto.auth.LoginDto;
 import com.project.wallet_keeper.dto.auth.RefreshTokenDto;
 import com.project.wallet_keeper.dto.auth.TokenDto;
-import com.project.wallet_keeper.dto.response.ApiResponse;
+import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

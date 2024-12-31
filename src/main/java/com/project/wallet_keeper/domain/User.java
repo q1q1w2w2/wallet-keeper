@@ -32,8 +32,9 @@ public class User {
     @Column(name = "birth")
     private LocalDate birth;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private String role;
+    private Role role;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -46,7 +47,7 @@ public class User {
 
 
     @Builder
-    public User(String email, String password, String nickname, LocalDate birth, String role) {
+    public User(String email, String password, String nickname, LocalDate birth, Role role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -63,5 +64,11 @@ public class User {
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now().withNano(0);
+    }
+
+    public User update(String nickname, LocalDate birth) {
+        this.nickname = nickname;
+        this.birth = birth;
+        return this;
     }
 }

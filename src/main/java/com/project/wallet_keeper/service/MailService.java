@@ -18,6 +18,7 @@ import static java.util.concurrent.TimeUnit.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class MailService {
 
     private final JavaMailSender mailSender;
@@ -25,6 +26,12 @@ public class MailService {
 
     private static final String AUTH_CODE_PREFIX = "authCode:";
 
+    /**
+     * 회원가입을 위한 인증 메일 전송
+     *
+     * @param email 수신자 이메일 주소
+     * @throws MessagingException 이메일 전송 중 발생하는 예외
+     */
     @Transactional
     public void sendMailForSignup(String email) throws MessagingException {
         String randomNumber = generateNumber();
@@ -44,6 +51,15 @@ public class MailService {
         sendMail(sender, email, title, content);
     }
 
+    /**
+     * 이메일 전송을 위한 메서드
+     *
+     * @param sender 발신자 이메일
+     * @param receiver 수신자 이메일
+     * @param title 이메일 제목
+     * @param content 이메일 내용 (HTML)
+     * @throws MessagingException 이메일 전송 중 발생하는 예외
+     */
     private void sendMail(String sender, String receiver, String title, String content) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
 
@@ -55,6 +71,11 @@ public class MailService {
         mailSender.send(message);
     }
 
+    /**
+     * 6자리 랜덤 인증 번호 생성
+     *
+     * @return 생성된 6자리 인증 번호
+     */
     private String generateNumber() {
         Random random = new Random();
         StringBuilder numberBuilder = new StringBuilder();
@@ -64,6 +85,14 @@ public class MailService {
         return numberBuilder.toString();
     }
 
+    /**
+     * 인증 코드 검증
+     *
+     * @param email 수신자 이메일 주소
+     * @param code 입력된 인증 번호
+     * @return 인증 코드가 일치하면 true
+     * @throws VerificationCodeMismatchException 인증 코드가 일치하지 않거나 존재하지 않을 경우 예외 발생
+     */
     public boolean verifyCode(String email, String code) {
         String storeCode = redisTemplate.opsForValue().get(AUTH_CODE_PREFIX + email);
         if (storeCode == null) {

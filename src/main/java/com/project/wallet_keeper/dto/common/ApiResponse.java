@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.dto.response;
+package com.project.wallet_keeper.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,22 +18,30 @@ public class ApiResponse<T> {
     private T data; // 응답 데이터
 
     public static <T> ApiResponse<T> success(HttpStatus status) {
-        return new ApiResponse<>(status.name(), status.value(), "Success", null);
+        return createResponse(status, "Success", null);
+    }
+
+    public static <T> ApiResponse<T> success(HttpStatus status, T data) {
+        return createResponse(status, "Success", data);
     }
 
     public static <T> ApiResponse<T> success(HttpStatus status, String message) {
-        return new ApiResponse<>(status.name(), status.value(), message, null);
+        return createResponse(status, message, null);
     }
 
     public static <T> ApiResponse<T> success(HttpStatus status, String message, T data) {
-        return new ApiResponse<>(status.name(), status.value(), message, data);
+        return createResponse(status, message, data);
     }
 
     public static <T> ApiResponse<T> error(HttpStatus status, String message) {
-        return new ApiResponse<>(status.name(), status.value(), message, null);
+        return createResponse(status, message, null);
     }
 
     public static <T> ApiResponse<T> error(HttpStatus status, String message, T data) {
+        return createResponse(status, message, data);
+    }
+
+    private static <T> ApiResponse<T> createResponse(HttpStatus status, String message, T data) {
         return new ApiResponse<>(status.name(), status.value(), message, data);
     }
 }

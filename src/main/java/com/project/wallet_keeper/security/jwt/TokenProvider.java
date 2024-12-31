@@ -1,5 +1,6 @@
 package com.project.wallet_keeper.security.jwt;
 
+import com.project.wallet_keeper.domain.Role;
 import com.project.wallet_keeper.dto.auth.TokenDto;
 import com.project.wallet_keeper.exception.UserNotFoundException;
 import com.project.wallet_keeper.repository.UserRepository;
@@ -24,6 +25,7 @@ import javax.crypto.SecretKey;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.project.wallet_keeper.domain.Role.*;
 import static java.util.concurrent.TimeUnit.*;
 
 @Component
@@ -129,7 +131,7 @@ public class TokenProvider implements InitializingBean {
         String subject = AesUtil.decrypt(claims.getSubject(), claimKey);
         String encryptAuthority = Optional.ofNullable(claims.get(AUTHORITY))
                 .map(Object::toString)
-                .orElse(AesUtil.encrypt(DEFAULT_ROLE, claimKey));
+                .orElse(AesUtil.encrypt(ROLE_USER.toString(), claimKey));
         String authority = AesUtil.decrypt(encryptAuthority, claimKey);
 
         return createAuthentication(subject, authority, token);

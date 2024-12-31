@@ -1,22 +1,30 @@
 package com.project.wallet_keeper.dto.user;
 
+import com.project.wallet_keeper.domain.Role;
 import com.project.wallet_keeper.domain.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
-public class SignupResponseDto {
+@Setter
+@AllArgsConstructor
+public class UserResponseDto {
 
     private Long userId;
     private String email;
     private String nickname;
+    private LocalDate birth;
     private LocalDateTime createdAt;
 
-    public SignupResponseDto(User user) {
+    public UserResponseDto(User user) {
         this.userId = user.getId();
         this.email = user.getEmail();
         this.nickname = user.getNickname();
+        this.birth = user.getBirth();
         this.createdAt = user.getCreatedAt();
     }
 }

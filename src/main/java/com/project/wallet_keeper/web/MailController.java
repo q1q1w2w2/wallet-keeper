@@ -2,7 +2,7 @@ package com.project.wallet_keeper.web;
 
 import com.project.wallet_keeper.dto.mail.EmailDto;
 import com.project.wallet_keeper.dto.mail.VerifyCodeDto;
-import com.project.wallet_keeper.dto.response.ApiResponse;
+import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
