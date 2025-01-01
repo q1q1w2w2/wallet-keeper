@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const email = [[${email}]];
+            const name = [[${name}]];
+            const provider = [[${provider}]];
+            const isExist = [[${isExist}]];
+
+            const data = {
+                email: email,
+                name: name,
+                provider: provider,
+                isExist: isExist
+            }
+
+            fetch('/api/auth/oauth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    return response.json().then((e) => {
+                        throw new Error(e.message);
+                    });
+                })
+                .then(data => {
+                    alert("로그인 되었습니다.");
+                    localStorage.setItem("accessToken", data.data.accessToken);
+                    localStorage.setItem("refreshToken", data.data.refreshToken);
+
+                    window.location.href = "/";
+                })
+                .catch(error => {
+                    alert("로그인에 실패했습니다.");
+
+                    console.log("Error: ", error);
+                    window.location.href = "/login";
+                });
+        });
+
+    </script>
+
+</body>
+</html>

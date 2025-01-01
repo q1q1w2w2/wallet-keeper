@@ -1,23 +1,21 @@
 package com.project.wallet_keeper.web;
 
-import com.project.wallet_keeper.dto.auth.AccessTokenDto;
-import com.project.wallet_keeper.dto.auth.LoginDto;
-import com.project.wallet_keeper.dto.auth.RefreshTokenDto;
-import com.project.wallet_keeper.dto.auth.TokenDto;
+import com.project.wallet_keeper.dto.auth.*;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
@@ -44,6 +42,31 @@ public class AuthController {
 
         AccessTokenDto data = new AccessTokenDto(newAccessToken);
         ApiResponse<AccessTokenDto> response = ApiResponse.success(HttpStatus.OK, "토큰이 재발급 되었습니다.", data);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/redirect")
+    public String redirectForOAuth(
+            @RequestParam String email,
+            @RequestParam String name,
+            @RequestParam String provider,
+            @RequestParam boolean isExist,
+            Model model
+            ) {
+        log.info("email: {}, name: {}, provider: {}, isExist: {}", email, name, provider, isExist);
+
+        model.addAttribute("email", email);
+        model.addAttribute("name", name);
+        model.addAttribute("provider", provider);
+        model.addAttribute("isExist", isExist);
+        return "redirect";
+    }
+
+    @PostMapping("/oauth")
+    public ResponseEntity<ApiResponse<TokenDto>> getAccessToken(@RequestBody OAuthDto oAuthDto) throws Exception {
+        TokenDto tokens = authService.oAuthSignupAndLogin(oAuthDto);
+
+        ApiResponse<TokenDto> response = ApiResponse.success(HttpStatus.OK, "로그인 되었습니다.", tokens);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

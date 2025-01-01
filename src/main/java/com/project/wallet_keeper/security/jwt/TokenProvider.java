@@ -1,10 +1,5 @@
 package com.project.wallet_keeper.security.jwt;
 
-import com.project.wallet_keeper.domain.Role;
-import com.project.wallet_keeper.dto.auth.TokenDto;
-import com.project.wallet_keeper.exception.UserNotFoundException;
-import com.project.wallet_keeper.repository.UserRepository;
-import com.project.wallet_keeper.security.CustomUserDetailsService;
 import com.project.wallet_keeper.security.util.AesUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -23,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static com.project.wallet_keeper.domain.Role.*;
 import static java.util.concurrent.TimeUnit.*;

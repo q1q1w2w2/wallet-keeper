@@ -1,7 +1,6 @@
-package com.project.wallet_keeper.security;
+package com.project.wallet_keeper.security.auth;
 
 import com.project.wallet_keeper.domain.User;
-import com.project.wallet_keeper.exception.UserNotFoundException;
 import com.project.wallet_keeper.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-
-import static com.project.wallet_keeper.security.jwt.TokenProvider.*;
 
 @Service("userDetailsService")
 @RequiredArgsConstructor

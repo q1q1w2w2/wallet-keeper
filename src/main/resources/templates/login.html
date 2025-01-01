@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%; /* 전체 높이를 100%로 설정 */
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            flex-direction: column; /* 세로 방향으로 정렬 */
+            justify-content: center; /* 중앙 정렬 */
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #ffbbbb; /* 주 색상으로 분홍색 사용 */
+            outline: none;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffbbbb; /* 주 색상으로 분홍색 사용 */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            background-color: #ffcaca; /* 호버 색상으로 조금 더 밝은 분홍색 사용 */
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>가계부 로그인</h2>
+    <form id="loginForm" action="/api/auth/login" method="POST">
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="text" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">로그인</button>
+        </div>
+    </form>
+    <div class="form-group">
+        <button class="google-login" onclick="location.href='/oauth2/authorization/google'">구글 로그인</button>
+    </div>
+    <div class="register-link">
+        <p>계정이 없으신가요? <a href="/api/users">회원가입</a></p>
+    </div>
+</div>
+
+<!-- footer -->
+<!--<div th:replace="fragment/footer :: footer"></div>-->
+
+<!-- js -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // 기본 폼 제출 방지
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const data = {
+                email: email,
+                password: password
+            };
+
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    return response.json().then((e) => {
+                        throw new Error(e.message);
+                    });
+                })
+                .then(data => {
+                    alert("로그인 되었습니다.");
+                    localStorage.setItem('accessToken', data.data.accessToken);
+                    localStorage.setItem('refreshToken', data.data.refreshToken);
+
+                    window.location.href = '/';
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert(error.message);
+
+                    window.location.href = '/login';
+                });
+        });
+    });
+</script>
+
+</body>
+</html>

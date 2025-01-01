@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 import static com.project.wallet_keeper.domain.Role.*;
 
 @Service
@@ -34,16 +36,12 @@ public class UserService {
      *
      * @param signupDto 사용자 가입에 필요한 정보
      * @return 생성된 사용자 객체
-     * @throws UserAlreadyExistException 이미 존재하는 이메일 또는 닉네임일 경우 예외 발생
+     * @throws UserAlreadyExistException 이미 존재하는 이메일일 경우 예외 발생
      */
     @Transactional
     public User signUp(SignupDto signupDto) {
-
         if (userRepository.findByEmail(signupDto.getEmail()).isPresent()) {
             throw new UserAlreadyExistException("이미 가입되어 있는 이메일입니다.");
-        }
-        if (userRepository.findByNickname(signupDto.getNickname()).isPresent()) {
-            throw new UserAlreadyExistException("이미 존재하는 닉네임입니다.");
         }
 
         User user = User.builder()
@@ -62,15 +60,10 @@ public class UserService {
      * @param user 현재 로그인한 사용자
      * @param updateDto 변경할 nickname과 birth
      * @return 변경된 User 객체
-     * @throws UserAlreadyExistException 변경할 닉네임이 이미 존재하는 경우 예외 발생
      */
     @Transactional
     public User updateUser(User user, UserProfileUpdateDto updateDto) {
-        if (userRepository.findByNickname(updateDto.getNickname()).isPresent()) {
-            throw new UserAlreadyExistException("이미 존재하는 닉네임입니다.");
-        }
-
-        return user.update(updateDto.getNickname(), updateDto.getBirth());
+         return user.update(updateDto.getNickname(), updateDto.getBirth());
     }
 
     /**

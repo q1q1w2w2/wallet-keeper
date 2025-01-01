@@ -1,10 +1,13 @@
 package com.project.wallet_keeper.config;
 
-import com.project.wallet_keeper.security.CustomAccessDeniedHandler;
-import com.project.wallet_keeper.security.CustomAuthenticationEntryPoint;
-import com.project.wallet_keeper.security.CustomUserDetailsService;
+import com.project.wallet_keeper.security.auth.CustomAccessDeniedHandler;
+import com.project.wallet_keeper.security.auth.CustomAuthenticationEntryPoint;
+import com.project.wallet_keeper.security.auth.CustomUserDetailsService;
 import com.project.wallet_keeper.security.jwt.JwtFilter;
 import com.project.wallet_keeper.security.jwt.TokenProvider;
+import com.project.wallet_keeper.security.oauth.CustomAuthenticationFailureHandler;
+import com.project.wallet_keeper.security.oauth.CustomAuthenticationSuccessHandler;
+import com.project.wallet_keeper.security.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +33,10 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -42,7 +49,9 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest
-                                .requestMatchers("/api/auth/login").permitAll()
+                                .requestMatchers("/error", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
+                                .requestMatchers("/login", "/").permitAll()
+                                .requestMatchers("/api/auth/login", "/api/auth/redirect", "/api/auth/oauth").permitAll()
                                 .requestMatchers("/api/users").permitAll()
                                 .requestMatchers("/api/mail/verification", "/api/mail/verification/code").permitAll()
                                 .requestMatchers("/api/users/reset-password").permitAll()
@@ -63,11 +72,21 @@ public class SecurityConfig {
                         exceptionHandling
                                 .authenticationEntryPoint(customAuthenticationEntryPoint)
                                 .accessDeniedHandler(customAccessDeniedHandler)
-                );
+                )
 
-//                .oauth2Login(oauth ->
-//                        oauth.userInfoEndpoint()
-//                );
+                .oauth2Login(oauth ->
+                        oauth
+                                .userInfoEndpoint(userInfo ->
+                                        userInfo
+                                                .userService(customOAuth2UserService)
+
+                                )
+                                .successHandler(customAuthenticationSuccessHandler)
+                                .failureHandler(customAuthenticationFailureHandler)
+                )
+        ;
+
+
 
         return http.build();
     }
