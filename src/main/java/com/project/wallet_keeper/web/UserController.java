@@ -23,8 +23,6 @@ public class UserController {
         User user = userService.signUp(signupDto);
 
         SignupResponseDto data = new SignupResponseDto(user);
-//        ApiResponse<SignupResponseDto> response = ApiResponse.success(HttpStatus.CREATED, "회원가입이 완료되었습니다.", data);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
         return createResponse(HttpStatus.CREATED, "회원가입이 완료되었습니다.", data);
     }
 
@@ -33,8 +31,6 @@ public class UserController {
         User user = userService.getCurrentUser();
 
         UserResponseDto data = new UserResponseDto(user);
-//        ApiResponse<UserResponseDto> response = ApiResponse.success(HttpStatus.OK, data);
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
         return createResponse(HttpStatus.OK, data);
     }
 
@@ -44,8 +40,6 @@ public class UserController {
         User updateUser = userService.updateUser(user, updateDto);
 
         UserResponseDto data = new UserResponseDto(updateUser);
-//        ApiResponse<UserResponseDto> response = ApiResponse.success(HttpStatus.OK, "사용자 정보가 수정되었습니다.", data);
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
         return createResponse(HttpStatus.OK, "사용자 정보가 수정되었습니다.", data);
     }
 
@@ -54,8 +48,6 @@ public class UserController {
         User user = userService.getCurrentUser();
         userService.deleteUser(user);
 
-//        ApiResponse<UserResponseDto> response = ApiResponse.success(HttpStatus.OK, "회원 탈퇴가 완료되었습니다.");
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
         return createResponse(HttpStatus.OK, "회원 탈퇴가 완료되었습니다.");
     }
 
@@ -74,7 +66,6 @@ public class UserController {
         return createResponse(HttpStatus.OK, "비밀번호가 변경되었습니다.");
     }
 
-    // todo 과도한 중복제거인 것 같은 느낌이라 고민중, 오버라이딩해서 한 번밖에 안쓰이는것도 있음
     private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message, T data) {
         ApiResponse<T> response = ApiResponse.success(status, message, data);
         return ResponseEntity.status(status).body(response);

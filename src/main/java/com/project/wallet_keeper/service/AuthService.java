@@ -110,7 +110,6 @@ public class AuthService {
 
         User user = null;
         if (!isExist) {
-            log.info("isExist = false 일 때 작동");
             if (userRepository.findByEmail(email).isPresent()) {
                 throw new UserAlreadyExistException("이미 가입되어 있는 이메일입니다.");
             }
@@ -124,7 +123,6 @@ public class AuthService {
                     .build();
             user = userRepository.save(saveUser);
         } else {
-            log.info("isExist = ture 일 때 작동");
             user = userRepository.findByEmail(email)
                     .orElseThrow(UserNotFoundException::new);
         }
