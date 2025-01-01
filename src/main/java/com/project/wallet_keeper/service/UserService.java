@@ -137,12 +137,13 @@ public class UserService {
     }
 
     @Transactional
-    public void resetPassword(ResetPasswordDto passwordDto) {
+    public boolean resetPassword(ResetPasswordDto passwordDto) {
         String email = passwordDto.getEmail();
         String password = passwordDto.getPassword();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
         user.updatePassword(passwordEncoder.encode(password));
+        return true;
     }
 }
