@@ -1,6 +1,5 @@
 package com.project.wallet_keeper.dto.transaction;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SaveIncomeDto {
+public class SaveTransactionDto {
 
     private String detail;
 
@@ -21,8 +20,8 @@ public class SaveIncomeDto {
     private String description;
 
     @NotNull(message = "날짜는 비어있을 수 없습니다.")
-    private LocalDateTime incomeAt;
+    private LocalDateTime transactionAt;
 
     @NotNull(message = "카테고리 ID는 비어있을 수 없습니다.")
-    private Long incomeCategoryId;
+    private Long transactionCategoryId;
 }
