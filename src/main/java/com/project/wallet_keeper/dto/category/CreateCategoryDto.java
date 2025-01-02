@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.dto;
+package com.project.wallet_keeper.dto.category;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

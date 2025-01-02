@@ -17,10 +17,10 @@ public class IncomeCategory {
     @Column(name = "income_category_id")
     private Long id;
 
-    @Column(name = "income_category_name")
+    @Column(name = "income_category_name", nullable = false)
     private String categoryName;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
     @Builder
@@ -28,4 +28,7 @@ public class IncomeCategory {
         this.categoryName = categoryName;
     }
 
+    public void delete() {
+        this.isDeleted = true;
+    }
 }

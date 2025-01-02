@@ -2,17 +2,21 @@ package com.project.wallet_keeper.web;
 
 import com.project.wallet_keeper.domain.ExpenseCategory;
 import com.project.wallet_keeper.domain.IncomeCategory;
-import com.project.wallet_keeper.dto.CreateCategoryDto;
+import com.project.wallet_keeper.dto.category.CategoryResponseDto;
+import com.project.wallet_keeper.dto.category.CreateCategoryDto;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -27,7 +31,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<IncomeCategory>> createIncomeCategory(@Valid @RequestBody CreateCategoryDto categoryDto) {
         IncomeCategory category = categoryService.createIncomeCategory(categoryDto);
 
-        ApiResponse<IncomeCategory> response = ApiResponse.success(CREATED, "수입 카테고리가 생성되었습니다.", category);
+        ApiResponse<IncomeCategory> response = ApiResponse.success(CREATED, category);
         return ResponseEntity.status(CREATED).body(response);
     }
 
@@ -35,7 +39,33 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<ExpenseCategory>> createExpenseCategory(@Valid @RequestBody CreateCategoryDto categoryDto) {
         ExpenseCategory category = categoryService.createExpenseCategory(categoryDto);
 
-        ApiResponse<ExpenseCategory> response = ApiResponse.success(CREATED, "지출 카테고리가 생성되었습니다.", category);
+        ApiResponse<ExpenseCategory> response = ApiResponse.success(CREATED, category);
         return ResponseEntity.status(CREATED).body(response);
+    }
+
+    @GetMapping("/income")
+    public ResponseEntity<ApiResponse<ArrayList<CategoryResponseDto>>> getIncomeCategoryList() {
+        List<IncomeCategory> incomeCategories = categoryService.getIncomeCategories();
+
+        ArrayList<CategoryResponseDto> categoryList = new ArrayList<>();
+        for (IncomeCategory incomeCategory : incomeCategories) {
+            categoryList.add(new CategoryResponseDto(incomeCategory));
+        }
+
+        ApiResponse<ArrayList<CategoryResponseDto>> response = ApiResponse.success(OK, categoryList);
+        return ResponseEntity.status(OK).body(response);
+    }
+
+    @GetMapping("/expense")
+    public ResponseEntity<ApiResponse<ArrayList<CategoryResponseDto>>> getExpenseCategoryList() {
+        List<ExpenseCategory> expenseCategories = categoryService.getExpenseCategories();
+
+        ArrayList<CategoryResponseDto> categoryList = new ArrayList<>();
+        for (ExpenseCategory expenseCategory : expenseCategories) {
+            categoryList.add(new CategoryResponseDto(expenseCategory));
+        }
+
+        ApiResponse<ArrayList<CategoryResponseDto>> response = ApiResponse.success(OK, categoryList);
+        return ResponseEntity.status(OK).body(response);
     }
 }

@@ -27,4 +27,8 @@ public class ExpenseCategory {
     public ExpenseCategory(String categoryName) {
         this.categoryName = categoryName;
     }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
 }
