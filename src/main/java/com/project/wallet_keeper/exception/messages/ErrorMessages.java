@@ -13,5 +13,7 @@ public class ErrorMessages {
 
     public static final String INVALID_TOKEN = "토큰이 유효하지 않습니다.";
 
+    public static final String TRANSACTION_CATEGORY_NOT_FOUND = "카테고리를 찾을 수 없습니다.";
+
 
 }

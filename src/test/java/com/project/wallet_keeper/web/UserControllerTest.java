@@ -7,8 +7,8 @@ import com.project.wallet_keeper.dto.user.ResetPasswordDto;
 import com.project.wallet_keeper.dto.user.SignupDto;
 import com.project.wallet_keeper.dto.user.UpdatePasswordDto;
 import com.project.wallet_keeper.dto.user.UserProfileUpdateDto;
-import com.project.wallet_keeper.exception.UserAlreadyExistException;
-import com.project.wallet_keeper.exception.UserNotFoundException;
+import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
+import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.security.jwt.TokenProvider;
 import com.project.wallet_keeper.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(UserController.class)
 @WithMockUser
 class UserControllerTest {

@@ -1,12 +1,16 @@
 package com.project.wallet_keeper.service;
 
+import com.project.wallet_keeper.domain.ExpenseCategory;
+import com.project.wallet_keeper.domain.IncomeCategory;
 import com.project.wallet_keeper.domain.User;
 import com.project.wallet_keeper.dto.user.ResetPasswordDto;
 import com.project.wallet_keeper.dto.user.SignupDto;
 import com.project.wallet_keeper.dto.user.UpdatePasswordDto;
 import com.project.wallet_keeper.dto.user.UserProfileUpdateDto;
-import com.project.wallet_keeper.exception.UserAlreadyExistException;
-import com.project.wallet_keeper.exception.UserNotFoundException;
+import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
+import com.project.wallet_keeper.exception.user.UserNotFoundException;
+import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
+import com.project.wallet_keeper.repository.IncomeCategoryRepository;
 import com.project.wallet_keeper.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +21,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 import static com.project.wallet_keeper.domain.Role.*;
 
@@ -51,6 +53,7 @@ public class UserService {
                 .birth(signupDto.getBirth())
                 .role(ROLE_USER)
                 .build();
+
         return userRepository.save(user);
     }
 

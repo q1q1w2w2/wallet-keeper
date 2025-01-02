@@ -5,10 +5,10 @@ import com.project.wallet_keeper.dto.auth.LoginDto;
 import com.project.wallet_keeper.dto.auth.OAuthDto;
 import com.project.wallet_keeper.dto.auth.RefreshTokenDto;
 import com.project.wallet_keeper.dto.auth.TokenDto;
-import com.project.wallet_keeper.exception.OAuthUserException;
-import com.project.wallet_keeper.exception.TokenValidationException;
-import com.project.wallet_keeper.exception.UserAlreadyExistException;
-import com.project.wallet_keeper.exception.UserNotFoundException;
+import com.project.wallet_keeper.exception.auth.OAuthUserException;
+import com.project.wallet_keeper.exception.auth.TokenValidationException;
+import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
+import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.repository.UserRepository;
 import com.project.wallet_keeper.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.project.wallet_keeper.domain.Role.ROLE_USER;
@@ -61,10 +62,13 @@ public class AuthService {
     }
 
     private void isOAuthUser(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(UserNotFoundException::new);
-        if (user.getProvider() != null || user.getPassword() == null) {
-            throw new OAuthUserException("소셜 로그인을 이용해주세요.");
+        Optional<User> findUser = userRepository.findByEmail(email);
+
+        if (findUser.isPresent()) {
+            User user = findUser.get();
+            if (user.getProvider() != null || user.getPassword() == null) {
+                throw new OAuthUserException("소셜 로그인을 이용해주세요.");
+            }
         }
     }
 

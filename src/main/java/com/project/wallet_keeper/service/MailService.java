@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.exception.VerificationCodeMismatchException;
+import com.project.wallet_keeper.exception.auth.VerificationCodeMismatchException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

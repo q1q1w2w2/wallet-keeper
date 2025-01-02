@@ -23,13 +23,8 @@ public class ExpenseCategory {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Builder
-    public ExpenseCategory(String categoryName, User user) {
+    public ExpenseCategory(String categoryName) {
         this.categoryName = categoryName;
-        this.user = user;
     }
 }

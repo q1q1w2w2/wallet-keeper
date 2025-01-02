@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.exception;
+package com.project.wallet_keeper.exception.auth;
 
 import static com.project.wallet_keeper.exception.messages.ErrorMessages.*;
 

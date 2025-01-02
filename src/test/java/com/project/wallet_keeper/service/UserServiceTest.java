@@ -1,40 +1,29 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.domain.Role;
 import com.project.wallet_keeper.domain.User;
 import com.project.wallet_keeper.dto.user.ResetPasswordDto;
 import com.project.wallet_keeper.dto.user.SignupDto;
 import com.project.wallet_keeper.dto.user.UpdatePasswordDto;
 import com.project.wallet_keeper.dto.user.UserProfileUpdateDto;
-import com.project.wallet_keeper.exception.UserAlreadyExistException;
-import com.project.wallet_keeper.exception.UserNotFoundException;
+import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
+import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.repository.UserRepository;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static com.project.wallet_keeper.domain.Role.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-//@WithMockUser
 class UserServiceTest {
 
     @InjectMocks

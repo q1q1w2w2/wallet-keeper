@@ -23,14 +23,9 @@ public class IncomeCategory {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Builder
-    public IncomeCategory(String categoryName, User user) {
+    public IncomeCategory(String categoryName) {
         this.categoryName = categoryName;
-        this.user = user;
     }
 
 }

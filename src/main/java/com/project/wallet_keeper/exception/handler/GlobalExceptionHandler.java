@@ -1,7 +1,12 @@
 package com.project.wallet_keeper.exception.handler;
 
 import com.project.wallet_keeper.dto.common.ApiResponse;
-import com.project.wallet_keeper.exception.*;
+import com.project.wallet_keeper.exception.auth.OAuthUserException;
+import com.project.wallet_keeper.exception.auth.TokenValidationException;
+import com.project.wallet_keeper.exception.auth.VerificationCodeMismatchException;
+import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
+import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
+import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -62,6 +67,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(VerificationCodeMismatchException.class)
     public ResponseEntity<ApiResponse<Object>> handleVerificationCodeMismatchException(VerificationCodeMismatchException e) {
         return createErrorResponse(e, BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(TransactionCategoryNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTransactionCategoryNotFoundException(TransactionCategoryNotFoundException e) {
+        return createErrorResponse(e, NOT_FOUND, e.getMessage());
     }
 
     // Bean Validation 예외
