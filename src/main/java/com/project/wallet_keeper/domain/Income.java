@@ -1,5 +1,6 @@
 package com.project.wallet_keeper.domain;
 
+import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,5 +32,12 @@ public class Income extends Transaction {
         super(detail, amount, description, user);
         this.incomeCategory = incomeCategory;
         this.incomeAt = incomeAt;
+    }
+
+    public Income update(String detail, int amount, String description, LocalDateTime incomeAt, IncomeCategory incomeCategory) {
+        super.update(detail, amount, description);
+        this.incomeCategory = incomeCategory;
+        this.incomeAt = incomeAt;
+        return this;
     }
 }

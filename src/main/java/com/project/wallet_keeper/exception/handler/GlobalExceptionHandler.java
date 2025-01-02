@@ -4,7 +4,9 @@ import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.exception.auth.OAuthUserException;
 import com.project.wallet_keeper.exception.auth.TokenValidationException;
 import com.project.wallet_keeper.exception.auth.VerificationCodeMismatchException;
+import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
+import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import jakarta.mail.MessagingException;
@@ -72,6 +74,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TransactionCategoryNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleTransactionCategoryNotFoundException(TransactionCategoryNotFoundException e) {
         return createErrorResponse(e, NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTransactionNotFoundException(TransactionNotFoundException e) {
+        return createErrorResponse(e, NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidTransactionOwnerException.class)
+    public ResponseEntity<ApiResponse<Object>> handleInvalidTransactionOwnerException(InvalidTransactionOwnerException e) {
+        return createErrorResponse(e, BAD_REQUEST, e.getMessage());
     }
 
     // Bean Validation 예외

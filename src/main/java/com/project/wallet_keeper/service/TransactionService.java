@@ -1,9 +1,11 @@
 package com.project.wallet_keeper.service;
 
 import com.project.wallet_keeper.domain.*;
-import com.project.wallet_keeper.dto.transaction.SaveTransactionDto;
+import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
+import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
+import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
 import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
 import com.project.wallet_keeper.repository.ExpenseRepository;
 import com.project.wallet_keeper.repository.IncomeCategoryRepository;
@@ -12,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class TransactionService {
     private final ExpenseCategoryRepository expenseCategoryRepository;
 
     @Transactional
-    public Income saveIncome(User user, SaveTransactionDto incomeDto) {
+    public Income saveIncome(User user, TransactionDto incomeDto) {
         Long categoryId = incomeDto.getTransactionCategoryId();
         IncomeCategory category = incomeCategoryRepository.findById(categoryId)
                 .orElseThrow(TransactionCategoryNotFoundException::new);
@@ -45,7 +44,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public Expense saveExpense(User user, SaveTransactionDto expenseDto) {
+    public Expense saveExpense(User user, TransactionDto expenseDto) {
         Long categoryId = expenseDto.getTransactionCategoryId();
         ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
                 .orElseThrow(TransactionCategoryNotFoundException::new);
@@ -98,4 +97,63 @@ public class TransactionService {
         return responseList;
     }
 
+    public Income getIncome(Long incomeId) {
+        return incomeRepository.findById(incomeId)
+                .orElseThrow(TransactionNotFoundException::new);
+    }
+
+    public Expense getExpense(Long expenseId) {
+        return expenseRepository.findById(expenseId)
+                .orElseThrow(TransactionNotFoundException::new);
+    }
+
+    @Transactional
+    public Income updateIncome(Long incomeId, TransactionDto incomeDto, User user) {
+        Income income = incomeRepository.findById(incomeId)
+                .orElseThrow(TransactionNotFoundException::new);
+
+        checkTransactionOwnership(income, user);
+
+        IncomeCategory category = incomeCategoryRepository.findById(incomeDto.getTransactionCategoryId())
+                .orElseThrow(TransactionCategoryNotFoundException::new);
+
+        return income.update(incomeDto.getDetail(), incomeDto.getAmount(), incomeDto.getDescription(), incomeDto.getTransactionAt(), category);
+    }
+
+    @Transactional
+    public Expense updateExpense(Long expenseId, TransactionDto expenseDto, User user) {
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(TransactionNotFoundException::new);
+
+        checkTransactionOwnership(expense, user);
+
+        ExpenseCategory category = expenseCategoryRepository.findById(expenseDto.getTransactionCategoryId())
+                .orElseThrow(TransactionCategoryNotFoundException::new);
+
+        return expense.update(expenseDto.getDetail(), expenseDto.getAmount(), expenseDto.getDescription(), expenseDto.getTransactionAt(), category);
+    }
+
+    @Transactional
+    public void deleteIncome(Long incomeId, User user) {
+        Income income = incomeRepository.findById(incomeId)
+                .orElseThrow(TransactionNotFoundException::new);
+        checkTransactionOwnership(income, user);
+
+        incomeRepository.delete(income);
+    }
+
+    @Transactional
+    public void deleteExpense(Long expenseId, User user) {
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(TransactionNotFoundException::new);
+        checkTransactionOwnership(expense, user);
+
+        expenseRepository.delete(expense);
+    }
+
+    private void checkTransactionOwnership(Transaction transaction, User user) {
+        if (!transaction.getUser().equals(user)) {
+            throw new InvalidTransactionOwnerException();
+        }
+    }
 }

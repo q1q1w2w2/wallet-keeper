@@ -33,4 +33,11 @@ public class Expense extends Transaction {
         this.expenseAt = expenseAt;
     }
 
+    public Expense update(String detail, int amount, String description, LocalDateTime expenseAt, ExpenseCategory expenseCategory) {
+        super.update(detail, amount, description);
+        this.expenseCategory = expenseCategory;
+        this.expenseAt = expenseAt;
+        return this;
+    }
+
 }

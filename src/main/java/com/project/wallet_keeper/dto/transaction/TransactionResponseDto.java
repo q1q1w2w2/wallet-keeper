@@ -17,16 +17,24 @@ public class TransactionResponseDto {
     private static final String INCOME = "INCOME";
     private static final String EXPENSE = "EXPENSE";
 
+    private Long transactionId;
     private String detail;
     private int amount;
     private String description;
+    private String transactionCategory;
     private LocalDateTime transactionAt;
     private String transactionType;
 
     public TransactionResponseDto(Transaction transaction) {
+        this.transactionId = transaction instanceof Income ?
+                ((Income) transaction).getId() :
+                ((Expense) transaction).getId();
         this.detail = transaction.getDetail();
         this.amount = transaction.getAmount();
         this.description = transaction.getDescription();
+        this.transactionCategory = transaction instanceof Income ?
+                ((Income) transaction).getIncomeCategory().getCategoryName() :
+                ((Expense) transaction).getExpenseCategory().getCategoryName();
         this.transactionAt = transaction instanceof Income ?
                 ((Income) transaction).getIncomeAt() :
                 ((Expense) transaction).getExpenseAt();

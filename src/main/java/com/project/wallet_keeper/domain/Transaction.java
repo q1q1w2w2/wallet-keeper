@@ -49,4 +49,10 @@ public abstract class Transaction {
         this.updatedAt = LocalDateTime.now().withNano(0);
     }
 
+    public void update(String detail, int amount, String description) {
+        this.detail = detail;
+        this.amount = amount;
+        this.description = description;
+    }
+
 }

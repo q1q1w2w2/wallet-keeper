@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SaveTransactionDto {
+public class TransactionDto {
 
     private String detail;
 

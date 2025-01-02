@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.*;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -23,7 +25,7 @@ public class UserController {
         User user = userService.signUp(signupDto);
 
         SignupResponseDto data = new SignupResponseDto(user);
-        return createResponse(HttpStatus.CREATED, "회원가입이 완료되었습니다.", data);
+        return createResponse(CREATED, "회원가입이 완료되었습니다.", data);
     }
 
     @GetMapping("/me")
@@ -31,7 +33,7 @@ public class UserController {
         User user = userService.getCurrentUser();
 
         UserResponseDto data = new UserResponseDto(user);
-        return createResponse(HttpStatus.OK, data);
+        return createResponse(OK, data);
     }
 
     @PatchMapping("/me")
@@ -40,7 +42,7 @@ public class UserController {
         User updateUser = userService.updateUser(user, updateDto);
 
         UserResponseDto data = new UserResponseDto(updateUser);
-        return createResponse(HttpStatus.OK, "사용자 정보가 수정되었습니다.", data);
+        return createResponse(OK, "사용자 정보가 수정되었습니다.", data);
     }
 
     @DeleteMapping("/me")
@@ -48,7 +50,7 @@ public class UserController {
         User user = userService.getCurrentUser();
         userService.deleteUser(user);
 
-        return createResponse(HttpStatus.OK, "회원 탈퇴가 완료되었습니다.");
+        return createResponse(OK, "회원 탈퇴가 완료되었습니다.");
     }
 
     @PatchMapping("/me/password")
@@ -56,14 +58,14 @@ public class UserController {
         User user = userService.getCurrentUser();
         userService.updatePassword(user, updatePasswordDto);
 
-        return createResponse(HttpStatus.OK, "비밀번호가 변경되었습니다.");
+        return createResponse(OK, "비밀번호가 변경되었습니다.");
     }
 
     @PatchMapping("/reset-password")
     public ResponseEntity resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) {
         userService.resetPassword(resetPasswordDto);
 
-        return createResponse(HttpStatus.OK, "비밀번호가 변경되었습니다.");
+        return createResponse(OK, "비밀번호가 변경되었습니다.");
     }
 
     private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message, T data) {
@@ -72,12 +74,12 @@ public class UserController {
     }
 
     private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message) {
-        ApiResponse<T> response = ApiResponse.success(status, message, null);
+        ApiResponse<T> response = ApiResponse.success(status, message);
         return ResponseEntity.status(status).body(response);
     }
 
     private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {
-        ApiResponse<T> response = ApiResponse.success(status, "Success", data);
+        ApiResponse<T> response = ApiResponse.success(status, data);
         return ResponseEntity.status(status).body(response);
     }
 }

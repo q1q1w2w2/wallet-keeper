@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.*;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -24,16 +26,16 @@ public class AuthController {
     public ResponseEntity<ApiResponse<TokenDto>> login(@Valid @RequestBody LoginDto loginDto) throws Exception {
         TokenDto tokens = authService.login(loginDto);
 
-        ApiResponse<TokenDto> response = ApiResponse.success(HttpStatus.OK, "로그인 되었습니다.", tokens);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        ApiResponse<TokenDto> response = ApiResponse.success(OK, "로그인 되었습니다.", tokens);
+        return ResponseEntity.status(OK).body(response);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<TokenDto>> logout(@Valid @RequestBody TokenDto tokenDto) throws Exception {
         authService.logout(tokenDto);
 
-        ApiResponse<TokenDto> response = ApiResponse.success(HttpStatus.OK, "로그아웃 되었습니다.");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        ApiResponse<TokenDto> response = ApiResponse.success(OK, "로그아웃 되었습니다.");
+        return ResponseEntity.status(OK).body(response);
     }
 
     @PostMapping("/token/refresh")
@@ -41,8 +43,8 @@ public class AuthController {
         String newAccessToken = authService.generateNewAccessTokens(tokenDto);
 
         AccessTokenDto data = new AccessTokenDto(newAccessToken);
-        ApiResponse<AccessTokenDto> response = ApiResponse.success(HttpStatus.OK, "토큰이 재발급 되었습니다.", data);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        ApiResponse<AccessTokenDto> response = ApiResponse.success(OK, "토큰이 재발급 되었습니다.", data);
+        return ResponseEntity.status(OK).body(response);
     }
 
     @GetMapping("/redirect")
@@ -66,7 +68,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<TokenDto>> getAccessToken(@RequestBody OAuthDto oAuthDto) throws Exception {
         TokenDto tokens = authService.oAuthSignupAndLogin(oAuthDto);
 
-        ApiResponse<TokenDto> response = ApiResponse.success(HttpStatus.OK, "로그인 되었습니다.", tokens);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        ApiResponse<TokenDto> response = ApiResponse.success(OK, "로그인 되었습니다.", tokens);
+        return ResponseEntity.status(OK).body(response);
     }
 }
