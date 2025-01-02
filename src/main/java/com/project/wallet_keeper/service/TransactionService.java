@@ -65,42 +65,37 @@ public class TransactionService {
         List<Income> incomeList = incomeRepository.findByUser(user);
         List<Expense> expenseList = expenseRepository.findByUser(user);
 
-        ArrayList<TransactionResponseDto> transactionList = new ArrayList<>();
-        for (Income income : incomeList) {
-            transactionList.add(new TransactionResponseDto(income));
-        }
-        for (Expense expense : expenseList) {
-            transactionList.add(new TransactionResponseDto(expense));
-        }
+        ArrayList<Transaction> transactionList = new ArrayList<>();
+        transactionList.addAll(incomeList);
+        transactionList.addAll(expenseList);
 
-        Collections.sort(transactionList, new Comparator<TransactionResponseDto>() {
-            @Override
-            public int compare(TransactionResponseDto t1, TransactionResponseDto t2) {
-                return t2.getTransactionAt().compareTo(t1.getTransactionAt());
-            }
-        });
-
-        return transactionList;
+        return sortAndConvertToDto(transactionList);
     }
 
     public List<TransactionResponseDto> getExpenseList(User user) {
         List<Expense> expenseList = expenseRepository.findByUser(user);
+        return sortAndConvertToDto(expenseList);
+    }
 
-        ArrayList<TransactionResponseDto> expenseResponseList = new ArrayList<>();
-        for (Expense expense : expenseList) {
-            expenseResponseList.add(new TransactionResponseDto(expense));
-        }
+    private List<TransactionResponseDto> sortAndConvertToDto(List<? extends Transaction> transactionList) {
+        List<TransactionResponseDto> responseList = convertToDto(transactionList);
 
-        Collections.sort(expenseResponseList, new Comparator<TransactionResponseDto>() {
+        Collections.sort(responseList, new Comparator<TransactionResponseDto>() {
             @Override
             public int compare(TransactionResponseDto t1, TransactionResponseDto t2) {
                 return t2.getTransactionAt().compareTo(t1.getTransactionAt());
             }
         });
 
-        return expenseResponseList;
+        return responseList;
     }
 
-//    private List<TransactionResponseDto> convertToDto
+    private List<TransactionResponseDto> convertToDto(List<? extends Transaction> transactionList) {
+        ArrayList<TransactionResponseDto> responseList = new ArrayList<>();
+        for (Transaction transaction : transactionList) {
+            responseList.add(new TransactionResponseDto(transaction));
+        }
+        return responseList;
+    }
 
 }
