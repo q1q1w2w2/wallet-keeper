@@ -9,6 +9,7 @@ import com.project.wallet_keeper.dto.user.UpdatePasswordDto;
 import com.project.wallet_keeper.dto.user.UserProfileUpdateDto;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
+import com.project.wallet_keeper.security.auth.CustomAuthenticationEntryPoint;
 import com.project.wallet_keeper.security.jwt.TokenProvider;
 import com.project.wallet_keeper.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -47,6 +48,9 @@ class UserControllerTest {
 
     @MockitoBean
     private TokenProvider tokenProvider;
+
+    @MockitoBean
+    private CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Test
     @DisplayName("회원가입")

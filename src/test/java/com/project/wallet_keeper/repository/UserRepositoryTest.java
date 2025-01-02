@@ -17,7 +17,6 @@ import static com.project.wallet_keeper.domain.Role.*;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-@ActiveProfiles
 class UserRepositoryTest {
 
     @Autowired

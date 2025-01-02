@@ -77,24 +77,10 @@ public class TransactionService {
     }
 
     private List<TransactionResponseDto> sortAndConvertToDto(List<? extends Transaction> transactionList) {
-        List<TransactionResponseDto> responseList = convertToDto(transactionList);
-
-        Collections.sort(responseList, new Comparator<TransactionResponseDto>() {
-            @Override
-            public int compare(TransactionResponseDto t1, TransactionResponseDto t2) {
-                return t2.getTransactionAt().compareTo(t1.getTransactionAt());
-            }
-        });
-
-        return responseList;
-    }
-
-    private List<TransactionResponseDto> convertToDto(List<? extends Transaction> transactionList) {
-        ArrayList<TransactionResponseDto> responseList = new ArrayList<>();
-        for (Transaction transaction : transactionList) {
-            responseList.add(new TransactionResponseDto(transaction));
-        }
-        return responseList;
+        return transactionList.stream()
+                .map(TransactionResponseDto::new)
+                .sorted(Comparator.comparing(TransactionResponseDto::getTransactionAt).reversed())
+                .toList();
     }
 
     public Income getIncome(Long incomeId) {

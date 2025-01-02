@@ -27,13 +27,13 @@ public class Expense extends Transaction {
     private LocalDateTime expenseAt;
 
     @Builder
-    public Expense(String detail, int amount, String description, User user, ExpenseCategory expenseCategory, LocalDateTime expenseAt) {
+    public Expense(String detail, Integer amount, String description, User user, ExpenseCategory expenseCategory, LocalDateTime expenseAt) {
         super(detail, amount, description, user);
         this.expenseCategory = expenseCategory;
         this.expenseAt = expenseAt;
     }
 
-    public Expense update(String detail, int amount, String description, LocalDateTime expenseAt, ExpenseCategory expenseCategory) {
+    public Expense update(String detail, Integer amount, String description, LocalDateTime expenseAt, ExpenseCategory expenseCategory) {
         super.update(detail, amount, description);
         this.expenseCategory = expenseCategory;
         this.expenseAt = expenseAt;

@@ -79,7 +79,6 @@ public class SecurityConfig {
                                 .userInfoEndpoint(userInfo ->
                                         userInfo
                                                 .userService(customOAuth2UserService)
-
                                 )
                                 .successHandler(customAuthenticationSuccessHandler)
                                 .failureHandler(customAuthenticationFailureHandler)

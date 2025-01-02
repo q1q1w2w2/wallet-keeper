@@ -28,13 +28,13 @@ public class Income extends Transaction {
     private LocalDateTime incomeAt;
 
     @Builder
-    public Income(String detail, int amount, String description, User user, LocalDateTime incomeAt, IncomeCategory incomeCategory) {
+    public Income(String detail, Integer amount, String description, User user, LocalDateTime incomeAt, IncomeCategory incomeCategory) {
         super(detail, amount, description, user);
         this.incomeCategory = incomeCategory;
         this.incomeAt = incomeAt;
     }
 
-    public Income update(String detail, int amount, String description, LocalDateTime incomeAt, IncomeCategory incomeCategory) {
+    public Income update(String detail, Integer amount, String description, LocalDateTime incomeAt, IncomeCategory incomeCategory) {
         super.update(detail, amount, description);
         this.incomeCategory = incomeCategory;
         this.incomeAt = incomeAt;

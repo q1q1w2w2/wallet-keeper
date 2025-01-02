@@ -6,7 +6,6 @@ import com.project.wallet_keeper.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,7 +60,7 @@ public class AuthController {
         model.addAttribute("name", name);
         model.addAttribute("provider", provider);
         model.addAttribute("isExist", isExist);
-        return "redirect";
+        return "auth/redirect";
     }
 
     @PostMapping("/oauth")
