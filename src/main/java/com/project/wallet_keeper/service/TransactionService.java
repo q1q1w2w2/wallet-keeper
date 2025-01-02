@@ -2,6 +2,7 @@ package com.project.wallet_keeper.service;
 
 import com.project.wallet_keeper.domain.*;
 import com.project.wallet_keeper.dto.transaction.SaveTransactionDto;
+import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
 import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
 import com.project.wallet_keeper.repository.ExpenseRepository;
@@ -10,6 +11,11 @@ import com.project.wallet_keeper.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +61,46 @@ public class TransactionService {
         return expenseRepository.save(expense);
     }
 
+    public List<TransactionResponseDto> getTransactionList(User user) {
+        List<Income> incomeList = incomeRepository.findByUser(user);
+        List<Expense> expenseList = expenseRepository.findByUser(user);
 
-    // 일단 여기서 둘 다 부르고 해봐야 쿼리 2번이라 굳이 조인을?
-//    public
+        ArrayList<TransactionResponseDto> transactionList = new ArrayList<>();
+        for (Income income : incomeList) {
+            transactionList.add(new TransactionResponseDto(income));
+        }
+        for (Expense expense : expenseList) {
+            transactionList.add(new TransactionResponseDto(expense));
+        }
+
+        Collections.sort(transactionList, new Comparator<TransactionResponseDto>() {
+            @Override
+            public int compare(TransactionResponseDto t1, TransactionResponseDto t2) {
+                return t2.getTransactionAt().compareTo(t1.getTransactionAt());
+            }
+        });
+
+        return transactionList;
+    }
+
+    public List<TransactionResponseDto> getExpenseList(User user) {
+        List<Expense> expenseList = expenseRepository.findByUser(user);
+
+        ArrayList<TransactionResponseDto> expenseResponseList = new ArrayList<>();
+        for (Expense expense : expenseList) {
+            expenseResponseList.add(new TransactionResponseDto(expense));
+        }
+
+        Collections.sort(expenseResponseList, new Comparator<TransactionResponseDto>() {
+            @Override
+            public int compare(TransactionResponseDto t1, TransactionResponseDto t2) {
+                return t2.getTransactionAt().compareTo(t1.getTransactionAt());
+            }
+        });
+
+        return expenseResponseList;
+    }
+
+//    private List<TransactionResponseDto> convertToDto
+
 }
