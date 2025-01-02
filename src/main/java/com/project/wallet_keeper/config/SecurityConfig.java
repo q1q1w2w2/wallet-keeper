@@ -66,7 +66,7 @@ public class SecurityConfig {
                         headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
 
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(tokenProvider, customAuthenticationEntryPoint), UsernamePasswordAuthenticationFilter.class)
 
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling

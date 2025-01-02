@@ -27,7 +27,6 @@ import static java.util.concurrent.TimeUnit.*;
 public class TokenProvider implements InitializingBean {
 
     public static final String AUTHORITY = "authority";
-    public static final String DEFAULT_ROLE = "ROLE_USER";
     public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
 
     private SecretKey key;
@@ -104,6 +103,7 @@ public class TokenProvider implements InitializingBean {
             log.error("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             log.error("만료된 토큰입니다.");
+            throw new ExpiredJwtException(null, null, "만료된 토큰입니다.");
         } catch (UnsupportedJwtException e) {
             log.error("지원되지 않는 토큰입니다.");
         } catch (IllegalArgumentException e) {
