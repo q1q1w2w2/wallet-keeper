@@ -3,6 +3,7 @@ package com.project.wallet_keeper.service;
 import com.project.wallet_keeper.domain.ExpenseCategory;
 import com.project.wallet_keeper.domain.IncomeCategory;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
+import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
 import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
 import com.project.wallet_keeper.repository.IncomeCategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,19 @@ public class CategoryService {
 
     public List<ExpenseCategory> getExpenseCategories() {
         return expenseCategoryRepository.findAllByIsDeletedFalse();
+    }
+
+    @Transactional
+    public void deleteIncomeCategory(Long categoryId) {
+        IncomeCategory category = incomeCategoryRepository.findById(categoryId)
+                .orElseThrow(TransactionCategoryNotFoundException::new);
+        category.delete();
+    }
+
+    @Transactional
+    public void deleteExpenseCategory(Long categoryId) {
+        ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
+                .orElseThrow(TransactionCategoryNotFoundException::new);
+        category.delete();
     }
 }
