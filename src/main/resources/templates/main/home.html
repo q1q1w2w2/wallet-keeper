@@ -144,7 +144,7 @@
             position: absolute;
             top: 62px;
             right: 0px;
-            height:100%;
+            height: 100%;
             background-color: #fff;
             padding: 20px;
             z-index: 1000;
@@ -226,6 +226,34 @@
         }
 
         #submit-item-button:hover {
+            background-color: #ff4f4f;
+        }
+
+        #update-item-button {
+            padding: 10px 60px;
+            background-color: #ff625c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #update-item-button:hover {
+            background-color: #ff4f4f;
+        }
+
+        #delete-item-button {
+            padding: 10px 60px;
+            background-color: #ff625c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #delete-item-button:hover {
             background-color: #ff4f4f;
         }
 
@@ -350,10 +378,12 @@
 
         <!-- 항목 추가 폼 -->
         <div id="add-item-form" class="hidden">
-            <input type="hidden" id="transaction-type" value="INCOME">
+            <input type="hidden" id="transaction-type" value="INCOME"/>
+            <input type="hidden" id="transaction-id" value=""/>
+
             <div style="display: flex; align-items: center;">
                 <span id="close-form">&times;</span>
-                <h3 style="margin: 0; margin-left: 10px;">항목 입력</h3>
+                <h3 id="form-title" style="margin: 0; margin-left: 10px;">항목 추가</h3>
             </div>
 
             <div>
@@ -385,7 +415,10 @@
             <br><br>
 
             <button id="submit-item-button">추가하기</button>
+            <button id="update-item-button" class="hidden">수정하기</button>
+            <button id="delete-item-button" class="hidden">삭제하기</button>
         </div>
+
 
 
     </div>
@@ -401,8 +434,8 @@
     let nickname = '';
     let email = '';
 
-    let incomeCategories = [];
-    let expenseCategories = [];
+    let incomeCategories;
+    let expenseCategories;
 
     let currentDateTime;
 
@@ -491,9 +524,6 @@
         const amountClass = transaction.transactionType === 'INCOME' ? 'income' : 'expense';
         const row = document.createElement('tr');
 
-        row.setAttribute('data-transaction-id', transaction.transactionId);
-        row.setAttribute('data-transaction-type', transaction.transactionType);
-
         row.innerHTML = `
             <td>${formatDate(transaction.transactionAt)}</td>
             <td>${transaction.detail}</td>
@@ -502,10 +532,34 @@
             <td>${transaction.description}</td>
         `;
 
-        row.onclick = function() {
-            const transactionId = this.getAttribute('data-transaction-id');
-            const transactionType = this.getAttribute('data-transaction-type');
-            alert(`선택한 거래 ID: ${transactionId}, 거래 유형: ${transactionType}`);
+        // 항목 클릭 시 수정 폼에 데이터 채우기
+        row.onclick = function () {
+            // 거래 유형에 따라 버튼 상태 업데이트
+            let categoryId;
+            if (transaction.transactionType === 'INCOME') {
+                document.getElementById('income-button').classList.add('active');
+                document.getElementById('expense-button').classList.remove('active');
+                const category = incomeCategories.find(cat => cat.categoryName === transaction.transactionCategory);
+                categoryId = category.categoryId;
+            } else {
+                document.getElementById('expense-button').classList.add('active');
+                document.getElementById('income-button').classList.remove('active');
+                const category = expenseCategories.find(cat => cat.categoryName === transaction.transactionCategory);
+                categoryId = category.categoryId;
+            }
+            document.getElementById('transaction-id').value = transaction.transactionId;
+            document.getElementById('detail').value = transaction.detail;
+            document.getElementById('amount').value = transaction.amount;
+            document.getElementById('description').value = transaction.description;
+            document.getElementById('transaction-at').value = transaction.transactionAt;
+            document.getElementById('category').value = categoryId;
+
+            // 수정 모드로 전환
+            document.getElementById('form-title').innerText = '항목 수정';
+            document.getElementById('submit-item-button').classList.add('hidden');
+            document.getElementById('update-item-button').classList.remove('hidden');
+            document.getElementById('delete-item-button').classList.remove('hidden');
+            document.getElementById('add-item-form').classList.remove('hidden');
         };
 
         return row;
@@ -634,6 +688,19 @@
     document.getElementById('add-item-button').addEventListener('click', () => {
         const form = document.getElementById('add-item-form');
         form.classList.toggle('hidden');
+
+        // 추가 모드로 전환
+        document.getElementById('form-title').innerText = '항목 추가';
+        document.getElementById('transaction-id').value = '';
+        document.getElementById('detail').value = '';
+        document.getElementById('category').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('transaction-at').value = currentDateTime;
+        document.getElementById('description').value = '';
+
+        document.getElementById('submit-item-button').classList.remove('hidden');
+        document.getElementById('update-item-button').classList.add('hidden');
+        document.getElementById('delete-item-button').classList.add('hidden');
     });
 
     // X 버튼 클릭 시 폼 숨기기
@@ -659,7 +726,7 @@
         populateCategories();
     });
 
-    // 폼 제출
+    // 제출 버튼
     document.getElementById('submit-item-button').addEventListener('click', () => {
         const transactionType = document.getElementById('transaction-type').value;
         const detail = document.getElementById('detail').value;
@@ -698,12 +765,106 @@
                 return response.json();
             })
             .then(data => {
-                alert("성공적으로 추가되었습니다.");
+                alert("추가되었습니다.");
 
                 getTransactionList(document.getElementById('start-date').value, document.getElementById('end-date').value);
 
                 document.getElementById('add-item-form').classList.add('hidden');
 
+                document.getElementById('detail').value = '';
+                document.getElementById('category').value = '';
+                document.getElementById('amount').value = '';
+                document.getElementById('transaction-at').value = currentDateTime;
+                document.getElementById('description').value = '';
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    });
+
+    // 수정 버튼
+    document.getElementById('update-item-button').addEventListener('click', () => {
+        const transactionId = document.getElementById('transaction-id').value;
+        const transactionType = document.getElementById('transaction-type').value;
+        const detail = document.getElementById('detail').value;
+        const categoryId = document.getElementById('category').value;
+        const amount = document.getElementById('amount').value;
+        const transactionAt = document.getElementById('transaction-at').value;
+        const description = document.getElementById('description').value;
+
+        if (!detail || !categoryId || !amount || !transactionAt) {
+            alert("설명 필드를 제외한 모든 필드를 입력해 주세요.");
+            return;
+        }
+
+        const apiUrl = transactionType === 'INCOME' ? `/api/transaction/income/${transactionId}` : `/api/transaction/expense/${transactionId}`;
+
+        const transactionData = {
+            detail: detail,
+            amount: parseFloat(amount),
+            description: description,
+            transactionAt: transactionAt,
+            transactionCategoryId: categoryId
+        };
+
+        fetch(apiUrl, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            },
+            body: JSON.stringify(transactionData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("수정에 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("수정되었습니다.");
+
+                getTransactionList(document.getElementById('start-date').value, document.getElementById('end-date').value);
+
+                document.getElementById('add-item-form').classList.add('hidden');
+
+                document.getElementById('transaction-id').value = '';
+                document.getElementById('detail').value = '';
+                document.getElementById('category').value = '';
+                document.getElementById('amount').value = '';
+                document.getElementById('transaction-at').value = currentDateTime;
+                document.getElementById('description').value = '';
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    });
+
+    // 삭제 버튼
+    document.getElementById('delete-item-button').addEventListener('click', () => {
+        const transactionId = document.getElementById('transaction-id').value;
+        const transactionType = document.getElementById('transaction-type').value;
+        const apiUrl = transactionType === 'INCOME' ? `/api/transaction/income/${transactionId}` : `/api/transaction/expense/${transactionId}`;
+
+        fetch(apiUrl, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("삭제에 실패했습니다.");
+                }
+                alert("삭제되었습니다.");
+
+                getTransactionList(document.getElementById('start-date').value, document.getElementById('end-date').value);
+
+                document.getElementById('add-item-form').classList.add('hidden');
+
+                document.getElementById('transaction-id').value = '';
                 document.getElementById('detail').value = '';
                 document.getElementById('category').value = '';
                 document.getElementById('amount').value = '';
