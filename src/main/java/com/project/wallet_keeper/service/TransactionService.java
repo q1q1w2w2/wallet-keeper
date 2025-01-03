@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -64,7 +66,21 @@ public class TransactionService {
         List<Income> incomeList = incomeRepository.findByUser(user);
         List<Expense> expenseList = expenseRepository.findByUser(user);
 
-        ArrayList<Transaction> transactionList = new ArrayList<>();
+        List<Transaction> transactionList = new ArrayList<>();
+        transactionList.addAll(incomeList);
+        transactionList.addAll(expenseList);
+
+        return sortAndConvertToDto(transactionList);
+    }
+
+    public List<TransactionResponseDto> getTransactionList(User user, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+        List<Income> incomeList = incomeRepository.findByUserAndIncomeAtBetween(user, startDateTime, endDateTime);
+        List<Expense> expenseList = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
+
+        List<Transaction> transactionList = new ArrayList<>();
         transactionList.addAll(incomeList);
         transactionList.addAll(expenseList);
 

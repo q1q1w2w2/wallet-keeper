@@ -10,13 +10,16 @@ import com.project.wallet_keeper.service.TransactionService;
 import com.project.wallet_keeper.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Controller
@@ -44,9 +47,12 @@ public class TransactionController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<TransactionResponseDto>>> getTransactionList() {
+    public ResponseEntity<ApiResponse<List<TransactionResponseDto>>> getTransactionList(
+            @RequestParam("startDate") @DateTimeFormat(iso = DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DATE) LocalDate endDate
+            ) {
         User user = getCurrentUser();
-        List<TransactionResponseDto> transactionList = transactionService.getTransactionList(user);
+        List<TransactionResponseDto> transactionList = transactionService.getTransactionList(user, startDate, endDate);
 
         return createResponse(OK, transactionList);
     }
