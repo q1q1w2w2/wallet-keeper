@@ -11,7 +11,7 @@
         }
 
         html, body {
-            height: 100%; /* 전체 높이를 100%로 설정 */
+            height: 100%;
             margin: 0;
         }
 
@@ -19,8 +19,8 @@
             font-family: Arial, sans-serif;
             background-color: #e9ecef;
             display: flex;
-            flex-direction: column; /* 세로 방향으로 정렬 */
-            justify-content: center; /* 중앙 정렬 */
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
         }
 
@@ -57,14 +57,14 @@
         }
 
         .form-group input:focus {
-            border-color: #ffbbbb; /* 주 색상으로 분홍색 사용 */
+            border-color: var(--primary-color);
             outline: none;
         }
 
         .form-group button {
             width: 100%;
             padding: 12px;
-            background-color: #ffbbbb; /* 주 색상으로 분홍색 사용 */
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
@@ -74,7 +74,7 @@
         }
 
         .form-group button:hover {
-            background-color: #ffcaca; /* 호버 색상으로 조금 더 밝은 분홍색 사용 */
+            background-color: var(--hover-color);
         }
 
         .register-link {
@@ -83,7 +83,7 @@
         }
 
         .register-link a {
-            color: #007bff;
+            color: var(--light-hover-color);
             text-decoration: none;
         }
 
@@ -117,10 +117,6 @@
     </div>
 </div>
 
-<!-- footer -->
-<!--<div th:replace="fragment/footer :: footer"></div>-->
-
-<!-- js -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('loginForm').addEventListener('submit', function (event) {

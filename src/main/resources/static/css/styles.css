@@ -1,0 +1,51 @@
+:root {
+    --primary-color: #ffbbbb; /* 주 색상 - 연한 핑크색 */
+    --secondary-color: #ff9999; /* 보조 색상 - 더 어두운 핑크색 */
+    --hover-color: #ff9999; /* 호버 시 색상 - 더 어두운 핑크색 */
+    --light-hover-color: #ff8080; /* 더 어두운 호버 색상 */
+    --background-color: #f4f4f7; /* 배경 색상 - 연한 회색 */
+    --text-color: #343a40; /* 기본 텍스트 색상 - 어두운 회색 */
+}
+
+/* 상단바 */
+.navbar {
+    background-color: #fff; /* 상단바 색상 */
+    color: #343a40; /* 텍스트 색상 */
+    padding: 15px;
+    text-align: left; /* 왼쪽 정렬 */
+    height: 30px; /* 상단바 높이 */
+    width: 100%; /* 상단바가 전체 너비 */
+    border-bottom: 2px solid #d5d5d5;
+}
+.navbar h1 {
+    margin: 0; /* 기본 여백 제거 */
+    font-size: 20px; /* 폰트 크기 조정 */
+}
+
+/* 사이드바 */
+.sidebar {
+    width: 150px;
+    height: 100%;
+    background-color: var(--background-color); /* 사이드바 색상 */
+    padding: 15px;
+}
+.sidebar h2 {
+    margin: 0 0 20px;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+.sidebar ul li {
+    margin: 10px 0;
+}
+.sidebar ul li a {
+    text-decoration: none;
+    color: #343a40; /* 텍스트 색상 */
+    padding: 10px;
+    display: block;
+    border-radius: 4px;
+}
+.sidebar ul li a:hover {
+    background-color: #ffede8; /* 호버 색상 */
+}

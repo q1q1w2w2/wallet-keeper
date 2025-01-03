@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragments</title>
+</head>
+<body>
+<!-- 상단바 -->
+<div th:fragment="navbar">
+    <div class="navbar">
+        <h1>가계부</h1>
+    </div>
+</div>
+
+<!-- 사이드바 -->
+<div th:fragment="sidebar">
+    <div class="sidebar">
+        <ul>
+            <li><a href="#home">내역</a></li>
+            <li><a href="#profile">달력</a></li>
+            <li><a href="#settings">예산</a></li>
+            <li><a href="#help">통계</a></li>
+            <li><a href="#logout">설정</a></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
