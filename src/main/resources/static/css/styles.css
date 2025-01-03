@@ -9,25 +9,26 @@
 
 /* 상단바 */
 .navbar {
-    background-color: #fff; /* 상단바 색상 */
-    color: #343a40; /* 텍스트 색상 */
+    background-color: #fff;
+    color: #343a40;
     padding: 15px;
-    text-align: left; /* 왼쪽 정렬 */
-    height: 30px; /* 상단바 높이 */
-    width: 100%; /* 상단바가 전체 너비 */
+    text-align: left;
+    height: 30px;
+    width: 100%;
     border-bottom: 2px solid #d5d5d5;
 }
 .navbar h1 {
-    margin: 0; /* 기본 여백 제거 */
-    font-size: 20px; /* 폰트 크기 조정 */
+    margin: 0;
+    font-size: 20px; /
 }
 
 /* 사이드바 */
 .sidebar {
     width: 150px;
     height: 100%;
-    background-color: var(--background-color); /* 사이드바 색상 */
+    background-color: var(--background-color);
     padding: 15px;
+    font-size: 16px;
 }
 .sidebar h2 {
     margin: 0 0 20px;
@@ -41,11 +42,11 @@
 }
 .sidebar ul li a {
     text-decoration: none;
-    color: #343a40; /* 텍스트 색상 */
+    color: #343a40;
     padding: 10px;
     display: block;
     border-radius: 4px;
 }
 .sidebar ul li a:hover {
-    background-color: #ffede8; /* 호버 색상 */
+    background-color: #eaeaea;
 }
