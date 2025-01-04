@@ -27,4 +27,9 @@ public class ViewController {
     public String calendarPage() {
         return "main/calendar";
     }
+
+    @GetMapping("/setting")
+    public String settingPage() {
+        return "main/setting";
+    }
 }

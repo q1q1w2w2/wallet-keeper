@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang='ko' xmlns:th='http://www.thymeleaf.org'>
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/css/styles.css'>
+    <script src="https://kit.fontawesome.com/5ff918606f.js" crossorigin="anonymous"></script>
+    <title>설정</title>
+
+    <style>
+        .sidebar ul li a.setting {
+            background-color: #ffede8;
+            color: #ff6254;
+        }
+
+        .content {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .options {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .options button {
+            padding: 12px 24px;
+            cursor: pointer;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border: 2px solid transparent;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .options button:hover {
+            background-color: #ffede8
+        }
+
+        .options button.active {
+            background-color: #ffede8;
+            color: #f85f52;
+        }
+
+    </style>
+</head>
+<body>
+
+<div th:replace='~{fragments/fragments :: navbar}'></div>
+
+<div class='main'>
+    <div th:replace='~{fragments/fragments :: sidebar}'></div>
+
+    <div class='content'>
+        <div class="options">
+            <button id="toggleUserInfo">회원 정보 수정</button>
+            <button id="togglePasswordChange">비밀번호 변경</button>
+            <button id="toggleAccountDeletion">회원 탈퇴</button>
+        </div>
+
+        <div id="userInfoSection" class="hidden">
+            <h2>회원 정보 수정</h2>
+            <form>
+                <label for="nickname">닉네임:</label>
+                <input type="text" id="nickname" name="nickname" required>
+                <br>
+                <label for="email">이메일:</label>
+                <input type="email" id="email" name="email" required>
+                <br>
+                <button type="submit">수정 완료</button>
+            </form>
+        </div>
+
+        <div id="passwordChangeSection" class="hidden">
+            <h2>비밀번호 변경</h2>
+            <form>
+                <label for="currentPassword">현재 비밀번호:</label>
+                <input type="password" id="currentPassword" name="currentPassword" required>
+                <br>
+                <label for="newPassword">새 비밀번호:</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+                <br>
+                <button type="submit">변경 완료</button>
+            </form>
+        </div>
+
+        <div id="accountDeletionSection" class="hidden">
+            <h2>회원 탈퇴</h2>
+            <form>
+                <label for="deletionReason">탈퇴 이유:</label>
+                <textarea id="deletionReason" name="deletionReason" required></textarea>
+                <br>
+                <button type="submit">탈퇴 완료</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { getUserInfo } from '/js/getUserInfo.js';
+
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    let userId = '';
+    let nickname = '';
+    let email = '';
+
+    window.onload = function () {
+        getUserInfo(accessToken).then(user => {
+            userId = user.userId;
+            email = user.email;
+            nickname = user.nickname;
+
+            // 초기값 설정
+            document.getElementById('nickname').value = nickname;
+            document.getElementById('email').value = email;
+        });
+    }
+
+    function showSection(sectionId) {
+        // 모든 섹션 숨기기
+        document.getElementById('userInfoSection').classList.add('hidden');
+        document.getElementById('passwordChangeSection').classList.add('hidden');
+        document.getElementById('accountDeletionSection').classList.add('hidden');
+
+        // 선택한 섹션 보이기
+        document.getElementById(sectionId).classList.remove('hidden');
+
+        // 폼 초기화
+        document.getElementById('nickname').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('deletionReason').value = '';
+    }
+
+    // 모든 버튼에서 active 클래스 제거
+    function clearActiveButtons() {
+        const buttons = document.querySelectorAll('.options button');
+        buttons.forEach(button => {
+            button.classList.remove('active');
+        });
+    }
+
+    document.getElementById('toggleUserInfo').addEventListener('click', function() {
+        clearActiveButtons();
+        this.classList.add('active');
+        showSection('userInfoSection');
+    });
+
+    document.getElementById('togglePasswordChange').addEventListener('click', function() {
+        clearActiveButtons();
+        this.classList.add('active');
+        showSection('passwordChangeSection');
+    });
+
+    document.getElementById('toggleAccountDeletion').addEventListener('click', function() {
+        clearActiveButtons();
+        this.classList.add('active');
+        showSection('accountDeletionSection');
+    });
+</script>
+
+<script src="/js/scripts.js"></script>
+
+</body>
+</html>
