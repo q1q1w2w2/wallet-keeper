@@ -14,52 +14,90 @@
         }
 
         .content {
-            background: white;
+            background: var(--background-color);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         #calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0; /* 간격 없애기 */
+            gap: 0;
             margin-top: 20px;
+            outline: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .day {
-            border: 1px solid var(--white-background-color);
-            padding: 20px; /* 칸 크기 증가 */
-            text-align: center;
+            outline: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
             background-color: var(--white-background-color);
             position: relative;
-            height: 60px; /* 칸 높이 설정 */
+            height: 80px;
+            color: var(--text-color);
+        }
+
+        .day.header {
+            height: 30px;
+            background-color: var(--header-bg-color);
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .day:hover {
-            background-color: #e8e8ec;
+            background-color: #efeff1;
         }
 
         .header {
-            font-weight: bold;
             background-color: var(--header-bg-color);
-            color: black;
-            border-bottom: 2px solid #ff6254;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
             padding: 10px 0;
+        }
+
+        .day.header.sunday {
+            color: var(--income-color);
+        }
+
+        .day.header.saturday {
+            color: var(--expense-color);
+        }
+
+        .day.sunday {
+            color: var(--income-color);
+        }
+
+        .day.saturday {
+            color: var(--expense-color);
+        }
+
+        .income {
+            color: var(--income-color);
+        }
+
+        .expense {
+            color: var(--expense-color);
         }
 
         .input-container {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
         }
 
-        input[type="number"] {
+        input[type="month"] {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 80px;
+            width: 120px; /* 적절한 너비 조정 */
         }
 
         button {
@@ -73,8 +111,108 @@
         }
 
         button:hover {
-            background-color: #ff3c2a;
+            background-color: var(--hover-color);
         }
+
+        .arrow-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+        }
+
+        /* 폼 */
+        #list-form {
+            position: absolute;
+            top: 62px;
+            right: 0px;
+            height: 100%;
+            width: 360px;
+            background-color: var(--background-color);
+            padding: 20px;
+            z-index: 1000;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #close-form {
+            cursor: pointer;
+            font-size: 36px;
+            color: var(--inactive-text-color);
+            margin-right: 10px;
+            align-self: center;
+        }
+
+        /* 폼 요소 */
+        #transaction-sum {
+            display: flex; /* 플렉스 박스 설정 */
+            flex-direction: column; /* 세로 방향으로 정렬 */
+            align-items: flex-start; /* 왼쪽 정렬 */
+            background-color: var(--white-background-color);
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .transaction-separator {
+            width: 100%; /* 가로로 전체 너비 */
+            height: 1px; /* 세로 두께 */
+            background-color: var(--border-color); /* 구분선 색상 */
+            margin: 10px 0; /* 구분선 위아래 여백 */
+        }
+
+        .transaction-sum-item {
+            display: flex; /* 플렉스 박스 설정 */
+            justify-content: space-between; /* 양쪽 끝으로 정렬 */
+            width: 100%; /* 전체 너비 */
+            margin-bottom: 5px; /* 아래 여백 */
+        }
+
+        #transaction-list {
+            max-height: 600px; /* 원하는 높이 설정 */
+            overflow-y: auto; /* 세로 스크롤 적용 */
+            margin-bottom: 20px; /* 아래 여백 */
+            border: 1px solid var(--border-color); /* 테두리 추가 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            background-color: var(--white-background-color); /* 배경색 */
+            padding: 10px; /* 내부 여백 */
+        }
+
+
+        /* 거래 항목 스타일 */
+        #transaction-list div {
+            background-color: var(--white-background-color); /* 흰색 배경 */
+            padding: 10px;
+            border: 1px solid var(--border-color); /* 기본 테두리 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            display: flex; /* 플렉스 박스 설정 */
+            justify-content: space-between; /* 양쪽 끝으로 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+        }
+
+        .transaction-category {
+            font-size: 11px;
+            color: var(--text-color);
+            flex: 0 0 80px; /* 카테고리의 고정 너비 설정 */
+            text-align: left; /* 왼쪽 정렬 */
+        }
+
+        .transaction-detail {
+            flex: 1; /* 나머지 공간을 차지 */
+            margin-left: 10px; /* 카테고리와의 여백 */
+        }
+
+        .transaction-amount {
+            text-align: right; /* 금액 오른쪽 정렬 */
+        }
+
     </style>
 </head>
 <body>
@@ -86,28 +224,60 @@
 
     <div class='content'>
         <h2>달력</h2>
+
         <div class="input-container">
-            <input type="number" id="year" placeholder="년도" value="2025" min="1900" max="2100">
-            <input type="number" id="month" placeholder="월" value="1" min="1" max="12">
-            <button id="generate-btn">생성</button>
+            <button class="arrow-button" id="prev-month"><</button>
+            <input type="month" id="monthYear">
+            <button class="arrow-button" id="next-month">></button>
+            <button id="generate-btn">조회</button>
         </div>
+
+        <div id="summary"></div>
         <div id="calendar"></div>
     </div>
 </div>
 
-<script>
-    function isLeapYear(year) {
-        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-    }
+<div id="list-form" class="hidden">
+    <div style="display: flex; align-items: center;">
+        <span id="close-form">&times;</span>
+        <h3 id="form-date" style="margin: 0; margin-left: 10px;">(날짜)</h3>
+    </div>
+
+    <div id="transaction-sum">
+        <div>
+        </div>
+    </div>
+    <h4>내역</h4>
+    <div id="transaction-list">
+
+    </div>
+</div>
+
+
+</div>
+
+
+<script type="module">
+    import {getUserInfo} from '/js/getUserInfo.js';
+
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    let userId = '';
+    let nickname = '';
+    let email = '';
+
+    let currentYear, currentMonth;
 
     function getDaysInMonth(year, month) {
         return new Date(year, month, 0).getDate();
     }
 
-    function generateCalendar(year, month) {
-        const calendar = document.getElementById('calendar');
+    function createCalendar(year, month, transactionsByDate = {}) {
+        currentYear = year;
+        currentMonth = month;
 
-        // 이전 내용 제거
+        const calendar = document.getElementById('calendar');
         calendar.innerHTML = '';
 
         // 요일 이름 추가
@@ -116,6 +286,11 @@
             const header = document.createElement('div');
             header.className = 'day header';
             header.textContent = day;
+            if (day === "일") {
+                header.classList.add('sunday');
+            } else if (day === "토") {
+                header.classList.add('saturday');
+            }
             calendar.appendChild(header);
         });
 
@@ -129,35 +304,264 @@
         // 빈 칸 추가
         for (let i = 0; i < startDay; i++) {
             const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'day';
+            emptyDiv.style.backgroundColor = `#f4f4f7`;
             calendar.appendChild(emptyDiv);
         }
 
-        // 날짜 추가
+        let monthlyTotalIncome = 0;
+        let monthlyTotalExpense = 0;
+        let monthlyCounterIncome = 0;
+        let monthlyCounterExpense = 0;
+
+        // 날짜 추가 및 거래 내역 매핑
         for (let day = 1; day <= totalDays; day++) {
             const dayDiv = document.createElement('div');
             dayDiv.className = 'day';
-            dayDiv.textContent = day;
+
+            const dayKey = `${month}/${day}`;
+            const dayOfWeek = new Date(year, month - 1, day).getDay();
+            if (dayOfWeek === 0) {
+                dayDiv.classList.add('sunday');
+            } else if (dayOfWeek === 6) {
+                dayDiv.classList.add('saturday');
+            }
+
+            dayDiv.textContent = (day === 1) ? `${month}/${day}` : day; // 1일이면 12/1 표시
+
+
+            let totalIncome = 0;
+            let totalExpense = 0;
+            let totalIncomeCounter = 0;
+            let totalExpenseCounter = 0;
+
+            if (transactionsByDate[dayKey]) {
+                const transactions = transactionsByDate[dayKey];
+                transactions.forEach(transaction => {
+                    if (transaction.transactionType === 'INCOME') {
+                        totalIncome += transaction.amount;
+                        totalIncomeCounter++;
+                    } else if (transaction.transactionType === 'EXPENSE') {
+                        totalExpense += transaction.amount;
+                        totalExpenseCounter++;
+                    }
+                });
+
+                // 거래 건수 표시
+                dayDiv.textContent += ` (${transactions.length}건)`;
+
+                // 수입과 지출이 0이 아닐 때만 표시
+                if (totalIncome > 0 || totalExpense > 0) {
+                    const incomeDiv = document.createElement('div');
+                    incomeDiv.classList.add('income');  // 클래스 추가
+                    incomeDiv.textContent = `${totalIncome.toLocaleString()}`;
+                    incomeDiv.style.position = 'absolute';
+                    incomeDiv.style.bottom = '20px';
+                    incomeDiv.style.right = '5px';
+                    dayDiv.appendChild(incomeDiv);
+
+                    const expenseDiv = document.createElement('div');
+                    expenseDiv.classList.add('expense');
+                    expenseDiv.textContent = `${totalExpense.toLocaleString()}`;
+                    expenseDiv.style.position = 'absolute';
+                    expenseDiv.style.bottom = '5px';
+                    expenseDiv.style.right = '5px';
+                    dayDiv.appendChild(expenseDiv);
+                }
+            }
+
+            monthlyTotalIncome += totalIncome;
+            monthlyTotalExpense += totalExpense;
+            monthlyCounterIncome += totalIncomeCounter;
+            monthlyCounterExpense += totalExpenseCounter;
+
+            // 날짜 클릭 시
+            dayDiv.addEventListener('click', () => {
+                if (transactionsByDate[dayKey]) {
+                    const transactions = transactionsByDate[dayKey];
+                    const transactionListDiv = document.getElementById('transaction-list');
+                    const transactionSumDiv = document.getElementById('transaction-sum');
+
+                    // 수입과 지출 초기화
+                    let totalIncome = 0;
+                    let totalExpense = 0;
+
+                    // 리스트 초기화
+                    transactionListDiv.innerHTML = '';
+
+                    // 거래 내역을 하나의 리스트로 표시
+                    transactions.forEach(t => {
+                        if (t.transactionType === 'INCOME') {
+                            totalIncome += t.amount;
+                            transactionListDiv.innerHTML += `<div>
+                                <span class="transaction-category">${t.transactionCategory}</span>
+                                <span class="transaction-detail">${t.detail}</span>
+                                <span class="income transaction-amount">${t.amount.toLocaleString()} 원</span>
+                            </div>`;
+                        } else if (t.transactionType === 'EXPENSE') {
+                            totalExpense += t.amount;
+                            transactionListDiv.innerHTML += `<div>
+                                <span class="transaction-category">${t.transactionCategory}</span>
+                                <span class="transaction-detail">${t.detail}</span>
+                                <span class="expense transaction-amount">${t.amount.toLocaleString()} 원</span>
+                            </div>`;
+                        }
+                    });
+
+
+                    // 수입과 지출 총합 표시
+                    transactionSumDiv.innerHTML = `
+                            <div class="transaction-sum-item">
+                                <span>수입: <span class="income"> ${totalIncome.toLocaleString()} 원</span></span>
+                            </div>
+                            <div class="transaction-separator"></div>
+                            <div class="transaction-sum-item">
+                                <span>지출: <span class="expense"> ${totalExpense.toLocaleString()} 원</span></span>
+                            </div>
+                        `;
+
+
+
+                    // 날짜 포맷팅
+                    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}(${weekDays[dayOfWeek]})`;
+                    document.getElementById('form-date').textContent = formattedDate;
+
+                    // list-form 보이기
+                    document.getElementById('list-form').classList.remove('hidden');
+                }
+            });
+
+
             calendar.appendChild(dayDiv);
         }
+        displaySummary(monthlyTotalIncome, monthlyTotalExpense, monthlyCounterIncome, monthlyCounterExpense);
     }
 
-    // 초기화
     document.getElementById('generate-btn').addEventListener('click', () => {
-        const year = parseInt(document.getElementById('year').value);
-        const month = parseInt(document.getElementById('month').value);
+        const monthYearInput = document.getElementById('monthYear').value;
+        const [year, month] = monthYearInput.split('-').map(Number);
 
         if (year >= 1900 && year <= 2100 && month >= 1 && month <= 12) {
-            generateCalendar(year, month);
+            createCalendar(year, month);
+
+            // 해당 월의 거래 내역 가져오기
+            getTransactionList(
+                `${year}-${String(month).padStart(2, '0')}-01`,
+                `${year}-${String(month).padStart(2, '0')}-${getDaysInMonth(year, month)}`
+            );
         } else {
             alert("올바른 년도와 월을 입력하세요.");
         }
     });
 
-    // 기본적으로 현재 날짜로 초기화
-    const now = new Date();
-    document.getElementById('year').value = now.getFullYear();
-    document.getElementById('month').value = now.getMonth() + 1; // 월은 0부터 시작하므로 +1
-    generateCalendar(now.getFullYear(), now.getMonth() + 1);
+    document.getElementById('prev-month').addEventListener('click', () => {
+        if (currentMonth === 1) {
+            currentMonth = 12;
+            currentYear--;
+        } else {
+            currentMonth--;
+        }
+        createCalendar(currentYear, currentMonth);
+        document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+
+        // 해당 월의 거래 내역 가져오기
+        getTransactionList(
+            `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`,
+            `${currentYear}-${String(currentMonth).padStart(2, '0')}-${getDaysInMonth(currentYear, currentMonth)}`
+        );
+    });
+
+    document.getElementById('next-month').addEventListener('click', () => {
+        if (currentMonth === 12) {
+            currentMonth = 1;
+            currentYear++;
+        } else {
+            currentMonth++;
+        }
+        createCalendar(currentYear, currentMonth);
+        document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+
+        // 해당 월의 거래 내역 가져오기
+        getTransactionList(
+            `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`,
+            `${currentYear}-${String(currentMonth).padStart(2, '0')}-${getDaysInMonth(currentYear, currentMonth)}`
+        );
+    });
+
+    window.onload = function () {
+        getUserInfo(accessToken).then(user => {
+            userId = user.userId;
+            email = user.email;
+            nickname = user.nickname;
+
+            const now = new Date();
+            currentYear = now.getFullYear();
+            currentMonth = now.getMonth() + 1;
+            document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+            createCalendar(currentYear, currentMonth);
+
+            getTransactionList(`${currentYear}-${String(currentMonth).padStart(2, '0')}-01`,
+                `${currentYear}-${String(currentMonth).padStart(2, '0')}-${getDaysInMonth(currentYear, currentMonth)}`);
+        });
+    }
+
+    function getTransactionList(startDate, endDate) {
+        fetch(`/api/transaction/list?startDate=${startDate}&endDate=${endDate}`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("거래 내역을 불러오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 거래 내역을 날짜별로 매핑할 객체 생성
+                const transactionsByDate = {};
+
+                data.data.forEach(transaction => {
+                    const date = new Date(transaction.transactionAt);
+                    const key = `${date.getMonth() + 1}/${date.getDate()}`; // "M/D" 형식
+                    if (!transactionsByDate[key]) {
+                        transactionsByDate[key] = [];
+                    }
+                    transactionsByDate[key].push(transaction);
+                });
+
+                // 달력 생성 시 거래 내역 매핑
+                createCalendar(currentYear, currentMonth, transactionsByDate);
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+
+    function displaySummary(totalIncome, totalExpense, incomeCounter, expenseCounter) {
+        const summaryDiv = document.getElementById('summary');
+
+        const totalAmount = totalIncome - totalExpense;
+        const totalCount = incomeCounter + expenseCounter;
+
+        const totalClass = totalAmount >= 0 ? 'income' : 'expense';
+
+        summaryDiv.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 50px;">
+            <p>전체(${totalCount}): <span class="${totalClass}"><strong>${totalAmount.toLocaleString()} 원</strong></span></p>
+            <p>수입(${incomeCounter}): <span class="income"><strong>${totalIncome.toLocaleString()} 원</strong></span></p>
+            <p>지출(${expenseCounter}): <span class="expense"><strong>${totalExpense.toLocaleString()} 원</strong></span></p>
+        </div>
+    `;
+    }
+
+    document.getElementById('close-form').addEventListener('click', () => {
+        document.getElementById('list-form').classList.add('hidden');
+    });
+
 </script>
 <script src="/js/scripts.js"></script>
 </body>

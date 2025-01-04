@@ -7,6 +7,12 @@
     <title>Wallet Keeper</title>
     <script src="https://kit.fontawesome.com/5ff918606f.js" crossorigin="anonymous"></script>
     <style>
+        /* 현재 위치한 페이지 표시 */
+        .sidebar ul li a.current {
+            background-color: #ffede8;
+            color: #ff6254;
+        }
+
         .date-range {
             margin-bottom: 20px;
         }
@@ -14,7 +20,7 @@
         .table-container {
             background-color: var(--white-background-color);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
             overflow: hidden;
             max-height: 480px;
             overflow-y: auto;
@@ -108,18 +114,13 @@
             background-color: var(--hover-color);
         }
 
-        /* 현재 위치한 페이지 표시 */
-        .sidebar ul li a.current {
-            background-color: #ffede8;
-            color: #ff6254;
-        }
-
         /* 항목 추가 폼 */
         #add-item-form {
             position: absolute;
             top: 62px;
             right: 0px;
             height: 100%;
+            width: 360px;
             background-color: var(--white-background-color);
             padding: 20px;
             z-index: 1000;
@@ -647,8 +648,8 @@
         getUserInfo(accessToken).then(user => {
             userId = user.userId;
             email = user.email;
-
             nickname = user.nickname;
+
             getIncomeCategory();
             getExpenseCategory();
             getTransactionList(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
