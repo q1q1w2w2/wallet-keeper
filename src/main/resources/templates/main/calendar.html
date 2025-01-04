@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang='ko' xmlns:th='http://www.thymeleaf.org'>
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/css/styles.css'>
+    <title>Wallet Keeper</title>
+    <script src="https://kit.fontawesome.com/5ff918606f.js" crossorigin="anonymous"></script>
+
+    <style>
+        /* 현재 위치한 페이지 표시 */
+        .sidebar ul li a.calendar {
+            background-color: #ffede8;
+            color: #ff6254;
+        }
+
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0; /* 간격 없애기 */
+            margin-top: 20px;
+        }
+
+        .day {
+            border: 1px solid var(--white-background-color);
+            padding: 20px; /* 칸 크기 증가 */
+            text-align: center;
+            background-color: var(--white-background-color);
+            position: relative;
+            height: 60px; /* 칸 높이 설정 */
+        }
+
+        .day:hover {
+            background-color: #e8e8ec;
+        }
+
+        .header {
+            font-weight: bold;
+            background-color: var(--header-bg-color);
+            color: black;
+            border-bottom: 2px solid #ff6254;
+            padding: 10px 0;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 80px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #ff6254;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff3c2a;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace='~{fragments/fragments :: navbar}'></div>
+
+<div class='main'>
+    <div th:replace='~{fragments/fragments :: sidebar}'></div>
+
+    <div class='content'>
+        <h2>달력</h2>
+        <div class="input-container">
+            <input type="number" id="year" placeholder="년도" value="2025" min="1900" max="2100">
+            <input type="number" id="month" placeholder="월" value="1" min="1" max="12">
+            <button id="generate-btn">생성</button>
+        </div>
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<script>
+    function isLeapYear(year) {
+        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    }
+
+    function getDaysInMonth(year, month) {
+        return new Date(year, month, 0).getDate();
+    }
+
+    function generateCalendar(year, month) {
+        const calendar = document.getElementById('calendar');
+
+        // 이전 내용 제거
+        calendar.innerHTML = '';
+
+        // 요일 이름 추가
+        const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+        weekDays.forEach(day => {
+            const header = document.createElement('div');
+            header.className = 'day header';
+            header.textContent = day;
+            calendar.appendChild(header);
+        });
+
+        // 해당 월의 첫 번째 날
+        const firstDay = new Date(year, month - 1, 1);
+        const totalDays = getDaysInMonth(year, month);
+
+        // 첫 번째 날의 요일
+        const startDay = firstDay.getDay();
+
+        // 빈 칸 추가
+        for (let i = 0; i < startDay; i++) {
+            const emptyDiv = document.createElement('div');
+            calendar.appendChild(emptyDiv);
+        }
+
+        // 날짜 추가
+        for (let day = 1; day <= totalDays; day++) {
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'day';
+            dayDiv.textContent = day;
+            calendar.appendChild(dayDiv);
+        }
+    }
+
+    // 초기화
+    document.getElementById('generate-btn').addEventListener('click', () => {
+        const year = parseInt(document.getElementById('year').value);
+        const month = parseInt(document.getElementById('month').value);
+
+        if (year >= 1900 && year <= 2100 && month >= 1 && month <= 12) {
+            generateCalendar(year, month);
+        } else {
+            alert("올바른 년도와 월을 입력하세요.");
+        }
+    });
+
+    // 기본적으로 현재 날짜로 초기화
+    const now = new Date();
+    document.getElementById('year').value = now.getFullYear();
+    document.getElementById('month').value = now.getMonth() + 1; // 월은 0부터 시작하므로 +1
+    generateCalendar(now.getFullYear(), now.getMonth() + 1);
+</script>
+<script src="/js/scripts.js"></script>
+</body>
+</html>

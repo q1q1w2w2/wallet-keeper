@@ -49,8 +49,9 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest
-                                .requestMatchers("/error", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**","/static/js/**").permitAll()
-                                .requestMatchers("/login", "/").permitAll()
+                                .requestMatchers("/error", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**", "/static/js/**").permitAll()
+                                .requestMatchers("/login", "/", "/calendar").permitAll()
+
                                 .requestMatchers("/api/auth/login", "/api/auth/redirect", "/api/auth/oauth").permitAll()
                                 .requestMatchers("/api/users").permitAll()
                                 .requestMatchers("/api/mail/verification", "/api/mail/verification/code").permitAll()

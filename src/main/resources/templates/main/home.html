@@ -7,38 +7,12 @@
     <title>Wallet Keeper</title>
     <script src="https://kit.fontawesome.com/5ff918606f.js" crossorigin="anonymous"></script>
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            font-size: 14px;
-        }
-
-        .main {
-            display: flex;
-            flex: 1;
-            height: calc(100% - 50px);
-        }
-
-        .content {
-            padding: 15px;
-            flex: 1;
-            background-color: var(--background-color);
-            overflow-y: auto;
-        }
-
         .date-range {
             margin-bottom: 20px;
         }
 
         .table-container {
-            background-color: #ffffff;
+            background-color: var(--white-background-color);
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -57,7 +31,7 @@
         }
 
         th {
-            background-color: #f1f1f1;
+            background-color: var(--header-bg-color);
             font-weight: bold;
             text-align: center;
             position: sticky;
@@ -70,15 +44,15 @@
         }
 
         tr:hover {
-            background-color: #f9f9f9;
+            background-color: var(--row-hover-color);
         }
 
         .income {
-            color: #ff647b;
+            color: var(--income-color);
         }
 
         .expense {
-            color: #1f88ff;
+            color: var(--expense-color);
         }
 
         .date-column {
@@ -104,7 +78,7 @@
         }
 
         .category-data {
-            color: #7a7a7a;
+            color: var(--text-color);
         }
 
         .amount-data {
@@ -118,7 +92,7 @@
             right: 50px;
             width: 50px;
             height: 50px;
-            background-color: #ff625c;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 50%;
@@ -131,7 +105,7 @@
         }
 
         #add-item-button:hover {
-            background-color: #ff4f4f;
+            background-color: var(--hover-color);
         }
 
         /* 현재 위치한 페이지 표시 */
@@ -146,10 +120,10 @@
             top: 62px;
             right: 0px;
             height: 100%;
-            background-color: #fff;
+            background-color: var(--white-background-color);
             padding: 20px;
             z-index: 1000;
-            border-left: 1px solid #d5d5d5;
+            border-left: 1px solid var(--border-color);
         }
 
         .hidden {
@@ -159,25 +133,25 @@
         #close-form {
             cursor: pointer;
             font-size: 36px;
-            color: #9f9c9c;
+            color: var(--inactive-text-color);
             margin-right: 10px;
-            align-self: center; /* X 버튼 가운데 정렬 */
+            align-self: center;
         }
 
         #add-item-form > div {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
-            justify-content: flex-start; /* 왼쪽 정렬 */
-            height: 50px; /* 고정 높이 설정 */
+            justify-content: flex-start;
+            height: 50px;
 
         }
 
         .toggle-button {
             padding: 10px 70px;
-            border: 1px solid #d5d5d5;
+            border: 1px solid var(--border-color);
             background-color: white;
-            color: #7a7a7a;
+            color: var(--text-color);
             cursor: pointer;
             margin-right: 10px;
             border-radius: 4px;
@@ -185,17 +159,17 @@
 
         .toggle-button.active {
             background-color: white;
-            color: #ff625c;
-            border-color: #ff625c;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
         }
 
         .toggle-button:hover {
-            border-color: #ff4f4f;
+            border-color: var(--hover-color);
         }
 
         #add-item-form label {
             font-size: 14px;
-            color: #9f9c9c;
+            color: var(--inactive-text-color);
             display: block;
         }
 
@@ -203,7 +177,7 @@
         input[type="number"],
         input[type="datetime-local"] {
             padding: 10px;
-            border: 1px solid #d5d5d5;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
             width: calc(100% - 22px);
             margin-bottom: 15px;
@@ -212,13 +186,13 @@
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="datetime-local"]:focus {
-            border-color: #ff625c;
+            border-color: var(--primary-color);
             outline: none;
         }
 
         #submit-item-button {
             padding: 10px 140px;
-            background-color: #ff625c;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
@@ -227,12 +201,12 @@
         }
 
         #submit-item-button:hover {
-            background-color: #ff4f4f;
+            background-color: var(--hover-color);
         }
 
         #update-item-button {
             padding: 10px 60px;
-            background-color: #ff625c;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
@@ -241,12 +215,12 @@
         }
 
         #update-item-button:hover {
-            background-color: #ff4f4f;
+            background-color: var(--hover-color);
         }
 
         #delete-item-button {
             padding: 10px 60px;
-            background-color: #ff625c;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
@@ -255,27 +229,27 @@
         }
 
         #delete-item-button:hover {
-            background-color: #ff4f4f;
+            background-color: var(--hover-color);
         }
 
         select {
-            padding: 10px; /* 내부 여백 */
-            border: 1px solid #d5d5d5; /* 테두리 색상 */
-            border-radius: 4px; /* 모서리 둥글기 */
-            width: calc(100% - 22px); /* 선택 상자 너비 */
-            margin-bottom: 15px; /* 아래 여백 */
-            font-size: 14px; /* 글자 크기 */
-            color: #7a7a7a; /* 기본 글자 색상 */
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: calc(100% - 22px);
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: var(--text-color);
         }
 
         select:focus {
-            border-color: #ff625c; /* 포커스 시 테두리 색상 변경 */
-            outline: none; /* 아웃라인 제거 */
-            color: #333; /* 포커스 시 글자 색상 */
+            border-color: var(--primary-color);
+            outline: none;
+            color: #333;
         }
 
         select option {
-            color: #333; /* 옵션 글자 색상 */
+            color: #333;
         }
 
         /* 날짜 설정 부분 */
@@ -292,7 +266,7 @@
         }
 
         .date-range label {
-            color: #9f9c9c;
+            color: var(--inactive-text-color);
             margin-bottom: 5px;
         }
 
@@ -301,24 +275,24 @@
             top: -10px;
             left: 10px;
             font-size: 12px;
-            color: #ff625c;
+            color: var(--primary-color);
         }
 
         input[type="date"] {
             padding: 10px;
-            border: 1px solid #d5d5d5;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
             width: 150px;
         }
 
         input[type="date"]:focus {
-            border-color: #ff625c;
+            border-color: var(--primary-color);
             outline: none;
         }
 
         #fetch-button {
             padding: 10px 20px;
-            background-color: #ff625c;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
@@ -327,7 +301,7 @@
         }
 
         #fetch-button:hover {
-            background-color: #ff4f4f;
+            background-color: var(--hover-color);
         }
 
     </style>
