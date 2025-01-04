@@ -6,10 +6,12 @@
     <title>Fragments</title>
 </head>
 <body>
+
 <!-- 상단바 -->
 <div th:fragment="navbar">
-    <div class="navbar">
+    <div class="navbar" style="display: flex; justify-content: space-between; align-items: center;">
         <h1><a href="/" style="text-decoration: none; color: inherit">가계부</a></h1>
+        <i class="fa-solid fa-arrow-right-from-bracket fa-2x" style="cursor: pointer; margin-right: 30px;" onclick="logout()"></i>
     </div>
 </div>
 
@@ -17,7 +19,7 @@
 <div th:fragment="sidebar">
     <div class="sidebar">
         <ul>
-            <li><a href="/" class="current">내역</a></li>
+            <li></i><a href="/" class="current">내역</a></li>
             <li><a href="#" class="">달력</a></li>
             <li><a href="#">예산</a></li>
             <li><a href="#">통계</a></li>

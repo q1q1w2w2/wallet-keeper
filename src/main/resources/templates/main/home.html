@@ -5,6 +5,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel='stylesheet' href='/css/styles.css'>
     <title>Wallet Keeper</title>
+    <script src="https://kit.fontawesome.com/5ff918606f.js" crossorigin="anonymous"></script>
     <style>
         html, body {
             height: 100%;
@@ -376,7 +377,7 @@
         <!-- 항목 추가 폼을 띄우는 버튼 -->
         <button id="add-item-button">+</button>
 
-        <!-- 항목 추가 폼 -->
+        <!-- 항목 추가/수정 폼 -->
         <div id="add-item-form" class="hidden">
             <input type="hidden" id="transaction-type" value="INCOME"/>
             <input type="hidden" id="transaction-id" value=""/>
@@ -663,22 +664,21 @@
         startDate.setDate(startDate.getDate() + 1);
         const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
+        document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
+        document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
+
         currentDateTime = koreaTime.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm" 형식
         document.getElementById('transaction-at').value = currentDateTime;
 
         getUserInfo(accessToken).then(user => {
             userId = user.userId;
             email = user.email;
+
             nickname = user.nickname;
+            getIncomeCategory();
+            getExpenseCategory();
+            getTransactionList(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
         });
-
-        getIncomeCategory();
-        getExpenseCategory();
-
-        document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
-        document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
-
-        getTransactionList(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
     };
 
     // 날짜에 따른 조회 버튼
@@ -877,8 +877,9 @@
             });
     });
 
-
 </script>
+<script src="/js/scripts.js"></script>
+
 
 </body>
 </html>
