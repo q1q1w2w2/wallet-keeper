@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     log.info("Security Context에 '{}' 인증 정보 저장됨, URI: {}", authentication.getName(), request.getRequestURI());
                 } else {
-                    handleTokenError(response, "유효하지 않은 토큰입니다.");
+                    handleTokenError(response, "유효한 인증이 없습니다.");
                     return;
                 }
             } catch (ExpiredJwtException e) {

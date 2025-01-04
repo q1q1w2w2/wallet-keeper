@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest
                                 .requestMatchers("/error", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**", "/static/js/**").permitAll()
-                                .requestMatchers("/login", "/", "/calendar").permitAll()
+                                .requestMatchers("/login", "/signup", "/", "/calendar").permitAll()
 
                                 .requestMatchers("/api/auth/login", "/api/auth/redirect", "/api/auth/oauth").permitAll()
                                 .requestMatchers("/api/users").permitAll()
@@ -85,7 +85,6 @@ public class SecurityConfig {
                                 .failureHandler(customAuthenticationFailureHandler)
                 )
         ;
-
 
 
         return http.build();

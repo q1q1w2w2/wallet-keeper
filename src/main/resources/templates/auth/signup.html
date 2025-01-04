@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .signup-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 500px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .register-link a {
+            color: var(--light-hover-color);
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        #send-code-button {
+            width: 130px;
+        }
+
+        #code-submit-button {
+            width: 130px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="signup-container">
+    <h2>회원가입</h2>
+    <form id="loginForm" action="/api/users" method="POST">
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="email" name="email" required style="flex: 1;">
+                <button id="send-code-button" type="button" style="margin-left: 10px;">인증번호 받기</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="code">인증번호</label>
+            <div style="display: flex; align-items: center;">
+                <input type="number" id="code" name="code" required>
+                <button id="code-submit-button" type="button" style="margin-left: 10px;">확인하기</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" name="nickname" required>
+        </div>
+        <div class="form-group">
+            <label for="birth">생년월일</label>
+            <input type="date" id="birth" name="birth" required value="2000-01-01">
+        </div>
+        <div class="form-group">
+            <button type="submit" id="signup" disabled>회원가입</button>
+        </div>
+    </form>
+
+    <div class="register-link">
+        <p><a href="/login">돌아가기</a></p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // 기본 폼 제출 방지
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const nickname = document.getElementById('nickname').value;
+            const birth = document.getElementById('birth').value;
+
+            const data = {
+                email: email,
+                password: password,
+                nickname: nickname,
+                birth: birth
+            };
+
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    return response.json().then((e) => {
+                        throw new Error(e.message);
+                    });
+                })
+                .then(data => {
+                    alert("회원가입 되었습니다.");
+                    window.location.href = '/login';
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert(error.message);
+
+                    window.location.href = '/login';
+                });
+        });
+
+        // 인증번호 받기 버튼 클릭 이벤트
+        document.getElementById('send-code-button').addEventListener('click', function () {
+            const email = document.getElementById('email').value;
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            // 이메일 유효성 검사
+            if (email && emailPattern.test(email)) {
+                alert("인증번호가 전송되었습니다.");
+                document.getElementById('email').disabled = true;
+                document.getElementById('send-code-button').disabled = true;
+
+                fetch('/api/mail/verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            document.getElementById('email').disabled = false;
+                            document.getElementById('send-code-button').disabled = false;
+                            throw Error("인증번호 전송 중 오류가 발생했습니다.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert(error.message);
+                    });
+            } else {
+                alert("유효한 이메일 주소를 입력해주세요.");
+            }
+        });
+
+        // 인증번호 확인하기 버튼 클릭 이벤트
+        document.getElementById('code-submit-button').addEventListener('click', function () {
+            const email = document.getElementById('email').value;
+            const code = document.getElementById('code').value;
+
+            // 인증번호 유효성 검사
+            if (code) {
+                fetch('/api/mail/verification/code', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email, code: code })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("인증번호가 확인되었습니다.");
+                            document.getElementById('code').disabled = true;
+                            document.getElementById('code-submit-button').disabled = true;
+                            document.getElementById('signup').disabled = false;
+                        } else {
+                            alert("인증번호가 유효하지 않거나 만료되었습니다.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("인증번호 확인 중 오류가 발생했습니다.");
+                    });
+            } else {
+                alert("인증번호를 입력해주세요.");
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

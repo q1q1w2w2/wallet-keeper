@@ -18,13 +18,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-        ApiResponse<Object> apiResponse = ApiResponse.error(HttpStatus.UNAUTHORIZED, "유효한 인증이 없습니다.", null);
-        mapper.writeValue(response.getWriter(), apiResponse);
+        response.sendRedirect("/login");
     }
 }
