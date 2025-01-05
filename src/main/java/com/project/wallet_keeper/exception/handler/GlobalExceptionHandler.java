@@ -8,6 +8,7 @@ import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerEx
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
 import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
+import com.project.wallet_keeper.exception.user.UserNotActiveException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleUserNotFoundException(UserNotFoundException e) {
         return createErrorResponse(e, NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(UserNotActiveException.class)
+    public ResponseEntity<ApiResponse<Object>> handleUserNotActiveException(UserNotActiveException e) {
+        return createErrorResponse(e, UNAUTHORIZED, e.getMessage());
     }
 
     @ExceptionHandler(BadCredentialsException.class)

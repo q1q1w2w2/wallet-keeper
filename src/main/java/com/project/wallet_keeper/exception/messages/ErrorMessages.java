@@ -8,6 +8,7 @@ public class ErrorMessages {
 
     public static final String USER_ALREADY_EXIST = "이미 존재하는 사용자입니다.";
     public static final String USER_NOT_FOUND = "사용자를 찾을 수 없습니다.";
+    public static final String USER_NOT_ACTIVE = "회원 탈퇴한 사용자입니다.";
 
     public static final String INVALID_CREDENTIAL = "아이디 또는 비밀번호가 틀렸습니다.";
 

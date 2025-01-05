@@ -1,5 +1,6 @@
 package com.project.wallet_keeper.service;
 
+import com.project.wallet_keeper.domain.Reason;
 import com.project.wallet_keeper.domain.User;
 import com.project.wallet_keeper.dto.user.ResetPasswordDto;
 import com.project.wallet_keeper.dto.user.SignupDto;
@@ -7,6 +8,7 @@ import com.project.wallet_keeper.dto.user.UpdatePasswordDto;
 import com.project.wallet_keeper.dto.user.UserProfileUpdateDto;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
+import com.project.wallet_keeper.repository.ReasonRepository;
 import com.project.wallet_keeper.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,9 @@ class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private ReasonRepository reasonRepository;
 
     @Mock
     private User mockUser;
@@ -133,13 +138,15 @@ class UserServiceTest {
     @DisplayName("사용자 삭제 성공")
     void deleteUser() {
         // given
-        User user = createUser();
+        Reason reason = new Reason("탈퇴사유");
+
+        given(reasonRepository.save(any())).willReturn(reason);
 
         // when
-        userService.deleteUser(user);
+        userService.deleteUser(mockUser, "탈퇴사유");
 
         // then
-        verify(userRepository).delete(user);
+        verify(mockUser).deleteUser();
     }
 
     @Test

@@ -1,12 +1,10 @@
 package com.project.wallet_keeper.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.wallet_keeper.domain.Reason;
 import com.project.wallet_keeper.domain.Role;
 import com.project.wallet_keeper.domain.User;
-import com.project.wallet_keeper.dto.user.ResetPasswordDto;
-import com.project.wallet_keeper.dto.user.SignupDto;
-import com.project.wallet_keeper.dto.user.UpdatePasswordDto;
-import com.project.wallet_keeper.dto.user.UserProfileUpdateDto;
+import com.project.wallet_keeper.dto.user.*;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.security.auth.CustomAuthenticationEntryPoint;
@@ -184,12 +182,14 @@ class UserControllerTest {
     void deleteCurrentUser() throws Exception {
         // given
         User currentUser = createUser();
+        ReasonDto reasonDto = new ReasonDto("탈퇴사유");
 
         given(userService.getCurrentUser()).willReturn(currentUser);
 
         // when
-        ResultActions result = mockMvc.perform(delete("/api/users/me")
+        ResultActions result = mockMvc.perform(patch("/api/users/me/status")
                 .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reasonDto))
                 .with(csrf())
         );
 
@@ -197,7 +197,7 @@ class UserControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("회원 탈퇴가 완료되었습니다."));
 
-        verify(userService).deleteUser(eq(currentUser)); // 반환 타입이 void이므로 호출되었는지 검증
+        verify(userService).deleteUser(eq(currentUser), anyString()); // 반환 타입이 void이므로 호출되었는지 검증
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.project.wallet_keeper.service;
 
 import com.project.wallet_keeper.domain.ExpenseCategory;
 import com.project.wallet_keeper.domain.IncomeCategory;
+import com.project.wallet_keeper.domain.Reason;
 import com.project.wallet_keeper.domain.User;
 import com.project.wallet_keeper.dto.user.ResetPasswordDto;
 import com.project.wallet_keeper.dto.user.SignupDto;
@@ -11,6 +12,7 @@ import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
 import com.project.wallet_keeper.repository.IncomeCategoryRepository;
+import com.project.wallet_keeper.repository.ReasonRepository;
 import com.project.wallet_keeper.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ReasonRepository reasonRepository;
 
     /**
      * 사용자 회원가입
@@ -76,9 +79,9 @@ public class UserService {
      * @throws
      */
     @Transactional
-    public void deleteUser(User user) {
-        // todo 연관 데이터도 함께 삭제해줘야 함
-        userRepository.delete(user);
+    public void deleteUser(User user, String reason) {
+        user.deleteUser();
+        reasonRepository.save(new Reason(reason));
     }
 
     /**

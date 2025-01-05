@@ -45,10 +45,10 @@ public class UserController {
         return createResponse(OK, "사용자 정보가 수정되었습니다.", data);
     }
 
-    @DeleteMapping("/me")
-    public ResponseEntity<ApiResponse<UserResponseDto>> deleteCurrentUser() {
+    @PatchMapping("/me/status")
+    public ResponseEntity<ApiResponse<UserResponseDto>> deleteCurrentUser(@Valid @RequestBody ReasonDto reasonDto) {
         User user = userService.getCurrentUser();
-        userService.deleteUser(user);
+        userService.deleteUser(user, reasonDto.getReason());
 
         return createResponse(OK, "회원 탈퇴가 완료되었습니다.");
     }

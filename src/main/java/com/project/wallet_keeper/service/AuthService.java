@@ -8,6 +8,7 @@ import com.project.wallet_keeper.dto.auth.TokenDto;
 import com.project.wallet_keeper.exception.auth.OAuthUserException;
 import com.project.wallet_keeper.exception.auth.TokenValidationException;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
+import com.project.wallet_keeper.exception.user.UserNotActiveException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.repository.UserRepository;
 import com.project.wallet_keeper.security.jwt.TokenProvider;
@@ -66,9 +67,17 @@ public class AuthService {
 
         if (findUser.isPresent()) {
             User user = findUser.get();
+            checkDeactivated(user);
+
             if (user.getProvider() != null || user.getPassword() == null) {
                 throw new OAuthUserException("소셜 로그인을 이용해주세요.");
             }
+        }
+    }
+
+    private void checkDeactivated(User user) {
+        if (user.isDeleted()) {
+            throw new UserNotActiveException();
         }
     }
 

@@ -48,6 +48,9 @@ public class User {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
     @Builder
     public User(String email, String password, String nickname, LocalDate birth, Role role, String provider) {
         this.email = email;
@@ -77,5 +80,10 @@ public class User {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void deleteUser() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now().withNano(0);
     }
 }
