@@ -37,4 +37,9 @@ public class Budget {
         this.month = month;
         this.user = user;
     }
+
+    public Budget update(int amount) {
+        this.amount = amount;
+        return this;
+    }
 }

@@ -263,6 +263,8 @@
         })
             .then(data => {
                 alert(data.message);
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
             })
             .catch(error => {
                 console.error(error);
@@ -272,13 +274,17 @@
     document.getElementById('change-password-button').addEventListener('click', updatePassword);
 
     function deleteUser() {
+        let reason = document.getElementById('deletionReason').value;
 
         fetch('/api/users/me/status',  {
             method: 'PATCH',
             headers: {
                 'Content-type': 'application/json',
                 'Authorization': 'Bearer ' + accessToken
-            }
+            },
+            body: JSON.stringify({
+                reason: reason
+            })
         }).then(response => {
             if (!response.ok) {
                 return response.json().then(err => {
@@ -289,6 +295,7 @@
         })
             .then(data => {
                 alert(data.message);
+                window.location.href = '/login';
             })
             .catch(error => {
                 console.error(error);

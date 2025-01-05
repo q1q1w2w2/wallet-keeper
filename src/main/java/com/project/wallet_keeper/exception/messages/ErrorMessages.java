@@ -18,6 +18,7 @@ public class ErrorMessages {
     public static final String TRANSACTION_NOT_FOUND = "해당 거래를 찾을 수 없습니다.";
     public static final String INVALID_TRANSACTION_OWNER = "해당 거래의 소유자가 아닙니다.";
 
+    public static final String BUDGET_NOT_FOUNT = "해당 월의 예산을 찾을 수 없습니다.";
 
 
 }

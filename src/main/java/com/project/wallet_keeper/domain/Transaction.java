@@ -16,7 +16,7 @@ public abstract class Transaction {
     private String detail;
 
     @Column(name = "amount")
-    private Integer amount;
+    private int amount;
 
     @Column(name = "description")
     private String description;
@@ -31,7 +31,7 @@ public abstract class Transaction {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Transaction(String detail, Integer amount, String description, User user) {
+    public Transaction(String detail, int amount, String description, User user) {
         this.detail = detail;
         this.amount = amount;
         this.description = description;
@@ -49,7 +49,7 @@ public abstract class Transaction {
         this.updatedAt = LocalDateTime.now().withNano(0);
     }
 
-    public void update(String detail, Integer amount, String description) {
+    public void update(String detail, int amount, String description) {
         this.detail = detail;
         this.amount = amount;
         this.description = description;

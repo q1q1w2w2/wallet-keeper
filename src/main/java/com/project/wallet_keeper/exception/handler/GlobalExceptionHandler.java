@@ -4,6 +4,7 @@ import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.exception.auth.OAuthUserException;
 import com.project.wallet_keeper.exception.auth.TokenValidationException;
 import com.project.wallet_keeper.exception.auth.VerificationCodeMismatchException;
+import com.project.wallet_keeper.exception.budget.BudgetNotFoundException;
 import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
 import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
@@ -90,6 +91,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidTransactionOwnerException.class)
     public ResponseEntity<ApiResponse<Object>> handleInvalidTransactionOwnerException(InvalidTransactionOwnerException e) {
         return createErrorResponse(e, BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(BudgetNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBudgetNotFoundException(BudgetNotFoundException e) {
+        return createErrorResponse(e, NOT_FOUND, e.getMessage());
     }
 
     // Bean Validation 예외
