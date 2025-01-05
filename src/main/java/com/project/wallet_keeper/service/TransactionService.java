@@ -188,6 +188,7 @@ public class TransactionService {
             }
         }
 
+        int totalSpentAmount = categoryMap.values().stream().mapToInt(Integer::intValue).sum();
         ArrayList<ExpenseSummary> summaryList = new ArrayList<>();
         for (Map.Entry<ExpenseCategory, Integer> entry : categoryMap.entrySet()) {
             if (entry.getValue() > 0) {
@@ -195,6 +196,10 @@ public class TransactionService {
                 summary.setCategoryId(entry.getKey().getId());
                 summary.setCategoryName(entry.getKey().getCategoryName());
                 summary.setAmount(entry.getValue());
+
+                int percent = (int) ((entry.getValue() / (double) totalSpentAmount) * 100);
+                summary.setPercent(percent);
+
                 summaryList.add(summary);
             }
         }

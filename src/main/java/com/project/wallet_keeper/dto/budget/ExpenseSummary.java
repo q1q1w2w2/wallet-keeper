@@ -14,4 +14,5 @@ public class ExpenseSummary {
     private Long categoryId;
     private String categoryName;
     private int amount;
+    private int percent;
 }

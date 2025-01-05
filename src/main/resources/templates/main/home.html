@@ -506,34 +506,44 @@
         const row = document.createElement('tr');
 
         row.innerHTML = `
-            <td>${formatDate(transaction.transactionAt)}</td>
-            <td>${transaction.detail}</td>
-            <td class="category-column category-data">${transaction.transactionCategory}</td>
-            <td class="${amountClass} amount-column amount-data">${transaction.amount.toLocaleString() + " 원"}</td>
-            <td>${transaction.description}</td>
-        `;
+        <td>${formatDate(transaction.transactionAt)}</td>
+        <td>${transaction.detail}</td>
+        <td class="category-column category-data">${transaction.transactionCategory}</td>
+        <td class="${amountClass} amount-column amount-data">${transaction.amount.toLocaleString() + " 원"}</td>
+        <td>${transaction.description}</td>
+    `;
 
         // 항목 클릭 시 수정 폼에 데이터 채우기
         row.onclick = function () {
             // 거래 유형에 따라 버튼 상태 업데이트
-            let categoryId;
-            if (transaction.transactionType === 'INCOME') {
-                document.getElementById('income-button').classList.add('active');
-                document.getElementById('expense-button').classList.remove('active');
-                const category = incomeCategories.find(cat => cat.categoryName === transaction.transactionCategory);
-                categoryId = category.categoryId;
-            } else {
-                document.getElementById('expense-button').classList.add('active');
-                document.getElementById('income-button').classList.remove('active');
-                const category = expenseCategories.find(cat => cat.categoryName === transaction.transactionCategory);
-                categoryId = category.categoryId;
-            }
             document.getElementById('transaction-id').value = transaction.transactionId;
             document.getElementById('detail').value = transaction.detail;
             document.getElementById('amount').value = transaction.amount;
             document.getElementById('description').value = transaction.description;
             document.getElementById('transaction-at').value = transaction.transactionAt;
-            document.getElementById('category').value = categoryId;
+
+            // 거래 유형에 따라 카테고리 설정
+            if (transaction.transactionType === 'INCOME') {
+                document.getElementById('income-button').classList.add('active');
+                document.getElementById('expense-button').classList.remove('active');
+                document.getElementById('transaction-type').value = 'INCOME';
+            } else {
+                document.getElementById('expense-button').classList.add('active');
+                document.getElementById('income-button').classList.remove('active');
+                document.getElementById('transaction-type').value = 'EXPENSE';
+            }
+
+            // 카테고리 목록을 업데이트
+            populateCategories();
+
+            // 거래의 카테고리 ID를 설정
+            const category = transaction.transactionType === 'INCOME'
+                ? incomeCategories.find(cat => cat.categoryName === transaction.transactionCategory)
+                : expenseCategories.find(cat => cat.categoryName === transaction.transactionCategory);
+
+            if (category) {
+                document.getElementById('category').value = category.categoryId; // 올바른 카테고리 ID 설정
+            }
 
             // 수정 모드로 전환
             document.getElementById('form-title').innerText = '항목 수정';
@@ -545,6 +555,7 @@
 
         return row;
     }
+
 
     function formatDate(dateString) {
         const date = new Date(dateString);

@@ -115,7 +115,6 @@ public class TransactionController {
         return createResponse(NO_CONTENT);
     }
 
-    // 해당 월의 지출을 가져와서, 어떤 카테고리 지출이 얼마인지 먼저 계산
     @GetMapping("/expense/summary")
     public ResponseEntity getExpenseSummary(
             @RequestParam("startDate") @DateTimeFormat(iso = DATE) LocalDate startDate,
