@@ -16,7 +16,9 @@ export function getUserInfo(accessToken) {
             return {
                 userId: user.data.userId,
                 email: user.data.email,
-                nickname: user.data.nickname
+                nickname: user.data.nickname,
+                birth: user.data.birth,
+                createdAt: user.data.createdAt
             };
         })
         .catch(error => {

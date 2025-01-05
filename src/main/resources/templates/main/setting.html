@@ -7,6 +7,7 @@
     <title>설정</title>
 
     <style>
+        /* 현재 페이지 표시 */
         .sidebar ul li a.setting {
             background-color: #ffede8;
             color: #ff6254;
@@ -14,9 +15,6 @@
 
         .content {
             background: var(--background-color);
-            padding: 20px;
-            border-radius: 8px;
-            overflow: hidden;
         }
 
         .hidden {
@@ -30,24 +28,63 @@
         }
 
         .options button {
-            padding: 12px 24px;
+            padding: 8px 18px;
             cursor: pointer;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background-color: #ffede8;
+            color: #ff6254;
             border: 2px solid transparent;
             border-radius: 5px;
             font-size: 16px;
+            margin-right: 10px;
         }
 
         .options button:hover {
-            background-color: #ffede8
+            background-color: rgba(255, 255, 255, 0.3);
         }
 
         .options button.active {
             background-color: #ffede8;
             color: #f85f52;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin: 10px 0 5px;
+            color: var(--text-color);
+        }
+
+        input, textarea {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        input:focus, textarea:focus {
+            border: 1px solid var(--hover-color);
+            outline: none;
+        }
+
+        button {
+            background-color: #ff6254;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #f85f52;
+        }
     </style>
 </head>
 <body>
@@ -66,38 +103,37 @@
 
         <div id="userInfoSection" class="hidden">
             <h2>회원 정보 수정</h2>
-            <form>
-                <label for="nickname">닉네임:</label>
+            <div class="user-info">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" required disabled>
+                <label for="nickname">닉네임</label>
                 <input type="text" id="nickname" name="nickname" required>
-                <br>
-                <label for="email">이메일:</label>
-                <input type="email" id="email" name="email" required>
-                <br>
-                <button type="submit">수정 완료</button>
-            </form>
+                <label for="birth">생일</label>
+                <input type="date" id="birth" name="birth" required>
+                <label for="created-at">가입일</label>
+                <input type="text" id="created-at" name="created-at" required disabled>
+            </div>
+            <button id="update-user-button">수정하기</button>
         </div>
 
         <div id="passwordChangeSection" class="hidden">
             <h2>비밀번호 변경</h2>
-            <form>
+            <div class="user-info">
                 <label for="currentPassword">현재 비밀번호:</label>
                 <input type="password" id="currentPassword" name="currentPassword" required>
-                <br>
                 <label for="newPassword">새 비밀번호:</label>
                 <input type="password" id="newPassword" name="newPassword" required>
-                <br>
-                <button type="submit">변경 완료</button>
-            </form>
+            </div>
+            <button id="change-password-button">변경 완료</button>
         </div>
 
         <div id="accountDeletionSection" class="hidden">
             <h2>회원 탈퇴</h2>
-            <form>
+            <div class="user-info">
                 <label for="deletionReason">탈퇴 이유:</label>
                 <textarea id="deletionReason" name="deletionReason" required></textarea>
-                <br>
-                <button type="submit">탈퇴 완료</button>
-            </form>
+            </div>
+            <button id="delete-account-button">탈퇴 완료</button>
         </div>
     </div>
 </div>
@@ -106,21 +142,25 @@
     import { getUserInfo } from '/js/getUserInfo.js';
 
     const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
 
     let userId = '';
     let nickname = '';
     let email = '';
+    let birth = '';
+    let createdAt = '';
 
     window.onload = function () {
         getUserInfo(accessToken).then(user => {
             userId = user.userId;
             email = user.email;
             nickname = user.nickname;
-
+            birth = user.birth;
+            createdAt = user.createdAt.split('T')[0];
             // 초기값 설정
-            document.getElementById('nickname').value = nickname;
             document.getElementById('email').value = email;
+            document.getElementById('nickname').value = nickname;
+            document.getElementById('birth').value = birth;
+            document.getElementById('created-at').value = createdAt;
         });
     }
 
@@ -132,16 +172,8 @@
 
         // 선택한 섹션 보이기
         document.getElementById(sectionId).classList.remove('hidden');
-
-        // 폼 초기화
-        document.getElementById('nickname').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('currentPassword').value = '';
-        document.getElementById('newPassword').value = '';
-        document.getElementById('deletionReason').value = '';
     }
 
-    // 모든 버튼에서 active 클래스 제거
     function clearActiveButtons() {
         const buttons = document.querySelectorAll('.options button');
         buttons.forEach(button => {
@@ -149,23 +181,100 @@
         });
     }
 
-    document.getElementById('toggleUserInfo').addEventListener('click', function() {
+    document.getElementById('toggleUserInfo').addEventListener('click', function () {
         clearActiveButtons();
         this.classList.add('active');
         showSection('userInfoSection');
     });
 
-    document.getElementById('togglePasswordChange').addEventListener('click', function() {
+    document.getElementById('togglePasswordChange').addEventListener('click', function () {
         clearActiveButtons();
         this.classList.add('active');
         showSection('passwordChangeSection');
     });
 
-    document.getElementById('toggleAccountDeletion').addEventListener('click', function() {
+    document.getElementById('toggleAccountDeletion').addEventListener('click', function () {
         clearActiveButtons();
         this.classList.add('active');
         showSection('accountDeletionSection');
     });
+
+
+    function updateUserInfo() {
+        let newNickname = document.getElementById('nickname').value;
+        let newBirth = document.getElementById('birth').value;
+
+        const updateData = {
+            nickname: newNickname,
+            birth: newBirth
+        };
+
+        fetch('/api/users/me', {
+            method: 'PATCH',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            },
+            body: JSON.stringify(updateData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("사용자 정보 수정에 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("사용자 정보를 성공적으로 수정했습니다.");
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+    document.getElementById('update-user-button').addEventListener('click', updateUserInfo);
+
+    function updatePassword() {
+        let currentPassword = document.getElementById('currentPassword').value;
+        let newPassword = document.getElementById('newPassword').value;
+
+        if (currentPassword == null || newPassword == null) {
+
+        }
+
+        const updateData = {
+            oldPassword: currentPassword,
+            newPassword: newPassword
+        };
+
+        fetch('/api/users/me/password',  {
+            method: 'PATCH',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            },
+            body: JSON.stringify(updateData)
+        }).then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message);
+                })
+            }
+            return response.json();
+        })
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+    document.getElementById('change-password-button').addEventListener('click', updatePassword);
+
+    function deleteUser() {
+
+    }
+    document.getElementById('delete-account-button').addEventListener('click', deleteUser);
 </script>
 
 <script src="/js/scripts.js"></script>
