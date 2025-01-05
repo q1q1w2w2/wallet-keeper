@@ -1,6 +1,7 @@
 package com.project.wallet_keeper.service;
 
 import com.project.wallet_keeper.domain.*;
+import com.project.wallet_keeper.dto.budget.ExpenseSummary;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
 import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
@@ -92,6 +93,14 @@ public class TransactionService {
         return sortAndConvertToDto(expenseList);
     }
 
+    public List<TransactionResponseDto> getExpenseList(User user, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+        List<Expense> expenseList = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
+        return sortAndConvertToDto(expenseList);
+    }
+
     private List<TransactionResponseDto> sortAndConvertToDto(List<? extends Transaction> transactionList) {
         return transactionList.stream()
                 .map(TransactionResponseDto::new)
@@ -158,4 +167,39 @@ public class TransactionService {
             throw new InvalidTransactionOwnerException();
         }
     }
+
+    public List<ExpenseSummary> getExpenseSummary(User user, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+        List<Expense> expenseList = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
+        List<ExpenseCategory> expenseCategories = expenseCategoryRepository.findAllByIsDeletedFalse();
+
+        Map<ExpenseCategory, Integer> categoryMap = new HashMap<>();
+
+        for (ExpenseCategory expenseCategory : expenseCategories) {
+            categoryMap.put(expenseCategory, 0);
+        }
+
+        for (Expense expense : expenseList) {
+            ExpenseCategory category = expense.getExpenseCategory();
+            Integer totalAmount = categoryMap.get(category);
+            if (totalAmount != null) {
+                categoryMap.put(category, totalAmount + expense.getAmount());
+            }
+        }
+
+        ArrayList<ExpenseSummary> summaryList = new ArrayList<>();
+        for (Map.Entry<ExpenseCategory, Integer> entry : categoryMap.entrySet()) {
+            if (entry.getValue() > 0) {
+                ExpenseSummary summary = new ExpenseSummary();
+                summary.setCategoryId(entry.getKey().getId());
+                summary.setCategoryName(entry.getKey().getCategoryName());
+                summary.setAmount(entry.getValue());
+                summaryList.add(summary);
+            }
+        }
+
+        return summaryList;
+    }
+
 }

@@ -32,4 +32,9 @@ public class ViewController {
     public String settingPage() {
         return "main/setting";
     }
+
+    @GetMapping("/budget")
+    public String budgetPage() {
+        return "main/budget";
+    }
 }

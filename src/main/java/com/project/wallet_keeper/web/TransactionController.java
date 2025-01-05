@@ -3,6 +3,7 @@ package com.project.wallet_keeper.web;
 import com.project.wallet_keeper.domain.Expense;
 import com.project.wallet_keeper.domain.Income;
 import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.dto.budget.ExpenseSummary;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
@@ -58,9 +59,12 @@ public class TransactionController {
     }
 
     @GetMapping("/expense/list")
-    public ResponseEntity<ApiResponse<List<TransactionResponseDto>>> getExpenseList() {
+    public ResponseEntity<ApiResponse<List<TransactionResponseDto>>> getExpenseList(
+            @RequestParam("startDate") @DateTimeFormat(iso = DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DATE) LocalDate endDate
+    ) {
         User user = getCurrentUser();
-        List<TransactionResponseDto> expenseList = transactionService.getExpenseList(user);
+        List<TransactionResponseDto> expenseList = transactionService.getExpenseList(user, startDate, endDate);
 
         return createResponse(OK, expenseList);
     }
@@ -111,6 +115,17 @@ public class TransactionController {
         return createResponse(NO_CONTENT);
     }
 
+    // 해당 월의 지출을 가져와서, 어떤 카테고리 지출이 얼마인지 먼저 계산
+    @GetMapping("/expense/summary")
+    public ResponseEntity getExpenseSummary(
+            @RequestParam("startDate") @DateTimeFormat(iso = DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DATE) LocalDate endDate
+    ) {
+        User user = getCurrentUser();
+        List<ExpenseSummary> summaryList = transactionService.getExpenseSummary(user, startDate, endDate);
+
+        return createResponse(OK, summaryList);
+    }
 
     private User getCurrentUser() {
         return userService.getCurrentUser();

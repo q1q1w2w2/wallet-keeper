@@ -63,29 +63,18 @@
             padding: 10px 0;
         }
 
-        .day.header.sunday {
-            color: var(--income-color);
-        }
-
-        .day.header.saturday {
-            color: var(--expense-color);
-        }
-
-        .day.sunday {
-            color: var(--income-color);
-        }
-
-        .day.saturday {
-            color: var(--expense-color);
-        }
-
+        .day.header.sunday,
+        .day.sunday,
         .income {
             color: var(--income-color);
         }
 
+        .day.header.saturday,
+        .day.saturday,
         .expense {
             color: var(--expense-color);
         }
+
 
         .input-container {
             display: flex;
@@ -97,7 +86,7 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 120px; /* 적절한 너비 조정 */
+            width: 120px;
         }
 
         button {
@@ -149,9 +138,9 @@
 
         /* 폼 요소 */
         #transaction-sum {
-            display: flex; /* 플렉스 박스 설정 */
-            flex-direction: column; /* 세로 방향으로 정렬 */
-            align-items: flex-start; /* 왼쪽 정렬 */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             background-color: var(--white-background-color);
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -162,55 +151,55 @@
         }
 
         .transaction-separator {
-            width: 100%; /* 가로로 전체 너비 */
-            height: 1px; /* 세로 두께 */
-            background-color: var(--border-color); /* 구분선 색상 */
-            margin: 10px 0; /* 구분선 위아래 여백 */
+            width: 100%;
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 0;
         }
 
         .transaction-sum-item {
-            display: flex; /* 플렉스 박스 설정 */
-            justify-content: space-between; /* 양쪽 끝으로 정렬 */
-            width: 100%; /* 전체 너비 */
-            margin-bottom: 5px; /* 아래 여백 */
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 5px;
         }
 
         #transaction-list {
-            max-height: 600px; /* 원하는 높이 설정 */
-            overflow-y: auto; /* 세로 스크롤 적용 */
-            margin-bottom: 20px; /* 아래 여백 */
-            border: 1px solid var(--border-color); /* 테두리 추가 */
-            border-radius: 5px; /* 모서리 둥글게 */
-            background-color: var(--white-background-color); /* 배경색 */
-            padding: 10px; /* 내부 여백 */
+            max-height: 600px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--white-background-color);
+            padding: 10px;
         }
 
 
-        /* 거래 항목 스타일 */
+        /* 거래 항목 */
         #transaction-list div {
-            background-color: var(--white-background-color); /* 흰색 배경 */
+            background-color: var(--white-background-color);
             padding: 10px;
-            border: 1px solid var(--border-color); /* 기본 테두리 */
-            border-radius: 5px; /* 모서리 둥글게 */
-            display: flex; /* 플렉스 박스 설정 */
-            justify-content: space-between; /* 양쪽 끝으로 정렬 */
-            align-items: center; /* 수직 중앙 정렬 */
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .transaction-category {
             font-size: 11px;
             color: var(--text-color);
-            flex: 0 0 80px; /* 카테고리의 고정 너비 설정 */
-            text-align: left; /* 왼쪽 정렬 */
+            flex: 0 0 80px;
+            text-align: left;
         }
 
         .transaction-detail {
-            flex: 1; /* 나머지 공간을 차지 */
-            margin-left: 10px; /* 카테고리와의 여백 */
+            flex: 1;
+            margin-left: 10px;
         }
 
         .transaction-amount {
-            text-align: right; /* 금액 오른쪽 정렬 */
+            text-align: right;
         }
 
     </style>
@@ -280,7 +269,6 @@
         const calendar = document.getElementById('calendar');
         calendar.innerHTML = '';
 
-        // 요일 이름 추가
         const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
         weekDays.forEach(day => {
             const header = document.createElement('div');
@@ -294,14 +282,11 @@
             calendar.appendChild(header);
         });
 
-        // 해당 월의 첫 번째 날
         const firstDay = new Date(year, month - 1, 1);
         const totalDays = getDaysInMonth(year, month);
 
-        // 첫 번째 날의 요일
         const startDay = firstDay.getDay();
 
-        // 빈 칸 추가
         for (let i = 0; i < startDay; i++) {
             const emptyDiv = document.createElement('div');
             emptyDiv.className = 'day';
@@ -314,7 +299,6 @@
         let monthlyCounterIncome = 0;
         let monthlyCounterExpense = 0;
 
-        // 날짜 추가 및 거래 내역 매핑
         for (let day = 1; day <= totalDays; day++) {
             const dayDiv = document.createElement('div');
             dayDiv.className = 'day';
@@ -327,7 +311,7 @@
                 dayDiv.classList.add('saturday');
             }
 
-            dayDiv.textContent = (day === 1) ? `${month}/${day}` : day; // 1일이면 12/1 표시
+            dayDiv.textContent = (day === 1) ? `${month}/${day}` : day;
 
 
             let totalIncome = 0;
@@ -347,13 +331,11 @@
                     }
                 });
 
-                // 거래 건수 표시
                 dayDiv.textContent += ` (${transactions.length}건)`;
 
-                // 수입과 지출이 0이 아닐 때만 표시
                 if (totalIncome > 0 || totalExpense > 0) {
                     const incomeDiv = document.createElement('div');
-                    incomeDiv.classList.add('income');  // 클래스 추가
+                    incomeDiv.classList.add('income');
                     incomeDiv.textContent = `${totalIncome.toLocaleString()}`;
                     incomeDiv.style.position = 'absolute';
                     incomeDiv.style.bottom = '20px';
@@ -375,21 +357,17 @@
             monthlyCounterIncome += totalIncomeCounter;
             monthlyCounterExpense += totalExpenseCounter;
 
-            // 날짜 클릭 시
             dayDiv.addEventListener('click', () => {
                 if (transactionsByDate[dayKey]) {
                     const transactions = transactionsByDate[dayKey];
                     const transactionListDiv = document.getElementById('transaction-list');
                     const transactionSumDiv = document.getElementById('transaction-sum');
 
-                    // 수입과 지출 초기화
                     let totalIncome = 0;
                     let totalExpense = 0;
 
-                    // 리스트 초기화
                     transactionListDiv.innerHTML = '';
 
-                    // 거래 내역을 하나의 리스트로 표시
                     transactions.forEach(t => {
                         if (t.transactionType === 'INCOME') {
                             totalIncome += t.amount;
@@ -409,7 +387,6 @@
                     });
 
 
-                    // 수입과 지출 총합 표시
                     transactionSumDiv.innerHTML = `
                             <div class="transaction-sum-item">
                                 <span>수입: <span class="income"> ${totalIncome.toLocaleString()} 원</span></span>
@@ -420,13 +397,9 @@
                             </div>
                         `;
 
-
-
-                    // 날짜 포맷팅
                     const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}(${weekDays[dayOfWeek]})`;
                     document.getElementById('form-date').textContent = formattedDate;
 
-                    // list-form 보이기
                     document.getElementById('list-form').classList.remove('hidden');
                 }
             });
@@ -444,7 +417,6 @@
         if (year >= 1900 && year <= 2100 && month >= 1 && month <= 12) {
             createCalendar(year, month);
 
-            // 해당 월의 거래 내역 가져오기
             getTransactionList(
                 `${year}-${String(month).padStart(2, '0')}-01`,
                 `${year}-${String(month).padStart(2, '0')}-${getDaysInMonth(year, month)}`
@@ -464,7 +436,6 @@
         createCalendar(currentYear, currentMonth);
         document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
 
-        // 해당 월의 거래 내역 가져오기
         getTransactionList(
             `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`,
             `${currentYear}-${String(currentMonth).padStart(2, '0')}-${getDaysInMonth(currentYear, currentMonth)}`
@@ -481,7 +452,6 @@
         createCalendar(currentYear, currentMonth);
         document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
 
-        // 해당 월의 거래 내역 가져오기
         getTransactionList(
             `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`,
             `${currentYear}-${String(currentMonth).padStart(2, '0')}-${getDaysInMonth(currentYear, currentMonth)}`
@@ -520,19 +490,17 @@
                 return response.json();
             })
             .then(data => {
-                // 거래 내역을 날짜별로 매핑할 객체 생성
                 const transactionsByDate = {};
 
                 data.data.forEach(transaction => {
                     const date = new Date(transaction.transactionAt);
-                    const key = `${date.getMonth() + 1}/${date.getDate()}`; // "M/D" 형식
+                    const key = `${date.getMonth() + 1}/${date.getDate()}`;
                     if (!transactionsByDate[key]) {
                         transactionsByDate[key] = [];
                     }
                     transactionsByDate[key].push(transaction);
                 });
 
-                // 달력 생성 시 거래 내역 매핑
                 createCalendar(currentYear, currentMonth, transactionsByDate);
             })
             .catch(error => {

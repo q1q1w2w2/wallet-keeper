@@ -13,6 +13,13 @@
             color: #ff6254;
         }
 
+        .content {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
         .date-range {
             margin-bottom: 20px;
         }
@@ -258,7 +265,7 @@
             display: flex;
             align-items: flex-end;
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .date-range div {
@@ -344,12 +351,10 @@
                 </thead>
 
                 <tbody id='data-table'>
-                <!-- 거래 내역 -->
                 </tbody>
             </table>
         </div>
 
-        <!-- 항목 추가 폼을 띄우는 버튼 -->
         <button id="add-item-button">+</button>
 
         <!-- 항목 추가/수정 폼 -->
@@ -605,15 +610,12 @@
             });
     }
 
-    // 토글 상태에 따라 카테고리 업데이트
     function populateCategories() {
         const categorySelect = document.getElementById('category');
-        categorySelect.innerHTML = ''; // 기존 옵션 제거
+        categorySelect.innerHTML = '';
 
-        // 선택된 거래 유형
         const transactionType = document.getElementById('transaction-type').value;
 
-        // 기본 옵션 추가
         const defaultOption = document.createElement('option');
         defaultOption.value = '';
         defaultOption.disabled = true;
@@ -642,7 +644,7 @@
         document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
         document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
 
-        currentDateTime = koreaTime.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm" 형식
+        currentDateTime = koreaTime.toISOString().slice(0, 16);
         document.getElementById('transaction-at').value = currentDateTime;
 
         getUserInfo(accessToken).then(user => {
@@ -656,15 +658,12 @@
         });
     };
 
-    // 날짜에 따른 조회 버튼
     document.getElementById('fetch-button').addEventListener('click', filterData);
 
-    // + 버튼 클릭 시 폼 표시
     document.getElementById('add-item-button').addEventListener('click', () => {
         const form = document.getElementById('add-item-form');
         form.classList.toggle('hidden');
 
-        // 추가 모드로 전환
         document.getElementById('form-title').innerText = '항목 추가';
         document.getElementById('transaction-id').value = '';
         document.getElementById('detail').value = '';
@@ -678,12 +677,10 @@
         document.getElementById('delete-item-button').classList.add('hidden');
     });
 
-    // X 버튼 클릭 시 폼 숨기기
     document.getElementById('close-form').addEventListener('click', () => {
         document.getElementById('add-item-form').classList.add('hidden');
     });
 
-    // 수입 버튼 토글
     document.getElementById('income-button').addEventListener('click', () => {
         document.getElementById('income-button').classList.add('active');
         document.getElementById('expense-button').classList.remove('active');
@@ -692,7 +689,6 @@
         populateCategories();
     });
 
-    // 지출 버튼 토글
     document.getElementById('expense-button').addEventListener('click', () => {
         document.getElementById('expense-button').classList.add('active');
         document.getElementById('income-button').classList.remove('active');
@@ -701,7 +697,6 @@
         populateCategories();
     });
 
-    // 제출 버튼
     document.getElementById('submit-item-button').addEventListener('click', () => {
         const transactionType = document.getElementById('transaction-type').value;
         const detail = document.getElementById('detail').value;
@@ -758,7 +753,6 @@
             });
     });
 
-    // 수정 버튼
     document.getElementById('update-item-button').addEventListener('click', () => {
         const transactionId = document.getElementById('transaction-id').value;
         const transactionType = document.getElementById('transaction-type').value;
@@ -817,7 +811,6 @@
             });
     });
 
-    // 삭제 버튼
     document.getElementById('delete-item-button').addEventListener('click', () => {
         const transactionId = document.getElementById('transaction-id').value;
         const transactionType = document.getElementById('transaction-type').value;

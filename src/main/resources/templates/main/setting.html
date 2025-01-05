@@ -95,47 +95,47 @@
     <div th:replace='~{fragments/fragments :: sidebar}'></div>
 
     <div class='content'>
-        <div class="options">
-            <button id="toggleUserInfo">회원 정보 수정</button>
-            <button id="togglePasswordChange">비밀번호 변경</button>
-            <button id="toggleAccountDeletion">회원 탈퇴</button>
-        </div>
-
-        <div id="userInfoSection" class="hidden">
-            <h2>회원 정보 수정</h2>
-            <div class="user-info">
-                <label for="email">이메일</label>
-                <input type="email" id="email" name="email" required disabled>
-                <label for="nickname">닉네임</label>
-                <input type="text" id="nickname" name="nickname" required>
-                <label for="birth">생일</label>
-                <input type="date" id="birth" name="birth" required>
-                <label for="created-at">가입일</label>
-                <input type="text" id="created-at" name="created-at" required disabled>
-            </div>
-            <button id="update-user-button">수정하기</button>
-        </div>
-
-        <div id="passwordChangeSection" class="hidden">
-            <h2>비밀번호 변경</h2>
-            <div class="user-info">
-                <label for="currentPassword">현재 비밀번호:</label>
-                <input type="password" id="currentPassword" name="currentPassword" required>
-                <label for="newPassword">새 비밀번호:</label>
-                <input type="password" id="newPassword" name="newPassword" required>
-            </div>
-            <button id="change-password-button">변경 완료</button>
-        </div>
-
-        <div id="accountDeletionSection" class="hidden">
-            <h2>회원 탈퇴</h2>
-            <div class="user-info">
-                <label for="deletionReason">탈퇴 이유:</label>
-                <textarea id="deletionReason" name="deletionReason" required></textarea>
-            </div>
-            <button id="delete-account-button">탈퇴 완료</button>
-        </div>
+    <div class="options">
+        <button id="toggleUserInfo">회원 정보 수정</button>
+        <button id="togglePasswordChange">비밀번호 변경</button>
+        <button id="toggleAccountDeletion">회원 탈퇴</button>
     </div>
+
+    <div id="userInfoSection" class="hidden">
+        <h2>회원 정보 수정</h2>
+        <div class="user-info">
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" required disabled>
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" name="nickname" required>
+            <label for="birth">생일</label>
+            <input type="date" id="birth" name="birth" required>
+            <label for="created-at">가입일</label>
+            <input type="text" id="created-at" name="created-at" required disabled>
+        </div>
+        <button id="update-user-button">수정하기</button>
+    </div>
+
+    <div id="passwordChangeSection" class="hidden">
+        <h2>비밀번호 변경</h2>
+        <div class="user-info">
+            <label for="currentPassword">현재 비밀번호:</label>
+            <input type="password" id="currentPassword" name="currentPassword" required>
+            <label for="newPassword">새 비밀번호:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+        </div>
+        <button id="change-password-button">변경 완료</button>
+    </div>
+
+    <div id="accountDeletionSection" class="hidden">
+        <h2>회원 탈퇴</h2>
+        <div class="user-info">
+            <label for="deletionReason">탈퇴 사유:</label>
+            <textarea id="deletionReason" name="deletionReason" required></textarea>
+        </div>
+        <button id="delete-account-button">탈퇴 완료</button>
+    </div>
+</div>
 </div>
 
 <script type="module">
@@ -156,7 +156,7 @@
             nickname = user.nickname;
             birth = user.birth;
             createdAt = user.createdAt.split('T')[0];
-            // 초기값 설정
+
             document.getElementById('email').value = email;
             document.getElementById('nickname').value = nickname;
             document.getElementById('birth').value = birth;
@@ -165,12 +165,10 @@
     }
 
     function showSection(sectionId) {
-        // 모든 섹션 숨기기
         document.getElementById('userInfoSection').classList.add('hidden');
         document.getElementById('passwordChangeSection').classList.add('hidden');
         document.getElementById('accountDeletionSection').classList.add('hidden');
 
-        // 선택한 섹션 보이기
         document.getElementById(sectionId).classList.remove('hidden');
     }
 

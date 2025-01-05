@@ -3,6 +3,7 @@ package com.project.wallet_keeper.web;
 import com.project.wallet_keeper.domain.Budget;
 import com.project.wallet_keeper.domain.User;
 import com.project.wallet_keeper.dto.budget.BudgetDto;
+import com.project.wallet_keeper.dto.budget.BudgetReport;
 import com.project.wallet_keeper.dto.budget.BudgetResponseDto;
 import com.project.wallet_keeper.dto.budget.BudgetResultDto;
 import com.project.wallet_keeper.dto.common.ApiResponse;
@@ -47,17 +48,20 @@ public class BudgetController {
         return createResponse(OK, new BudgetResponseDto(budget));
     }
 
+    @GetMapping("/report")
+    public ResponseEntity report(@RequestParam int year, @RequestParam int month) {
+        User user = getCurrentUser();
+        BudgetReport report = budgetService.report(user, year, month);
+
+        return createResponse(OK, report);
+    }
+
     private User getCurrentUser() {
         return userService.getCurrentUser();
     }
 
     private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {
         ApiResponse<T> response = ApiResponse.success(status, data);
-        return ResponseEntity.status(status).body(response);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status) {
-        ApiResponse<T> response = ApiResponse.success(status);
         return ResponseEntity.status(status).body(response);
     }
 }

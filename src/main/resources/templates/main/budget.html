@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang='ko' xmlns:th='http://www.thymeleaf.org'>
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/css/styles.css'>
+    <script src="https://kit.fontawesome.com/5ff918606f.js" crossorigin="anonymous"></script>
+    <title>예산</title>
+
+    <style>
+        .sidebar ul li a.budget {
+            background-color: #ffede8;
+            color: #ff6254;
+        }
+
+        .content {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 120px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #ff6254;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .arrow-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+        }
+
+        .expense {
+            color: var(--expense-color);
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .input-budget {
+            display: flex;
+            align-items: center;
+        }
+
+        #budgetAmount {
+            margin-right: 5px;
+        }
+
+        .expense-list {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            width: 300px;
+            background-color: var(--white-background-color);
+            height: 550px;
+            overflow-y: auto;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            width: 100%;
+            height: 300px;
+            flex: 1;
+        }
+
+        .expenses-and-chart {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .charts {
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
+        }
+
+        .chart-container {
+            flex: 1;
+        }
+
+        .expense-list {
+            padding: 0;
+            flex: 1.2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--header-bg-color);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .category {
+            color: var(--text-color);
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        #budgetReportTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        #budgetReportTable th,
+        #budgetReportTable td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #budgetReportTable th {
+            background-color: var(--header-bg-color);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #budgetReportTable tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            width: 100%;
+            height: 300px;
+            flex: 1;
+            position: relative;
+        }
+
+        #expenseChart {
+            width: 100% !important;
+            height: 300px !important;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div th:replace='~{fragments/fragments :: navbar}'></div>
+
+<div class='main'>
+    <div th:replace='~{fragments/fragments :: sidebar}'></div>
+    <div class='content'>
+        <h2>예산</h2>
+
+        <div class="input-container">
+            <div>
+                <button class="arrow-button" id="prev-month"><</button>
+                <input type="month" id="monthYear">
+                <button class="arrow-button" id="next-month">></button>
+                <button id="generate-btn">조회</button>
+            </div>
+
+            <div class="input-budget">
+                <input type="number" id="budgetAmount" placeholder="예산 입력" required>
+                <button id="submit-budget">수정</button>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-container">
+                <div>
+                    <div id="chartNoDataMessage" style="display: none; color: red;">지출 내역이 없습니다.</div>
+                    <canvas id="expenseChart"></canvas>
+                </div>
+
+                <div class="budget-container">
+                    <table id="budgetReportTable">
+                        <thead>
+                        <tr>
+                            <th>항목</th>
+                            <th>금액</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>예산</td>
+                            <td id="budgetAmountInfo">0원</td>
+                        </tr>
+                        <tr>
+                            <td>사용 금액</td>
+                            <td id="totalAmountInfo">0원</td>
+                        </tr>
+                        <tr>
+                            <td>남은 금액</td>
+                            <td id="remainAmountInfo">0원</td>
+                        </tr>
+                        <tr>
+                            <td>사용 비율</td>
+                            <td id="percentInfo">0%</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
+            <div class="expense-list">
+                <table id="expenseTable">
+                    <thead>
+                    <tr>
+                        <th>날짜</th>
+                        <th>내용</th>
+                        <th>카테고리</th>
+                        <th>금액</th>
+                    </tr>
+                    </thead>
+                    <tbody id="expenseList">
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script type="module">
+    import {getUserInfo} from '/js/getUserInfo.js';
+
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    let userId = '';
+    let nickname = '';
+    let email = '';
+
+    let currentYear = '';
+    let currentMonth = '';
+
+    let expenseCategories;
+    let expenseChart;
+
+    window.onload = function () {
+        getUserInfo(accessToken).then(user => {
+            userId = user.userId;
+            email = user.email;
+            nickname = user.nickname;
+        });
+
+        const today = new Date();
+        currentYear = today.getFullYear();
+        currentMonth = String(today.getMonth() + 1).padStart(2, '0');
+        document.getElementById('monthYear').value = `${currentYear}-${currentMonth}`;
+
+        document.getElementById('generate-btn').click();
+        getExpenseCategory();
+        getBudgetReport(currentYear, currentMonth);
+    }
+
+    document.getElementById('prev-month').addEventListener('click', () => {
+        currentMonth = Number(currentMonth);
+        if (currentMonth === 1) {
+            currentMonth = 12;
+            currentYear--;
+        } else {
+            currentMonth--;
+        }
+
+        document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+        document.getElementById('generate-btn').click();
+    });
+
+    document.getElementById('next-month').addEventListener('click', () => {
+        currentMonth = Number(currentMonth);
+        if (currentMonth === 12) {
+            currentMonth = 1;
+            currentYear++;
+        } else {
+            currentMonth++;
+        }
+
+        document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+        document.getElementById('generate-btn').click();
+    });
+
+    document.getElementById('generate-btn').addEventListener('click', function () {
+        const selectedMonth = document.getElementById('monthYear').value;
+        const startDate = `${selectedMonth}-01`;
+
+        const year = selectedMonth.split('-')[0];
+        const month = selectedMonth.split('-')[1];
+        const endDate = new Date(year, month, 0).toISOString().split('T')[0];
+
+        let url = `/api/transaction/expense/list?startDate=${startDate}&endDate=${endDate}`;
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("지출 내역을 불러오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                displayExpenses(data.data);
+                getBudgetReport(year, month);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        url = `/api/transaction/expense/summary?startDate=${startDate}&endDate=${endDate}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("지출 요약을 불러오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                createExpenseChart(data.data);
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+    });
+
+
+    function displayExpenses(expenses) {
+        const expenseTableBody = document.getElementById('expenseList');
+        expenseTableBody.innerHTML = '';
+
+        let noDataMessage = document.getElementById('noDataMessage');
+        if (!noDataMessage) {
+            noDataMessage = document.createElement('tr');
+            noDataMessage.id = 'noDataMessage';
+            const noDataCell = document.createElement('td');
+            noDataCell.colSpan = 4;
+            noDataCell.textContent = "지출 내역이 없습니다.";
+            noDataCell.style.textAlign = 'center';
+            noDataCell.style.verticalAlign = 'middle';
+            noDataMessage.appendChild(noDataCell);
+        }
+
+        if (expenses.length === 0) {
+            expenseTableBody.appendChild(noDataMessage);
+        } else {
+            if (noDataMessage.parentNode) {
+                noDataMessage.parentNode.removeChild(noDataMessage);
+            }
+
+            expenses.forEach(expense => {
+                const row = document.createElement('tr');
+                const formattedDate = formatDate(expense.transactionAt);
+                row.innerHTML = `
+                <td>${formattedDate}</td>
+                <td>${expense.detail}</td>
+                <td class="category">${expense.transactionCategory}</td>
+                <td class="expense">${expense.amount}원</td>
+            `;
+                expenseTableBody.appendChild(row);
+            });
+        }
+    }
+
+    function getExpenseCategory() {
+        fetch(`/api/transaction/category/expense`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("카테고리를 불러오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                expenseCategories = data.data;
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+
+    function createExpenseChart(summary) {
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+
+        summary.sort((a, b) => b.amount - a.amount);
+
+        const labels = summary.map(item => item.categoryName);
+        const data = summary.map(item => item.amount);
+
+        const backgroundColors = ['#ff603b', '#ff904b', '#f7b12e', '#f7d415', '#b7de35', '#67d45f', '#6ce9da'];
+
+        if (expenseChart) {
+            expenseChart.data.labels = labels;
+            expenseChart.data.datasets[0].data = data;
+            expenseChart.data.datasets[0].backgroundColor = backgroundColors.slice(0, data.length);
+            expenseChart.update();
+        } else {
+            expenseChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '지출 통계',
+                        data: data,
+                        backgroundColor: backgroundColors.slice(0, data.length),
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        const noDataMessage = document.getElementById('chartNoDataMessage');
+        if (summary.length === 0) {
+            noDataMessage.style.display = 'block';
+            ctx.canvas.style.display = 'none';
+        } else {
+            noDataMessage.style.display = 'none';
+            ctx.canvas.style.display = 'block';
+        }
+    }
+
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = {
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            weekday: 'short',
+            hour12: false
+        };
+        const formattedDate = date.toLocaleString('ko-KR', options);
+        return formattedDate.replace(',', '');
+    }
+
+    document.getElementById('submit-budget').addEventListener('click', function () {
+        const budgetAmount = document.getElementById('budgetAmount').value;
+
+        if (!budgetAmount) {
+            alert("예산을 입력해주세요.");
+            return;
+        }
+
+        fetch(`/api/budget`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                amount: budgetAmount,
+                date: `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("예산 수정을 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                getBudgetReport(currentYear, currentMonth);
+                document.getElementById('budgetAmount').value = '';
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+
+    function getBudgetReport(year, month) {
+        fetch(`/api/budget/report?year=${year}&month=${month}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("예산 보고서를 불러오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const budget = data.data.budget;
+                const totalAmount = data.data.totalAmount;
+                const remainAmount = data.data.remainAmount;
+                const percent = data.data.percent;
+
+                document.getElementById('budgetAmountInfo').textContent = `${budget}원`;
+                document.getElementById('totalAmountInfo').textContent = `${totalAmount}원`;
+                document.getElementById('remainAmountInfo').textContent = `${remainAmount}원`;
+                document.getElementById('percentInfo').textContent = `${percent}%`;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+</script>
+<script src="/js/scripts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
