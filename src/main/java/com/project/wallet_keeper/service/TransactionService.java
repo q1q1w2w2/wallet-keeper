@@ -1,9 +1,7 @@
 package com.project.wallet_keeper.service;
 
 import com.project.wallet_keeper.domain.*;
-import com.project.wallet_keeper.dto.budget.ExpenseSummary;
-import com.project.wallet_keeper.dto.transaction.TransactionDto;
-import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
+import com.project.wallet_keeper.dto.transaction.*;
 import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
 import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
@@ -205,6 +203,52 @@ public class TransactionService {
         }
 
         return summaryList;
+    }
+
+    public AnnualSummary getAnnualSummary(User user, int year) {
+        LocalDateTime startDateTime = LocalDateTime.of(year, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(year, 12, 31, 23, 59);
+
+        List<Income> incomeList = incomeRepository.findByUserAndIncomeAtBetween(user, startDateTime, endDateTime);
+        List<Expense> expenseList = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
+
+        String[] monthly = {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
+        Map<String, MonthlySummary> monthlySummaryMap = new LinkedHashMap<>();
+
+        int totalIncome = 0;
+        int totalExpense = 0;
+
+        for (String month : monthly) {
+            monthlySummaryMap.put(month, new MonthlySummary());
+        }
+
+        for (Income income : incomeList) {
+            String month = income.getIncomeAt().getMonth().toString();
+            MonthlySummary summary = monthlySummaryMap.get(month);
+            summary.setIncome(summary.getIncome() + income.getAmount());
+        }
+
+        for (Expense expense : expenseList) {
+            String month = expense.getExpenseAt().getMonth().toString();
+            MonthlySummary summary = monthlySummaryMap.get(month);
+            summary.setExpense(summary.getExpense() + expense.getAmount());
+        }
+
+        for (String month : monthly) {
+            MonthlySummary summary = monthlySummaryMap.get(month);
+            summary.setTotal(summary.getIncome() - summary.getExpense());
+            totalIncome += summary.getIncome();
+            totalExpense += summary.getExpense();
+        }
+
+        AnnualSummary annualSummary = new AnnualSummary();
+        annualSummary.setYear(year);
+        annualSummary.setTotalIncome(totalIncome);
+        annualSummary.setTotalExpense(totalExpense);
+        annualSummary.setTotal(totalIncome - totalExpense);
+        annualSummary.setMonthly(monthlySummaryMap);
+
+        return annualSummary;
     }
 
 }

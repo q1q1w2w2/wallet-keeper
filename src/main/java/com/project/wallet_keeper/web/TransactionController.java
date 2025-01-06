@@ -3,7 +3,8 @@ package com.project.wallet_keeper.web;
 import com.project.wallet_keeper.domain.Expense;
 import com.project.wallet_keeper.domain.Income;
 import com.project.wallet_keeper.domain.User;
-import com.project.wallet_keeper.dto.budget.ExpenseSummary;
+import com.project.wallet_keeper.dto.transaction.AnnualSummary;
+import com.project.wallet_keeper.dto.transaction.ExpenseSummary;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
@@ -100,7 +101,7 @@ public class TransactionController {
     }
 
     @DeleteMapping("/income/{incomeId}")
-    public ResponseEntity deleteIncome(@PathVariable Long incomeId) {
+    public ResponseEntity<ApiResponse<Object>> deleteIncome(@PathVariable Long incomeId) {
         User user = getCurrentUser();
         transactionService.deleteIncome(incomeId, user);
 
@@ -108,7 +109,7 @@ public class TransactionController {
     }
 
     @DeleteMapping("/expense/{expenseId}")
-    public ResponseEntity deleteExpense(@PathVariable Long expenseId) {
+    public ResponseEntity<ApiResponse<Object>> deleteExpense(@PathVariable Long expenseId) {
         User user = getCurrentUser();
         transactionService.deleteExpense(expenseId, user);
 
@@ -116,7 +117,7 @@ public class TransactionController {
     }
 
     @GetMapping("/expense/summary")
-    public ResponseEntity getExpenseSummary(
+    public ResponseEntity<ApiResponse<List<ExpenseSummary>>> getExpenseSummary(
             @RequestParam("startDate") @DateTimeFormat(iso = DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DATE) LocalDate endDate
     ) {
@@ -124,6 +125,14 @@ public class TransactionController {
         List<ExpenseSummary> summaryList = transactionService.getExpenseSummary(user, startDate, endDate);
 
         return createResponse(OK, summaryList);
+    }
+
+    @GetMapping("/annual")
+    public ResponseEntity<ApiResponse<AnnualSummary>> getAnnualSummary(@RequestParam int year) {
+        User user = getCurrentUser();
+        AnnualSummary annualSummary = transactionService.getAnnualSummary(user, year);
+
+        return createResponse(OK, annualSummary);
     }
 
     private User getCurrentUser() {

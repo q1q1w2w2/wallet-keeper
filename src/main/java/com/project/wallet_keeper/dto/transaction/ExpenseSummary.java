@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.dto.budget;
+package com.project.wallet_keeper.dto.transaction;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
