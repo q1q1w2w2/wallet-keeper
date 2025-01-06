@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang='ko' xmlns:th='http://www.thymeleaf.org'>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/5ff918606f.js" crossorigin="anonymous"></script>
+    <link rel='stylesheet' href='/css/styles.css'>
+    <title>요약</title>
+
+    <style>
+        .sidebar ul li a.summary {
+            background-color: #ffede8;
+            color: #ff6254;
+        }
+
+        .content {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .arrow-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 120px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #ff6254;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .chart-container {
+            height: 300px;
+            width: 100%; /* 100% 너비 설정 */
+            position: relative; /* 캔버스의 위치를 상대적으로 설정 */
+        }
+
+        canvas {
+            width: 100% !important; /* 캔버스 너비를 100%로 강제 설정 */
+            height: 300px !important; /* 캔버스 높이를 300px로 강제 설정 */
+        }
+
+
+        .table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* 고정 레이아웃 사용 */
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            width: 8.33%; /* 12개의 열이므로 100%를 12로 나눈 값 */
+        }
+
+
+        th {
+            background-color: #ffede8;
+        }
+
+        .income {
+            color: var(--income-color);
+        }
+
+        .expense {
+            color: var(--expense-color);
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace='~{fragments/fragments :: navbar}'></div>
+
+<div class='main'>
+    <div th:replace='~{fragments/fragments :: sidebar}'></div>
+    <div class='content'>
+        <h2>요약</h2>
+
+        <div class="input-container">
+            <button class="arrow-button" id="prev-year"><</button>
+            <input type="number" id="year" readonly>
+            <button class="arrow-button" id="next-year">></button>
+        </div>
+
+        <div id="summary"></div>
+
+        <div class="chart-container">
+            <canvas id="incomeExpenseChart"></canvas>
+        </div>
+
+        <div class="table-container">
+            <table id="monthlySummaryTable">
+                <thead>
+                <tr>
+                    <th>항목</th>
+                    <th>1월</th>
+                    <th>2월</th>
+                    <th>3월</th>
+                    <th>4월</th>
+                    <th>5월</th>
+                    <th>6월</th>
+                    <th>7월</th>
+                    <th>8월</th>
+                    <th>9월</th>
+                    <th>10월</th>
+                    <th>11월</th>
+                    <th>12월</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>수입</td>
+                    <td id="jan-income">0</td>
+                    <td id="feb-income">0</td>
+                    <td id="mar-income">0</td>
+                    <td id="apr-income">0</td>
+                    <td id="may-income">0</td>
+                    <td id="jun-income">0</td>
+                    <td id="jul-income">0</td>
+                    <td id="aug-income">0</td>
+                    <td id="sep-income">0</td>
+                    <td id="oct-income">0</td>
+                    <td id="nov-income">0</td>
+                    <td id="dec-income">0</td>
+                </tr>
+                <tr>
+                    <td>지출</td>
+                    <td id="jan-expense">0</td>
+                    <td id="feb-expense">0</td>
+                    <td id="mar-expense">0</td>
+                    <td id="apr-expense">0</td>
+                    <td id="may-expense">0</td>
+                    <td id="jun-expense">0</td>
+                    <td id="jul-expense">0</td>
+                    <td id="aug-expense">0</td>
+                    <td id="sep-expense">0</td>
+                    <td id="oct-expense">0</td>
+                    <td id="nov-expense">0</td>
+                    <td id="dec-expense">0</td>
+                </tr>
+                <tr>
+                    <td>총계</td>
+                    <td id="jan-total">0</td>
+                    <td id="feb-total">0</td>
+                    <td id="mar-total">0</td>
+                    <td id="apr-total">0</td>
+                    <td id="may-total">0</td>
+                    <td id="jun-total">0</td>
+                    <td id="jul-total">0</td>
+                    <td id="aug-total">0</td>
+                    <td id="sep-total">0</td>
+                    <td id="oct-total">0</td>
+                    <td id="nov-total">0</td>
+                    <td id="dec-total">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import {getUserInfo} from '/js/getUserInfo.js';
+
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    let userId = '';
+    let nickname = '';
+    let email = '';
+
+    let currentYear;
+
+    let incomeExpenseChart;
+
+    window.onload = function () {
+        getUserInfo(accessToken).then(user => {
+            userId = user.userId;
+            email = user.email;
+            nickname = user.nickname;
+        });
+        const now = new Date();
+        currentYear = now.getFullYear();
+        document.getElementById('year').value = currentYear;
+
+        summaryData(currentYear);
+    }
+
+    document.getElementById('prev-year').addEventListener('click', () => {
+        currentYear--;
+        document.getElementById('year').value = currentYear;
+        summaryData(currentYear);
+    });
+
+    document.getElementById('next-year').addEventListener('click', () => {
+        currentYear++;
+        document.getElementById('year').value = currentYear;
+        summaryData(currentYear);
+    });
+
+    function summaryData(year) {
+        fetch(`/api/transaction/annual?year=${year}`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("보고서를 불러오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                updateChart(data.data);
+                updateTable(data.data);
+
+                // 총 수입, 지출, 카운터 계산
+                let totalIncome = 0;
+                let totalExpense = 0;
+
+                Object.keys(data.data.monthly).forEach(month => {
+                    const { income, expense } = data.data.monthly[month];
+                    totalIncome += income;
+                    totalExpense += expense;
+                });
+
+                // summary 표시
+                displaySummary(totalIncome, totalExpense);
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+
+    function updateChart(data) {
+        const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+        const monthlyData = data.monthly;
+
+        // 월 이름을 한글로 변환
+        const labels = [
+            '1월', '2월', '3월', '4월', '5월', '6월',
+            '7월', '8월', '9월', '10월', '11월', '12월'
+        ];
+
+        const incomeData = labels.map((_, index) => monthlyData[Object.keys(monthlyData)[index]].income);
+        const expenseData = labels.map((_, index) => monthlyData[Object.keys(monthlyData)[index]].expense);
+
+        // 기존 차트가 존재하면 파괴
+        if (incomeExpenseChart) {
+            incomeExpenseChart.destroy();
+        }
+
+        // 새로운 차트 생성
+        incomeExpenseChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '수입',
+                        data: incomeData,
+                        backgroundColor: '#ff647b',
+                    },
+                    {
+                        label: '지출',
+                        data: expenseData,
+                        backgroundColor: '#1f88ff',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function updateTable(data) {
+        const monthlyData = data.monthly;
+
+        Object.keys(monthlyData).forEach(month => {
+            const {income, expense, total} = monthlyData[month];
+            const monthKey = month.toLowerCase().slice(0, 3);
+
+            document.getElementById(`${monthKey}-income`).innerText = (income === 0) ? "" : income + "원";
+            document.getElementById(`${monthKey}-expense`).innerText = (expense === 0) ? "" : expense + "원";
+            document.getElementById(`${monthKey}-total`).innerText = (total === 0) ? "" : total + "원";
+        });
+    }
+
+    function displaySummary(totalIncome, totalExpense) {
+        const summaryDiv = document.getElementById('summary');
+
+        const totalAmount = totalIncome - totalExpense;
+
+        const totalClass = totalAmount >= 0 ? 'income' : 'expense';
+
+        summaryDiv.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 50px;">
+            <p>전체: <span class="${totalClass}"><strong>${totalAmount.toLocaleString()} 원</strong></span></p>
+            <p>수입: <span class="income"><strong>${totalIncome.toLocaleString()} 원</strong></span></p>
+            <p>지출: <span class="expense"><strong>${totalExpense.toLocaleString()} 원</strong></span></p>
+        </div>
+    `;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/scripts.js"></script>
+</body>

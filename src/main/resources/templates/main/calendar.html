@@ -463,16 +463,15 @@
             userId = user.userId;
             email = user.email;
             nickname = user.nickname;
-
-            const now = new Date();
-            currentYear = now.getFullYear();
-            currentMonth = now.getMonth() + 1;
-            document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
-            createCalendar(currentYear, currentMonth);
-
-            getTransactionList(`${currentYear}-${String(currentMonth).padStart(2, '0')}-01`,
-                `${currentYear}-${String(currentMonth).padStart(2, '0')}-${getDaysInMonth(currentYear, currentMonth)}`);
         });
+        const now = new Date();
+        currentYear = now.getFullYear();
+        currentMonth = now.getMonth() + 1;
+        document.getElementById('monthYear').value = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+        createCalendar(currentYear, currentMonth);
+
+        getTransactionList(`${currentYear}-${String(currentMonth).padStart(2, '0')}-01`,
+            `${currentYear}-${String(currentMonth).padStart(2, '0')}-${getDaysInMonth(currentYear, currentMonth)}`);
     }
 
     function getTransactionList(startDate, endDate) {

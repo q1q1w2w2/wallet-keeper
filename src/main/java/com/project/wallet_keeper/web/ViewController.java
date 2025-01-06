@@ -37,4 +37,9 @@ public class ViewController {
     public String budgetPage() {
         return "main/budget";
     }
+
+    @GetMapping("/summary")
+    public String summaryPage() {
+        return "main/summary";
+    }
 }
