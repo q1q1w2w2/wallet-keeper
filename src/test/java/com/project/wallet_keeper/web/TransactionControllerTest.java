@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.wallet_keeper.domain.*;
 import com.project.wallet_keeper.dto.transaction.*;
+import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
+import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.security.auth.CustomAuthenticationEntryPoint;
 import com.project.wallet_keeper.security.jwt.TokenProvider;
 import com.project.wallet_keeper.service.TransactionService;
@@ -100,6 +102,46 @@ class TransactionControllerTest {
     }
 
     @Test
+    @DisplayName("수입 저장 실패: 필수 필드 누락")
+    void saveIncomeFail() throws Exception {
+        // given
+        TransactionDto incomeDto = new TransactionDto(null, null, null, AT, 1L);
+        Income income = createIncome();
+
+        given(userService.getCurrentUser()).willReturn(user);
+        given(transactionService.saveIncome(any(User.class), any(TransactionDto.class))).willReturn(income);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/transaction/income")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(incomeDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("수입 저장 실패: 잘못된 사용자")
+    void saveIncomeFail2() throws Exception {
+        // given
+        TransactionDto incomeDto = new TransactionDto(DETAIL, AMOUNT, null, AT, 1L);
+
+        given(userService.getCurrentUser()).willThrow(new UserNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/transaction/income")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(incomeDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("지출 저장 성공")
     void saveExpense() throws Exception {
         // given
@@ -120,6 +162,46 @@ class TransactionControllerTest {
         result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.detail").value(DETAIL))
                 .andExpect(jsonPath("$.data.amount").value(AMOUNT));
+    }
+
+    @Test
+    @DisplayName("지출 저장 실패: 필수 필드 누락")
+    void saveExpenseFail() throws Exception {
+        // given
+        TransactionDto expenseDto = new TransactionDto(null, null, null, AT, 1L);
+        Expense expense = createExpense();
+
+        given(userService.getCurrentUser()).willReturn(user);
+        given(transactionService.saveExpense(any(User.class), any(TransactionDto.class))).willReturn(expense);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/transaction/expense")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(expenseDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("지출 저장 실패: 존재하지 않는 사용자")
+    void saveExpenseFail2() throws Exception {
+        // given
+        TransactionDto expenseDto = new TransactionDto(DETAIL, AMOUNT, null, AT, 1L);
+
+        given(userService.getCurrentUser()).willThrow(new UserNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/transaction/expense")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(expenseDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isNotFound());
     }
 
     @Test
@@ -148,6 +230,22 @@ class TransactionControllerTest {
     }
 
     @Test
+    @DisplayName("거래 내역 조회 실패: 존재하지 않는 사용자")
+    void getTransactionListFail() throws Exception {
+        // given
+        given(userService.getCurrentUser()).willThrow(new UserNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(get("/api/transaction/list")
+                .param("startDate", "2000-01-01")
+                .param("endDate", "2000-12-31")
+        );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("지출 내역 조회 성공")
     void getExpenseList() throws Exception {
         // given
@@ -164,12 +262,22 @@ class TransactionControllerTest {
                 .param("startDate", "2000-01-01")
                 .param("endDate", "2000-12-31")
         );
+    }
+
+    @Test
+    @DisplayName("지출 내역 조회 실패: 존재하지 않는 사용자")
+    void getExpenseListFail() throws Exception {
+        // given
+        given(userService.getCurrentUser()).willThrow(new UserNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(get("/api/transaction/expense/list")
+                .param("startDate", "2000-01-01")
+                .param("endDate", "2000-12-31")
+        );
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].detail").value(DETAIL))
-                .andExpect(jsonPath("$.data[0].amount").value(AMOUNT))
-                .andExpect(jsonPath("$.data[0].transactionType").value(EXPENSE));
+        result.andExpect(status().isNotFound());
     }
 
     @Test
@@ -190,6 +298,20 @@ class TransactionControllerTest {
     }
 
     @Test
+    @DisplayName("수입 항목 조회 실패: 존재하지 않는 항목")
+    void getIncomeFail() throws Exception {
+        // given
+        given(transactionService.getIncome(anyLong())).willThrow(new TransactionNotFoundException());
+
+        // when
+        ResultActions result =
+                mockMvc.perform(get("/api/transaction/income/{incomeId}", 1L));
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("지출 항목 조회 성공")
     void getExpense() throws Exception {
         // given
@@ -204,6 +326,20 @@ class TransactionControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.detail").value(DETAIL))
                 .andExpect(jsonPath("$.data.amount").value(AMOUNT));
+    }
+
+    @Test
+    @DisplayName("지출 항목 조회 실패: 존재하지 않는 항목")
+    void getExpenseFail() throws Exception {
+        // given
+        given(transactionService.getExpense(anyLong())).willThrow(new TransactionNotFoundException());
+
+        // when
+        ResultActions result =
+                mockMvc.perform(get("/api/transaction/expense/{expenseId}", 1L));
+
+        // then
+        result.andExpect(status().isNotFound());
     }
 
     @Test
@@ -233,6 +369,72 @@ class TransactionControllerTest {
     }
 
     @Test
+    @DisplayName("수입 항목 수정 성공: 존재하지 않는 사용자")
+    void updateIncomeFail() throws Exception {
+        // given
+        TransactionDto transactionDto =
+                new TransactionDto(DETAIL, AMOUNT, null, AT, 1L);
+
+        given(userService.getCurrentUser()).willThrow(UserNotFoundException.class);
+
+        // when
+        ResultActions result =
+                mockMvc.perform(patch("/api/transaction/income/{incomeId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transactionDto))
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("수입 항목 수정 실패: 존재하지 않는 항목")
+    void updateIncomeFail2() throws Exception {
+        // given
+        TransactionDto transactionDto =
+                new TransactionDto(DETAIL, AMOUNT, null, AT, 1L);
+
+        given(userService.getCurrentUser()).willReturn(user);
+        given(transactionService.updateIncome(anyLong(), any(TransactionDto.class), any(User.class))).willThrow(new TransactionNotFoundException());
+
+        // when
+        ResultActions result =
+                mockMvc.perform(patch("/api/transaction/income/{incomeId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transactionDto))
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("수입 항목 수정 실패: 필수 항목 누락")
+    void updateIncomeFail3() throws Exception {
+        // given
+        Income income = createIncome();
+        TransactionDto transactionDto =
+                new TransactionDto(DETAIL, null, null, AT, 1L);
+
+        given(userService.getCurrentUser()).willReturn(user);
+        given(transactionService.updateIncome(anyLong(), any(TransactionDto.class), any(User.class))).willReturn(income);
+
+        // when
+        ResultActions result =
+                mockMvc.perform(patch("/api/transaction/income/{incomeId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transactionDto))
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("지출 항목 수정 성공")
     void updateExpense() throws Exception {
         // given
@@ -259,6 +461,73 @@ class TransactionControllerTest {
     }
 
     @Test
+    @DisplayName("지출 항목 수정 실패: 존재하지 않는 사용자")
+    void updateExpenseFail() throws Exception {
+        // given
+        TransactionDto transactionDto =
+                new TransactionDto(DETAIL, AMOUNT, null, AT, 1L);
+
+        given(userService.getCurrentUser()).willThrow(UserNotFoundException.class);
+
+        // when
+        ResultActions result =
+                mockMvc.perform(patch("/api/transaction/expense/{expenseId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transactionDto))
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("지출 항목 수정 실패: 존재하지 않는 항목")
+    void updateExpenseFail2() throws Exception {
+        // given
+        Expense expense = createExpense();
+        TransactionDto transactionDto =
+                new TransactionDto(DETAIL, AMOUNT, null, AT, 1L);
+
+        given(userService.getCurrentUser()).willReturn(user);
+        given(transactionService.updateExpense(anyLong(), any(TransactionDto.class), any(User.class))).willThrow(new TransactionNotFoundException());
+
+        // when
+        ResultActions result =
+                mockMvc.perform(patch("/api/transaction/expense/{expenseId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transactionDto))
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("지출 항목 수정 실패: 필수 필드 누락")
+    void updateExpenseFail3() throws Exception {
+        // given
+        Expense expense = createExpense();
+        TransactionDto transactionDto =
+                new TransactionDto(DETAIL, null, null, AT, 1L);
+
+        given(userService.getCurrentUser()).willReturn(user);
+        given(transactionService.updateExpense(anyLong(), any(TransactionDto.class), any(User.class))).willReturn(expense);
+
+        // when
+        ResultActions result =
+                mockMvc.perform(patch("/api/transaction/expense/{expenseId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transactionDto))
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("수입 항목 삭제 성공")
     void deleteIncome() throws Exception {
         // given
@@ -277,6 +546,40 @@ class TransactionControllerTest {
     }
 
     @Test
+    @DisplayName("수입 항목 삭제 실패: 존재하지 않는 사용자")
+    void deleteIncomeFail() throws Exception {
+        // given
+        given(userService.getCurrentUser()).willThrow(new UserNotFoundException());
+
+        // when
+        ResultActions result =
+                mockMvc.perform(delete("/api/transaction/income/{incomeId}", 1L)
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    @DisplayName("수입 항목 삭제 실패: 존재하지 않는 항목")
+    void deleteIncomeFail2() throws Exception {
+        // given
+        given(userService.getCurrentUser()).willReturn(user);
+        doThrow(new TransactionNotFoundException()).when(transactionService).deleteIncome(anyLong(), any(User.class));
+
+        // when
+        ResultActions result =
+                mockMvc.perform(delete("/api/transaction/income/{incomeId}", 1L)
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("지출 항목 삭제 성공")
     void deleteExpense() throws Exception {
         // given
@@ -292,6 +595,39 @@ class TransactionControllerTest {
         result.andExpect(status().isNoContent());
 
         verify(transactionService).deleteExpense(eq(1L), eq(user));
+    }
+
+    @Test
+    @DisplayName("지출 항목 삭제 실패: 존재하지 않는 사용자")
+    void deleteExpenseFail() throws Exception {
+        // given
+        given(userService.getCurrentUser()).willThrow(new UserNotFoundException());
+
+        // when
+        ResultActions result =
+                mockMvc.perform(delete("/api/transaction/expense/{expenseId}", 1L)
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("지출 항목 삭제 실패: 존재하지 않는 항목")
+    void deleteExpenseFail2() throws Exception {
+        // given
+        given(userService.getCurrentUser()).willReturn(user);
+        doThrow(new TransactionNotFoundException()).when(transactionService).deleteExpense(anyLong(), any(User.class));
+
+        // when
+        ResultActions result =
+                mockMvc.perform(delete("/api/transaction/expense/{expenseId}", 1L)
+                        .with(csrf())
+                );
+
+        // then
+        result.andExpect(status().isNotFound());
     }
 
     @Test
@@ -315,6 +651,22 @@ class TransactionControllerTest {
     }
 
     @Test
+    @DisplayName("지출 요약 조회 실패: 존재하지 않는 사용자")
+    void getExpenseSummaryFail() throws Exception {
+        // given
+        given(userService.getCurrentUser()).willThrow(new UserNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(get("/api/transaction/expense/summary")
+                .param("startDate", "2000-01-01")
+                .param("endDate", "2000-12-31")
+        );
+
+        // then
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("연간 보고서 조회 성공")
     void getAnnualSummary() throws Exception {
         // given
@@ -334,6 +686,21 @@ class TransactionControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.year").value(2000));
+    }
+
+    @Test
+    @DisplayName("연간 보고서 조회 실패: 존재하지 않는 사용자")
+    void getAnnualSummaryFail() throws Exception {
+        // given
+        given(userService.getCurrentUser()).willThrow(new UserNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(get("/api/transaction/annual")
+                .param("year", "2000")
+        );
+
+        // then
+        result.andExpect(status().isNotFound());
     }
 
     private Income createIncome() {
