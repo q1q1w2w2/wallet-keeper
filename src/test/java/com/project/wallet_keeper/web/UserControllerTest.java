@@ -12,6 +12,7 @@ import com.project.wallet_keeper.security.jwt.TokenProvider;
 import com.project.wallet_keeper.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -38,7 +39,7 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
+    @InjectMocks
     private UserController userController;
 
     @MockitoBean
