@@ -72,7 +72,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.email").value(user.getEmail()))
                 .andExpect(jsonPath("$.data.nickname").value(user.getNickname()))
                 .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."));
-
     }
 
     @Test
