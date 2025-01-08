@@ -31,4 +31,8 @@ public class IncomeCategory {
     public void delete() {
         this.isDeleted = true;
     }
+
+    public void active() {
+        this.isDeleted = false;
+    }
 }

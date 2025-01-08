@@ -31,4 +31,8 @@ public class ExpenseCategory {
     public void delete() {
         this.isDeleted = true;
     }
+
+    public void active() {
+        this.isDeleted = false;
+    }
 }
