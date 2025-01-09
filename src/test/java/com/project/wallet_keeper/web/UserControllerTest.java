@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @WithMockUser
+@DisplayName("UserController 테스트")
 class UserControllerTest {
 
     @Autowired
@@ -52,7 +53,7 @@ class UserControllerTest {
     private CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Test
-    @DisplayName("회원가입")
+    @DisplayName("회원가입 성공")
     void signUp() throws Exception {
         // given
         User user = createUser();
@@ -94,7 +95,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("현재 로그인한 사용자 정보")
+    @DisplayName("현재 로그인한 사용자 정보 조회 성공")
     void getCurrentUser() throws Exception {
         // given
         User currentUser = createUser();
@@ -133,7 +134,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("현재 로그인한 사용자 정보 수정")
+    @DisplayName("현재 로그인한 사용자 정보 수정 성공")
     void updateCurrentUser() throws Exception {
         // given
         User currentUser = createUser();
@@ -178,7 +179,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("현재 로그인한 사용자 탈퇴")
+    @DisplayName("현재 로그인한 사용자 탈퇴 성공")
     void deleteCurrentUser() throws Exception {
         // given
         User currentUser = createUser();
@@ -201,7 +202,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("로그인한 사용자 비밀번호 변경")
+    @DisplayName("로그인한 사용자 비밀번호 변경 성공")
     void updatePassword() throws Exception {
         // given
         User currentUser = createUser();
@@ -248,7 +249,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("비밀번호 초기화")
+    @DisplayName("비밀번호 초기화 성공")
     void resetPassword() throws Exception {
         // given
         User currentUser = createUser();

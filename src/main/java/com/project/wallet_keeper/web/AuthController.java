@@ -64,7 +64,7 @@ public class AuthController {
     }
 
     @PostMapping("/oauth")
-    public ResponseEntity<ApiResponse<TokenDto>> getAccessToken(@RequestBody OAuthDto oAuthDto) throws Exception {
+    public ResponseEntity<ApiResponse<TokenDto>> getOAuthAccessToken(@RequestBody OAuthDto oAuthDto) throws Exception {
         TokenDto tokens = authService.oAuthSignupAndLogin(oAuthDto);
 
         ApiResponse<TokenDto> response = ApiResponse.success(OK, "로그인 되었습니다.", tokens);
