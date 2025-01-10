@@ -589,7 +589,7 @@
 
             transactionRow.innerHTML = `
             <td>${transaction.detail}</td>
-            <td>${transaction.amount}</td>
+            <td>${transaction.amount} 원</td>
             <td>${transaction.description}</td>
             <td>${transaction.transactionCategory}</td>
             <td>${new Date(transaction.transactionAt).toLocaleDateString()}</td>
@@ -777,6 +777,11 @@
         const category = document.getElementById('category').value;
         const transactionAt = document.getElementById('transaction-at').value;
 
+        if (!detail || !category || !amount || !transactionAt) {
+            alert("설명 필드를 제외한 모든 필드를 입력해 주세요.");
+            return;
+        }
+
         const transactionData = {
             detail: detail,
             amount: amount,
@@ -823,6 +828,11 @@
         const description = document.getElementById('description').value;
         const category = document.getElementById('category').value;
         const transactionAt = document.getElementById('transaction-at').value;
+
+        if (!detail || !category || !amount || !transactionAt) {
+            alert("설명 필드를 제외한 모든 필드를 입력해 주세요.");
+            return;
+        }
 
         const transactionData = {
             detail: detail,

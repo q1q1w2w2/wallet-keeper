@@ -14,6 +14,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -139,20 +142,27 @@ public class TransactionScheduler {
     public void saveRegularIncome() {
         try {
             List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
+            LocalDate now = LocalDate.now();
+
             for (RegularIncome regularIncome : regularIncomes) {
+                LocalDateTime incomeAt = regularIncome.getIncomeAt();
+                int dayOfMonth = incomeAt.getDayOfMonth();
+
+                LocalDateTime nextIncomeDateTime = LocalDateTime.of(now.getYear(), now.getMonth(), dayOfMonth, 0, 0);
+
                 Income income = Income.builder()
                         .user(regularIncome.getUser())
                         .detail(regularIncome.getDetail())
                         .amount(regularIncome.getAmount())
                         .description(regularIncome.getDescription() != null ? regularIncome.getDescription() : "")
                         .incomeCategory(regularIncome.getIncomeCategory())
-                        .incomeAt(regularIncome.getIncomeAt())
+                        .incomeAt(nextIncomeDateTime)
                         .build();
 
                 incomeRepository.save(income);
             }
         } catch (Exception e) {
-            log.error("반복적인 수입 항목을 저장하던 중 오류가 발생했습니다: {}", e.getMessage());
+            log.error("정기 수입 항목을 저장하던 중 오류가 발생했습니다: {}", e.getMessage());
         }
 
     }
@@ -162,20 +172,27 @@ public class TransactionScheduler {
     public void saveRegularExpense() {
         try {
             List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
+            LocalDate now = LocalDate.now();
+
             for (RegularExpense regularExpense : regularExpenses) {
+                LocalDateTime incomeAt = regularExpense.getExpenseAt();
+                int dayOfMonth = incomeAt.getDayOfMonth();
+
+                LocalDateTime nextIncomeDateTime = LocalDateTime.of(now.getYear(), now.getMonth(), dayOfMonth, 0, 0);
+
                 Expense expense = Expense.builder()
                         .user(regularExpense.getUser())
                         .detail(regularExpense.getDetail())
                         .amount(regularExpense.getAmount())
                         .description(regularExpense.getDescription() != null ? regularExpense.getDescription() : "")
                         .expenseCategory(regularExpense.getExpenseCategory())
-                        .expenseAt(regularExpense.getExpenseAt())
+                        .expenseAt(nextIncomeDateTime)
                         .build();
 
                 expenseRepository.save(expense);
             }
         } catch (Exception e) {
-            log.error("반복적인 지출 항목을 저장하던 중 오류가 발생했습니다: {}", e.getMessage());
+            log.error("정기 지출 항목을 저장하던 중 오류가 발생했습니다: {}", e.getMessage());
         }
     }
 }
