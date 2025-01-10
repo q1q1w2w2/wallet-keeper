@@ -4,7 +4,9 @@ import com.project.wallet_keeper.domain.*;
 import com.project.wallet_keeper.dto.transaction.RegularTransactionResponseDto;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
+import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
+import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
 import com.project.wallet_keeper.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,6 +76,62 @@ public class TransactionScheduler {
                 ).sorted(Comparator.comparing(RegularTransactionResponseDto::getTransactionAt).reversed())
                 .toList();
         return regularTransactions;
+    }
+
+    @Transactional
+    public void deleteRegularIncome(User user, Long regularIncomeId) {
+        RegularIncome regularIncome = getRegularIncome(regularIncomeId);
+        validateOwnership(user, regularIncome);
+        regularIncomeRepository.delete(regularIncome);
+    }
+
+    @Transactional
+    public void deleteRegularExpense(User user, Long regularExpenseId) {
+        RegularExpense regularExpense = getRegularExpense(regularExpenseId);
+        validateOwnership(user, regularExpense);
+        regularExpenseRepository.delete(regularExpense);
+    }
+
+    @Transactional
+    public RegularIncome updateRegularIncome(User user, Long regularIncomeId, TransactionDto transactionDto) {
+        RegularIncome regularIncome = getRegularIncome(regularIncomeId);
+
+        validateOwnership(user, regularIncome);
+
+        Long categoryId = transactionDto.getTransactionCategoryId();
+        IncomeCategory category = incomeCategoryRepository.findById(categoryId)
+                .orElseThrow(TransactionCategoryNotFoundException::new);
+
+        return regularIncome.update(transactionDto.getDetail(), transactionDto.getAmount(), transactionDto.getDescription(), transactionDto.getTransactionAt(), category);
+    }
+
+    @Transactional
+    public RegularExpense updateRegularExpense(User user, Long regularExpenseId, TransactionDto transactionDto) {
+        RegularExpense regularExpense = getRegularExpense(regularExpenseId);
+
+        validateOwnership(user, regularExpense);
+
+        Long categoryId = transactionDto.getTransactionCategoryId();
+        ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
+                .orElseThrow(TransactionCategoryNotFoundException::new);
+
+        return regularExpense.update(transactionDto.getDetail(), transactionDto.getAmount(), transactionDto.getDescription(), transactionDto.getTransactionAt(), category);
+    }
+
+    private RegularIncome getRegularIncome(Long regularIncomeId) {
+        return regularIncomeRepository.findById(regularIncomeId)
+                .orElseThrow(TransactionNotFoundException::new);
+    }
+
+    private RegularExpense getRegularExpense(Long regularExpenseId) {
+        return regularExpenseRepository.findById(regularExpenseId)
+                .orElseThrow(TransactionNotFoundException::new);
+    }
+
+    private void validateOwnership(User user, Transaction transaction) {
+        if (!transaction.getUser().equals(user)) {
+            throw new InvalidTransactionOwnerException();
+        }
     }
 
     @Transactional

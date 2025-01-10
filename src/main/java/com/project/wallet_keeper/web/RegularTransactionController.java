@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,7 +32,7 @@ public class RegularTransactionController {
 
     @PostMapping("/income")
     public ResponseEntity<ApiResponse<RegularTransactionResponseDto>> saveRegularIncome(@Valid @RequestBody TransactionDto incomeDto) {
-        User user = userService.getCurrentUser();
+        User user = getCurrentUser();
         RegularIncome regularIncome = transactionScheduler.saveRegularIncome(user, incomeDto);
 
         return createResponse(CREATED, new RegularTransactionResponseDto(regularIncome));
@@ -43,7 +40,7 @@ public class RegularTransactionController {
 
     @PostMapping("/expense")
     public ResponseEntity<ApiResponse<RegularTransactionResponseDto>> saveRegularExpense(@Valid @RequestBody TransactionDto incomeDto) {
-        User user = userService.getCurrentUser();
+        User user = getCurrentUser();
         RegularExpense regularExpense = transactionScheduler.saveRegularExpense(user, incomeDto);
 
         return createResponse(CREATED, new RegularTransactionResponseDto(regularExpense));
@@ -51,10 +48,46 @@ public class RegularTransactionController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<RegularTransactionResponseDto>>> getRegularTransactions() {
-        User user = userService.getCurrentUser();
+        User user = getCurrentUser();
         List<RegularTransactionResponseDto> regularTransactions = transactionScheduler.getRegularTransactions(user);
 
         return createResponse(OK, regularTransactions);
+    }
+
+    @PatchMapping("/income/{incomeId}")
+    public ResponseEntity<ApiResponse<Object>> updateRegularIncome(@PathVariable Long incomeId, @Valid @RequestBody TransactionDto transactionDto) {
+        User user = getCurrentUser();
+        RegularIncome regularIncome = transactionScheduler.updateRegularIncome(user, incomeId, transactionDto);
+
+        return createResponse(OK, new RegularTransactionResponseDto(regularIncome));
+    }
+
+    @PatchMapping("/expense/{expenseId}")
+    public ResponseEntity<ApiResponse<Object>> updateRegularExpense(@PathVariable Long expenseId, @Valid @RequestBody TransactionDto transactionDto) {
+        User user = getCurrentUser();
+        RegularExpense regularExpense = transactionScheduler.updateRegularExpense(user, expenseId, transactionDto);
+
+        return createResponse(OK, new RegularTransactionResponseDto(regularExpense));
+    }
+
+    @DeleteMapping("/income/{incomeId}")
+    public ResponseEntity<ApiResponse<Object>> deleteRegularIncome(@PathVariable Long incomeId) {
+        User user = getCurrentUser();
+        transactionScheduler.deleteRegularIncome(user, incomeId);
+
+        return createResponse(NO_CONTENT);
+    }
+
+    @DeleteMapping("/expense/{expenseId}")
+    public ResponseEntity<ApiResponse<Object>> deleteRegularExpense(@PathVariable Long expenseId) {
+        User user = getCurrentUser();
+        transactionScheduler.deleteRegularExpense(user, expenseId);
+
+        return createResponse(NO_CONTENT);
+    }
+
+    private User getCurrentUser() {
+        return userService.getCurrentUser();
     }
 
     private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {
@@ -62,5 +95,9 @@ public class RegularTransactionController {
         return ResponseEntity.status(status).body(response);
     }
 
+    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status) {
+        ApiResponse<T> response = ApiResponse.success(status);
+        return ResponseEntity.status(status).body(response);
+    }
 
 }

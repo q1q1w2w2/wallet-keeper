@@ -118,8 +118,7 @@ public class TransactionService {
 
     @Transactional
     public Income updateIncome(Long incomeId, TransactionDto incomeDto, User user) {
-        Income income = incomeRepository.findById(incomeId)
-                .orElseThrow(TransactionNotFoundException::new);
+        Income income = getIncome(incomeId);
 
         checkTransactionOwnership(income, user);
 
@@ -131,8 +130,7 @@ public class TransactionService {
 
     @Transactional
     public Expense updateExpense(Long expenseId, TransactionDto expenseDto, User user) {
-        Expense expense = expenseRepository.findById(expenseId)
-                .orElseThrow(TransactionNotFoundException::new);
+        Expense expense = getExpense(expenseId);
 
         checkTransactionOwnership(expense, user);
 
@@ -144,8 +142,7 @@ public class TransactionService {
 
     @Transactional
     public void deleteIncome(Long incomeId, User user) {
-        Income income = incomeRepository.findById(incomeId)
-                .orElseThrow(TransactionNotFoundException::new);
+        Income income = getIncome(incomeId);
         checkTransactionOwnership(income, user);
 
         incomeRepository.delete(income);
@@ -153,8 +150,7 @@ public class TransactionService {
 
     @Transactional
     public void deleteExpense(Long expenseId, User user) {
-        Expense expense = expenseRepository.findById(expenseId)
-                .orElseThrow(TransactionNotFoundException::new);
+        Expense expense = getExpense(expenseId);
         checkTransactionOwnership(expense, user);
 
         expenseRepository.delete(expense);

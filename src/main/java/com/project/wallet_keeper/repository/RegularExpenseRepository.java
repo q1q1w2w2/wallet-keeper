@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RegularExpenseRepository extends JpaRepository<RegularExpense,Integer> {
+public interface RegularExpenseRepository extends JpaRepository<RegularExpense, Long> {
     List<RegularExpense> findAllByUser(User user);
 }
