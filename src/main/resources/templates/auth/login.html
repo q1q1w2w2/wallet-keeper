@@ -146,7 +146,6 @@
                     });
                 })
                 .then(data => {
-                    alert("로그인 되었습니다.");
                     localStorage.setItem('accessToken', data.data.accessToken);
                     localStorage.setItem('refreshToken', data.data.refreshToken);
 
