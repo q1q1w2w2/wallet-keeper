@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -71,6 +72,18 @@ public class TransactionScheduler {
     public List<RegularTransactionResponseDto> getRegularExpenses(User user) {
         List<RegularExpense> list = regularExpenseRepository.findAllByUser(user);
         return convertToDto(list);
+    }
+
+    public List<RegularTransactionResponseDto> getRegularTransactions(User user) {
+        List<RegularIncome> regularIncomes = regularIncomeRepository.findAllByUser(user);
+        List<RegularExpense> regularExpenses = regularExpenseRepository.findAllByUser(user);
+
+        List<RegularTransactionResponseDto> regularTransactions = Stream.concat(
+                        regularIncomes.stream().map(RegularTransactionResponseDto::new),
+                        regularExpenses.stream().map(RegularTransactionResponseDto::new)
+                ).sorted(Comparator.comparing(RegularTransactionResponseDto::getTransactionAt).reversed())
+                .toList();
+        return regularTransactions;
     }
 
     private List<RegularTransactionResponseDto> convertToDto(List<? extends Transaction> transactionList) {

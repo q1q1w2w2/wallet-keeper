@@ -49,6 +49,14 @@ public class RegularTransactionController {
         return createResponse(CREATED, new RegularTransactionResponseDto(regularExpense));
     }
 
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<RegularTransactionResponseDto>>> getRegularTransactions() {
+        User user = userService.getCurrentUser();
+        List<RegularTransactionResponseDto> regularTransactions = transactionScheduler.getRegularTransactions(user);
+
+        return createResponse(OK, regularTransactions);
+    }
+
     @GetMapping("/income")
     public ResponseEntity<ApiResponse<List<RegularTransactionResponseDto>>> getRegularIncomes() {
         User user = userService.getCurrentUser();
