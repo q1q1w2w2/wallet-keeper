@@ -64,16 +64,6 @@ public class TransactionScheduler {
         return regularExpenseRepository.save(regularExpense);
     }
 
-    public List<RegularTransactionResponseDto> getRegularIncomes(User user) {
-        List<RegularIncome> list = regularIncomeRepository.findAllByUser(user);
-        return convertToDto(list);
-    }
-
-    public List<RegularTransactionResponseDto> getRegularExpenses(User user) {
-        List<RegularExpense> list = regularExpenseRepository.findAllByUser(user);
-        return convertToDto(list);
-    }
-
     public List<RegularTransactionResponseDto> getRegularTransactions(User user) {
         List<RegularIncome> regularIncomes = regularIncomeRepository.findAllByUser(user);
         List<RegularExpense> regularExpenses = regularExpenseRepository.findAllByUser(user);
@@ -84,13 +74,6 @@ public class TransactionScheduler {
                 ).sorted(Comparator.comparing(RegularTransactionResponseDto::getTransactionAt).reversed())
                 .toList();
         return regularTransactions;
-    }
-
-    private List<RegularTransactionResponseDto> convertToDto(List<? extends Transaction> transactionList) {
-        return transactionList.stream()
-                .map(RegularTransactionResponseDto::new)
-                .sorted(Comparator.comparing(RegularTransactionResponseDto::getTransactionAt).reversed())
-                .toList();
     }
 
     @Transactional

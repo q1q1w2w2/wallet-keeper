@@ -57,22 +57,6 @@ public class RegularTransactionController {
         return createResponse(OK, regularTransactions);
     }
 
-    @GetMapping("/income")
-    public ResponseEntity<ApiResponse<List<RegularTransactionResponseDto>>> getRegularIncomes() {
-        User user = userService.getCurrentUser();
-        List<RegularTransactionResponseDto> regularIncomes = transactionScheduler.getRegularIncomes(user);
-
-        return createResponse(OK, regularIncomes);
-    }
-
-    @GetMapping("/expense")
-    public ResponseEntity<ApiResponse<List<RegularTransactionResponseDto>>> getRegularExpenses() {
-        User user = userService.getCurrentUser();
-        List<RegularTransactionResponseDto> regularExpenses = transactionScheduler.getRegularExpenses(user);
-
-        return createResponse(OK, regularExpenses);
-    }
-
     private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {
         ApiResponse<T> response = ApiResponse.success(status, data);
         return ResponseEntity.status(status).body(response);
