@@ -5,6 +5,9 @@ import com.project.wallet_keeper.dto.auth.LoginDto;
 import com.project.wallet_keeper.dto.auth.OAuthDto;
 import com.project.wallet_keeper.dto.auth.RefreshTokenDto;
 import com.project.wallet_keeper.dto.auth.TokenDto;
+import com.project.wallet_keeper.exception.auth.OAuthUserException;
+import com.project.wallet_keeper.exception.auth.TokenValidationException;
+import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.security.auth.CustomAuthenticationEntryPoint;
 import com.project.wallet_keeper.security.jwt.TokenProvider;
 import com.project.wallet_keeper.service.AuthService;
@@ -15,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -77,6 +81,42 @@ class AuthControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 실패: 잘못된 아이디 또는 비밀번호")
+    void loginFail() throws Exception {
+        // given
+        LoginDto loginDto = new LoginDto(email, password);
+        given(authService.login(any())).willThrow(BadCredentialsException.class);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("로그인 실패: OAuth 사용자")
+    void loginFail2() throws Exception {
+        // given
+        LoginDto loginDto = new LoginDto(email, password);
+        given(authService.login(any())).willThrow(OAuthUserException.class);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @DisplayName("로그아웃 성공")
     void logout() throws Exception {
         // given
@@ -91,6 +131,26 @@ class AuthControllerTest {
 
         // then
         result.andExpect(status().isOk());
+
+        verify(authService).logout(any(TokenDto.class));
+    }
+
+    @Test
+    @DisplayName("로그아웃 실패: 유효하지 않은 토큰")
+    void logoutFail() throws Exception {
+        // given
+        TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
+        doThrow(new TokenValidationException()).when(authService).logout(any(TokenDto.class));
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/auth/logout")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tokenDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isUnauthorized());
 
         verify(authService).logout(any(TokenDto.class));
     }
@@ -111,6 +171,24 @@ class AuthControllerTest {
 
         // then
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 실패: 유효하지 않은 토큰")
+    void refreshTokenFail() throws Exception {
+        // given
+        RefreshTokenDto refreshTokenDto = new RefreshTokenDto(refreshToken);
+        given(authService.generateNewAccessTokens(any())).willThrow(TokenValidationException.class);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/auth/token/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(refreshTokenDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -150,5 +228,23 @@ class AuthControllerTest {
 
         // then
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("OAuth 회원가입 실패: 일반 회원가입 한 경우")
+    void getOAuthAccessTokenFail() throws Exception {
+        // given
+        OAuthDto oAuthDto = new OAuthDto(email, "name", "google", "false");
+        given(authService.oAuthSignupAndLogin(any())).willThrow(UserAlreadyExistException.class);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/auth/oauth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(oAuthDto))
+                .with(csrf())
+        );
+
+        // then
+        result.andExpect(status().isConflict());
     }
 }
