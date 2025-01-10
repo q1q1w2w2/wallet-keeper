@@ -95,51 +95,60 @@
     <div th:replace='~{fragments/fragments :: sidebar}'></div>
 
     <div class='content'>
-    <div class="options">
-        <button id="toggleUserInfo">회원 정보 수정</button>
-        <button id="togglePasswordChange">비밀번호 변경</button>
-        <button id="toggleAccountDeletion">회원 탈퇴</button>
-    </div>
-
-    <div id="userInfoSection" class="hidden">
-        <h2>회원 정보 수정</h2>
-        <div class="user-info">
-            <label for="email">이메일</label>
-            <input type="email" id="email" name="email" required disabled>
-            <label for="nickname">닉네임</label>
-            <input type="text" id="nickname" name="nickname" required>
-            <label for="birth">생일</label>
-            <input type="date" id="birth" name="birth" required>
-            <label for="created-at">가입일</label>
-            <input type="text" id="created-at" name="created-at" required disabled>
+        <div class="options">
+            <button id="toggleRegularTransaction">정기 거래 등록</button>
+            <button id="toggleUserInfo">회원 정보 수정</button>
+            <button id="togglePasswordChange">비밀번호 변경</button>
+            <button id="toggleAccountDeletion">회원 탈퇴</button>
         </div>
-        <button id="update-user-button">수정하기</button>
-    </div>
 
-    <div id="passwordChangeSection" class="hidden">
-        <h2>비밀번호 변경</h2>
-        <div class="user-info">
-            <label for="currentPassword">현재 비밀번호:</label>
-            <input type="password" id="currentPassword" name="currentPassword" required>
-            <label for="newPassword">새 비밀번호:</label>
-            <input type="password" id="newPassword" name="newPassword" required>
+        <div id="regularTransactionSection" class="hidden">
+            <h2>정기 거래 등록</h2>
+            <div class="regular-list">
+<!--                정기 거래 목록-->
+            </div>
+            <button id="regular-button">추가하기</button>
         </div>
-        <button id="change-password-button">변경 완료</button>
-    </div>
 
-    <div id="accountDeletionSection" class="hidden">
-        <h2>회원 탈퇴</h2>
-        <div class="user-info">
-            <label for="deletionReason">탈퇴 사유:</label>
-            <textarea id="deletionReason" name="deletionReason" required></textarea>
+        <div id="userInfoSection" class="hidden">
+            <h2>회원 정보 수정</h2>
+            <div class="user-info">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" required disabled>
+                <label for="nickname">닉네임</label>
+                <input type="text" id="nickname" name="nickname" required>
+                <label for="birth">생일</label>
+                <input type="date" id="birth" name="birth" required>
+                <label for="created-at">가입일</label>
+                <input type="text" id="created-at" name="created-at" required disabled>
+            </div>
+            <button id="update-user-button">수정하기</button>
         </div>
-        <button id="delete-account-button">탈퇴 완료</button>
+
+        <div id="passwordChangeSection" class="hidden">
+            <h2>비밀번호 변경</h2>
+            <div class="user-info">
+                <label for="currentPassword">현재 비밀번호:</label>
+                <input type="password" id="currentPassword" name="currentPassword" required>
+                <label for="newPassword">새 비밀번호:</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+            </div>
+            <button id="change-password-button">변경 완료</button>
+        </div>
+
+        <div id="accountDeletionSection" class="hidden">
+            <h2>회원 탈퇴</h2>
+            <div class="user-info">
+                <label for="deletionReason">탈퇴 사유:</label>
+                <textarea id="deletionReason" name="deletionReason" required></textarea>
+            </div>
+            <button id="delete-account-button">탈퇴 완료</button>
+        </div>
     </div>
-</div>
 </div>
 
 <script type="module">
-    import { getUserInfo } from '/js/getUserInfo.js';
+    import {getUserInfo} from '/js/getUserInfo.js';
 
     const accessToken = localStorage.getItem('accessToken');
 
@@ -165,6 +174,7 @@
     }
 
     function showSection(sectionId) {
+        document.getElementById('regularTransactionSection').classList.add('hidden');
         document.getElementById('userInfoSection').classList.add('hidden');
         document.getElementById('passwordChangeSection').classList.add('hidden');
         document.getElementById('accountDeletionSection').classList.add('hidden');
@@ -178,6 +188,12 @@
             button.classList.remove('active');
         });
     }
+
+    document.getElementById('toggleRegularTransaction').addEventListener('click', function () {
+        clearActiveButtons();
+        this.classList.add('active');
+        showSection('regularTransactionSection');
+    });
 
     document.getElementById('toggleUserInfo').addEventListener('click', function () {
         clearActiveButtons();
@@ -229,6 +245,7 @@
                 alert(error.message);
             });
     }
+
     document.getElementById('update-user-button').addEventListener('click', updateUserInfo);
 
     function updatePassword() {
@@ -244,7 +261,7 @@
             newPassword: newPassword
         };
 
-        fetch('/api/users/me/password',  {
+        fetch('/api/users/me/password', {
             method: 'PATCH',
             headers: {
                 'Content-type': 'application/json',
@@ -269,12 +286,13 @@
                 alert(error.message);
             });
     }
+
     document.getElementById('change-password-button').addEventListener('click', updatePassword);
 
     function deleteUser() {
         let reason = document.getElementById('deletionReason').value;
 
-        fetch('/api/users/me/status',  {
+        fetch('/api/users/me/status', {
             method: 'PATCH',
             headers: {
                 'Content-type': 'application/json',
@@ -300,6 +318,7 @@
                 alert(error.message);
             });
     }
+
     document.getElementById('delete-account-button').addEventListener('click', deleteUser);
 </script>
 
