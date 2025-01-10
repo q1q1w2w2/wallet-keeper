@@ -34,7 +34,6 @@
             color: #ff6254;
             border: 2px solid transparent;
             border-radius: 5px;
-            font-size: 16px;
             margin-right: 10px;
         }
 
@@ -78,12 +77,169 @@
             border-radius: 5px;
             padding: 12px;
             cursor: pointer;
-            font-size: 16px;
             transition: background-color 0.3s;
         }
 
         button:hover {
             background-color: #f85f52;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--header-bg-color);
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* 항목 추가 폼 */
+        #add-item-form {
+            position: absolute;
+            top: 62px;
+            right: 0px;
+            height: 100%;
+            width: 360px;
+            background-color: var(--white-background-color);
+            padding: 20px;
+            z-index: 1000;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #close-form {
+            cursor: pointer;
+            font-size: 36px;
+            color: var(--inactive-text-color);
+            margin-right: 10px;
+            align-self: center;
+        }
+
+        #add-item-form > div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            justify-content: flex-start;
+            height: 50px;
+
+        }
+
+        .toggle-button {
+            padding: 10px 70px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
+            cursor: pointer;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+
+        .toggle-button.active {
+            background-color: white;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .toggle-button:hover {
+            border-color: var(--hover-color);
+        }
+
+        #add-item-form label {
+            color: var(--inactive-text-color);
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="datetime-local"] {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: calc(100% - 22px);
+            margin-bottom: 0px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="datetime-local"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        #submit-item-button {
+            padding: 10px 140px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #submit-item-button:hover {
+            background-color: var(--hover-color);
+        }
+
+        #update-item-button {
+            padding: 10px 60px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #update-item-button:hover {
+            background-color: var(--hover-color);
+        }
+
+        #delete-item-button {
+            padding: 10px 60px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #delete-item-button:hover {
+            background-color: var(--hover-color);
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: calc(100% - 22px);
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            color: #333;
+        }
+
+        select option {
+            color: #333;
         }
     </style>
 </head>
@@ -104,10 +260,22 @@
 
         <div id="regularTransactionSection" class="hidden">
             <h2>정기 거래 등록</h2>
-            <div class="regular-list">
-<!--                정기 거래 목록-->
-            </div>
-            <button id="regular-button">추가하기</button>
+            <table id="regular-transaction-table">
+                <thead>
+                <tr>
+                    <th>내용</th>
+                    <th>금액</th>
+                    <th>상세</th>
+                    <th>카테고리</th>
+                    <th>날짜</th>
+                    <th>거래형태</th>
+                </tr>
+                </thead>
+                <tbody class="regular-list" id="regular-transaction-list">
+                <!-- 정기 거래 목록 -->
+                </tbody>
+            </table>
+            <button id="add-item-button">추가하기</button>
         </div>
 
         <div id="userInfoSection" class="hidden">
@@ -144,6 +312,50 @@
             </div>
             <button id="delete-account-button">탈퇴 완료</button>
         </div>
+
+        <!-- 추가/수정 폼 -->
+        <div id="add-item-form" class="hidden">
+            <input type="hidden" id="transaction-type" value="INCOME"/>
+            <input type="hidden" id="transaction-id" value=""/>
+
+            <div style="display: flex; align-items: center;">
+                <span id="close-form">&times;</span>
+                <h3 id="form-title" style="margin: 0; margin-left: 10px;">항목 추가</h3>
+            </div>
+
+            <div>
+                <button id="income-button" class="toggle-button active">수입</button>
+                <button id="expense-button" class="toggle-button">지출</button>
+            </div>
+
+            <label for="transaction-at">일시</label><br>
+            <input type="datetime-local" id="transaction-at" required>
+            <br><br>
+
+            <label for="detail">내용</label><br>
+            <input type="text" id="detail" required>
+            <br><br>
+
+            <label for="amount">금액</label><br>
+            <input type="number" id="amount" required>
+            <br><br>
+
+            <label for="description">설명</label><br>
+            <input type="text" id="description" required>
+            <br><br>
+
+            <label for="category">카테고리</label><br>
+            <select id="category" required>
+                <option value="" disabled selected>카테고리 선택</option>
+                <!-- 카테고리 -->
+            </select>
+            <br><br>
+
+            <button id="submit-item-button">추가하기</button>
+            <button id="update-item-button" class="hidden">수정하기</button>
+            <button id="delete-item-button" class="hidden">삭제하기</button>
+        </div>
+
     </div>
 </div>
 
@@ -158,6 +370,11 @@
     let birth = '';
     let createdAt = '';
 
+    let incomeCategories;
+    let expenseCategories;
+
+    let currentDateTime;
+
     window.onload = function () {
         getUserInfo(accessToken).then(user => {
             userId = user.userId;
@@ -171,6 +388,15 @@
             document.getElementById('birth').value = birth;
             document.getElementById('created-at').value = createdAt;
         });
+
+        const now = new Date();
+        const koreaTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+        currentDateTime = koreaTime.toISOString().slice(0, 16);
+        document.getElementById('transaction-at').value = currentDateTime;
+
+        fetchRegularTransactions();
+        getIncomeCategory();
+        getExpenseCategory();
     }
 
     function showSection(sectionId) {
@@ -193,24 +419,28 @@
         clearActiveButtons();
         this.classList.add('active');
         showSection('regularTransactionSection');
+        resetAddItemForm();
     });
 
     document.getElementById('toggleUserInfo').addEventListener('click', function () {
         clearActiveButtons();
         this.classList.add('active');
         showSection('userInfoSection');
+        resetAddItemForm();
     });
 
     document.getElementById('togglePasswordChange').addEventListener('click', function () {
         clearActiveButtons();
         this.classList.add('active');
         showSection('passwordChangeSection');
+        resetAddItemForm();
     });
 
     document.getElementById('toggleAccountDeletion').addEventListener('click', function () {
         clearActiveButtons();
         this.classList.add('active');
         showSection('accountDeletionSection');
+        resetAddItemForm();
     });
 
 
@@ -320,6 +550,216 @@
     }
 
     document.getElementById('delete-account-button').addEventListener('click', deleteUser);
+
+    function fetchRegularTransactions() {
+        fetch('/api/transaction/scheduler', {
+            method: 'GET',
+                headers: {
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("정기 거래 목록을 가져오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                renderRegularTransactions(data.data);
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+
+    function renderRegularTransactions(transactions) {
+        const transactionListElement = document.getElementById('regular-transaction-list');
+        transactionListElement.innerHTML = '';
+
+        transactions.forEach(transaction => {
+            const transactionRow = document.createElement('tr');
+            transactionListElement.appendChild(transactionRow);
+            transactionRow.innerHTML = `
+                <td>${transaction.detail}</td>
+                <td>${transaction.amount}</td>
+                <td>${transaction.description}</td>
+                <td>${transaction.transactionCategory}</td>
+                <td>${new Date(transaction.transactionAt).toLocaleDateString()}</td>
+                <td>${transaction.transactionType === 'INCOME' ? '수입' : "지출"}</td>
+            `;
+        });
+    }
+
+    // 수입 카테고리 불러오기
+    function getIncomeCategory() {
+        fetch(`/api/transaction/category/income`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("카테고리를 불러오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                incomeCategories = data.data;
+                populateCategories();
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+
+    // 지출 카테고리 불러오기
+    function getExpenseCategory() {
+        fetch(`/api/transaction/category/expense`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("카테고리를 불러오는 데 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                expenseCategories = data.data;
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    }
+
+    function populateCategories() {
+        const categorySelect = document.getElementById('category');
+        categorySelect.innerHTML = '';
+
+        const transactionType = document.getElementById('transaction-type').value;
+
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        defaultOption.textContent = transactionType === 'INCOME' ? '수입 카테고리 선택' : '지출 카테고리 선택';
+        categorySelect.appendChild(defaultOption);
+
+        let categories = transactionType === 'INCOME' ? incomeCategories : expenseCategories;
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.categoryId;
+            option.textContent = category.categoryName;
+            categorySelect.appendChild(option);
+        });
+    }
+
+    document.getElementById('income-button').addEventListener('click', () => {
+        document.getElementById('income-button').classList.add('active');
+        document.getElementById('expense-button').classList.remove('active');
+        document.getElementById('transaction-type').value = 'INCOME';
+
+        populateCategories();
+    });
+
+    document.getElementById('expense-button').addEventListener('click', () => {
+        document.getElementById('expense-button').classList.add('active');
+        document.getElementById('income-button').classList.remove('active');
+        document.getElementById('transaction-type').value = 'EXPENSE';
+
+        populateCategories();
+    });
+
+    document.getElementById('close-form').addEventListener('click', () => {
+        document.getElementById('add-item-form').classList.add('hidden');
+    });
+
+    document.getElementById('add-item-button').addEventListener('click', () => {
+        const form = document.getElementById('add-item-form');
+        form.classList.toggle('hidden');
+
+        document.getElementById('form-title').innerText = '항목 추가';
+        document.getElementById('transaction-id').value = '';
+        document.getElementById('detail').value = '';
+        document.getElementById('category').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('transaction-at').value = currentDateTime;
+        document.getElementById('description').value = '';
+
+        document.getElementById('submit-item-button').classList.remove('hidden');
+        document.getElementById('update-item-button').classList.add('hidden');
+        document.getElementById('delete-item-button').classList.add('hidden');
+    });
+
+    function resetAddItemForm() {
+        document.getElementById('add-item-form').classList.add('hidden');
+
+        document.getElementById('transaction-id').value = '';
+        document.getElementById('detail').value = '';
+        document.getElementById('category').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('transaction-at').value = currentDateTime;
+        document.getElementById('description').value = '';
+        document.getElementById('submit-item-button').classList.remove('hidden');
+        document.getElementById('update-item-button').classList.add('hidden');
+        document.getElementById('delete-item-button').classList.add('hidden');
+    }
+
+    document.getElementById('submit-item-button').addEventListener('click', () => {
+        const transactionType = document.getElementById('transaction-type').value;
+        const detail = document.getElementById('detail').value;
+        const amount = document.getElementById('amount').value;
+        const description = document.getElementById('description').value;
+        const category = document.getElementById('category').value;
+        const transactionAt = document.getElementById('transaction-at').value;
+
+        const transactionData = {
+            detail: detail,
+            amount: amount,
+            description: description,
+            transactionAt: transactionAt,
+            transactionCategoryId: category
+        };
+
+        const endpoint = transactionType === 'INCOME'
+            ? '/api/transaction/scheduler/income'
+            : '/api/transaction/scheduler/expense';
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            },
+            body: JSON.stringify(transactionData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("거래 추가에 실패했습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("거래가 성공적으로 추가되었습니다.");
+                resetAddItemForm();
+                fetchRegularTransactions();
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
+    });
+
+
 </script>
 
 <script src="/js/scripts.js"></script>
