@@ -139,7 +139,7 @@ public class TransactionScheduler {
 
     @Transactional
     @Scheduled(cron = "0 0 4 1 * ?") // 매달 1일 새벽 4시
-    public void saveRegularIncome() {
+    public void saveRegularIncomes() {
         try {
             List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
             LocalDate now = LocalDate.now();
@@ -160,6 +160,7 @@ public class TransactionScheduler {
                         .build();
 
                 incomeRepository.save(income);
+                log.info("정기 수입 저장 스케줄러 실행됨: {}", LocalDateTime.now());
             }
         } catch (Exception e) {
             log.error("정기 수입 항목을 저장하던 중 오류가 발생했습니다: {}", e.getMessage());
@@ -169,7 +170,7 @@ public class TransactionScheduler {
 
     @Transactional
     @Scheduled(cron = "0 0 4 1 * ?")
-    public void saveRegularExpense() {
+    public void saveRegularExpenses() {
         try {
             List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
             LocalDate now = LocalDate.now();
@@ -190,6 +191,7 @@ public class TransactionScheduler {
                         .build();
 
                 expenseRepository.save(expense);
+                log.info("정기 지출 저장 스케줄러 실행됨: {}", LocalDateTime.now());
             }
         } catch (Exception e) {
             log.error("정기 지출 항목을 저장하던 중 오류가 발생했습니다: {}", e.getMessage());
