@@ -9,12 +9,21 @@ import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
 import com.project.wallet_keeper.repository.ExpenseRepository;
 import com.project.wallet_keeper.repository.IncomeCategoryRepository;
 import com.project.wallet_keeper.repository.IncomeRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -247,4 +256,43 @@ public class TransactionService {
         return annualSummary;
     }
 
+    public void generateExcelForTransaction(User user, LocalDate startDate, LocalDate endDate, HttpServletResponse response) throws IOException {
+        List<TransactionResponseDto> transactionList = getTransactionList(user, startDate, endDate);
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Transactions");
+
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("날짜");
+        headerRow.createCell(1).setCellValue("분류");
+        headerRow.createCell(2).setCellValue("내용");
+        headerRow.createCell(3).setCellValue("금액(원)");
+        headerRow.createCell(4).setCellValue("거래 유형");
+        headerRow.createCell(5).setCellValue("설명");
+
+        CellStyle dateCellStyle = workbook.createCellStyle();
+        CreationHelper creationHelper = workbook.getCreationHelper();
+        dateCellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+
+        int rowNum = 1;
+        for (TransactionResponseDto transaction : transactionList) {
+            LocalDateTime transactionAt = transaction.getTransactionAt();
+            Row row = sheet.createRow(rowNum++);
+
+            Cell dateCell = row.createCell(0);
+            dateCell.setCellValue(Date.from(transactionAt.atZone(ZoneId.systemDefault()).toInstant()));
+            dateCell.setCellStyle(dateCellStyle);
+
+            row.createCell(1).setCellValue(transaction.getTransactionCategory());
+            row.createCell(2).setCellValue(transaction.getDetail());
+            row.createCell(3).setCellValue(transaction.getAmount());
+            row.createCell(4).setCellValue(transaction.getTransactionType().equals("INCOME") ? "수입" : "지출");
+            row.createCell(5).setCellValue(transaction.getDescription() != null ? transaction.getDescription() : "");
+        }
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=transactions.xlsx");
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
 }
