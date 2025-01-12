@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static com.project.wallet_keeper.exception.messages.ErrorMessages.*;
 import static org.springframework.http.HttpStatus.*;
 
-@Hidden
+//@Hidden
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {

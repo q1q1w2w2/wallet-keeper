@@ -11,10 +11,7 @@ import com.project.wallet_keeper.repository.IncomeCategoryRepository;
 import com.project.wallet_keeper.repository.IncomeRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -262,6 +259,9 @@ public class TransactionService {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Transactions");
 
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
         Row headerRow = sheet.createRow(0);
         headerRow.createCell(0).setCellValue("날짜");
         headerRow.createCell(1).setCellValue("분류");
@@ -270,9 +270,21 @@ public class TransactionService {
         headerRow.createCell(4).setCellValue("거래 유형");
         headerRow.createCell(5).setCellValue("설명");
 
+        for (int i = 0; i < headerRow.getPhysicalNumberOfCells(); i++) {
+            headerRow.getCell(i).setCellStyle(headerStyle);
+        }
+
         CellStyle dateCellStyle = workbook.createCellStyle();
         CreationHelper creationHelper = workbook.getCreationHelper();
         dateCellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+        dateCellStyle.setAlignment(HorizontalAlignment.LEFT);
+
+        sheet.setColumnWidth(0, 20 * 256);
+        sheet.setColumnWidth(1, 15 * 256);
+        sheet.setColumnWidth(2, 28 * 256);
+        sheet.setColumnWidth(3, 10 * 256);
+        sheet.setColumnWidth(4, 10 * 256);
+        sheet.setColumnWidth(5, 30 * 256);
 
         int rowNum = 1;
         for (TransactionResponseDto transaction : transactionList) {
