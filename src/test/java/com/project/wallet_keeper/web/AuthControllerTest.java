@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AuthController.class)
 @WithMockUser
-@DisplayName("UserController 테스트")
+@DisplayName("AuthController 테스트")
 class AuthControllerTest {
 
     @Autowired
@@ -191,25 +191,25 @@ class AuthControllerTest {
         result.andExpect(status().isUnauthorized());
     }
 
-    @Test
-    @DisplayName("OAuth 리다이렉트 성공")
-    void redirectForOAuth() throws Exception {
-        // given
-
-        // when
-        ResultActions result = mockMvc.perform(get("/api/auth/redirect")
-                .param("email", email)
-                .param("name", "name")
-                .param("provider", "google")
-                .param("isExist", "true")
-                .with(csrf())
-        );
-
-        // then
-        result.andExpect(status().isOk());
-        result.andExpect(model().attribute("email", email));
-        result.andExpect(view().name("auth/redirect"));
-    }
+//    @Test
+//    @DisplayName("OAuth 리다이렉트 성공")
+//    void redirectForOAuth() throws Exception {
+//        // given
+//
+//        // when
+//        ResultActions result = mockMvc.perform(get("/api/auth/redirect")
+//                .param("email", email)
+//                .param("name", "name")
+//                .param("provider", "google")
+//                .param("isExist", "true")
+//                .with(csrf())
+//        );
+//
+//        // then
+//        result.andExpect(status().isOk());
+//        result.andExpect(model().attribute("email", email));
+//        result.andExpect(view().name("auth/redirect"));
+//    }
 
     @Test
     @DisplayName("OAuth 로그인 성공")

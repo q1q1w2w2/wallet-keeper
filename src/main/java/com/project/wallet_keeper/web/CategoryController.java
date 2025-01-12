@@ -6,6 +6,7 @@ import com.project.wallet_keeper.dto.category.CategoryResponseDto;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.CategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,8 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
-@Controller
+@Tag(name = "CategoryController", description = "카테고리 컨트롤러 API")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/transaction/category")
 public class CategoryController {

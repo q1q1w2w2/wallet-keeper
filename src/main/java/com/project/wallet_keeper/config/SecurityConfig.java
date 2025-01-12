@@ -51,6 +51,7 @@ public class SecurityConfig {
                         authorizeRequest
                                 .requestMatchers("/error", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**", "/static/js/**").permitAll()
                                 .requestMatchers("/login", "/signup", "/", "/calendar", "/setting", "/budget", "/summary").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                                 .requestMatchers("/api/auth/login", "/api/auth/redirect", "/api/auth/oauth").permitAll()
                                 .requestMatchers("/api/users").permitAll()

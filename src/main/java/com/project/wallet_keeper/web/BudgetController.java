@@ -9,6 +9,7 @@ import com.project.wallet_keeper.dto.budget.BudgetResultDto;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.BudgetService;
 import com.project.wallet_keeper.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,8 @@ import java.time.LocalDate;
 
 import static org.springframework.http.HttpStatus.*;
 
-@Controller
+@Tag(name = "BudgetController", description = "예산 컨트롤러 API")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/budget")
 public class BudgetController {

@@ -10,6 +10,7 @@ import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
 import com.project.wallet_keeper.service.TransactionService;
 import com.project.wallet_keeper.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,8 @@ import java.util.List;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
 import static org.springframework.http.HttpStatus.*;
 
-@Controller
+@Tag(name = "TransactionController", description = "거래 컨트롤러 API")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/transaction")
 public class TransactionController {
@@ -135,15 +137,6 @@ public class TransactionController {
         AnnualSummary annualSummary = transactionService.getAnnualSummary(user, year);
 
         return createResponse(OK, annualSummary);
-    }
-
-    @GetMapping("/excel")
-    public void downloadTransaction(
-            @RequestParam("startDate") LocalDate startDate,
-            @RequestParam("endDate") LocalDate endDate,
-            HttpServletResponse response) throws IOException {
-        User user = getCurrentUser();
-        transactionService.generateExcelForTransaction(user, startDate, endDate, response);
     }
 
     private User getCurrentUser() {

@@ -4,6 +4,7 @@ import com.project.wallet_keeper.dto.mail.EmailDto;
 import com.project.wallet_keeper.dto.mail.VerifyCodeDto;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.MailService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@Tag(name = "MailController", description = "메일 컨트롤러 API")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mail")
 public class MailController {

@@ -3,17 +3,17 @@ package com.project.wallet_keeper.web;
 import com.project.wallet_keeper.dto.auth.*;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.*;
 
-@Controller
+@Tag(name = "AuthController", description = "인증 컨트롤러 API")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 @Slf4j
@@ -44,23 +44,6 @@ public class AuthController {
         AccessTokenDto data = new AccessTokenDto(newAccessToken);
         ApiResponse<AccessTokenDto> response = ApiResponse.success(OK, "토큰이 재발급 되었습니다.", data);
         return ResponseEntity.status(OK).body(response);
-    }
-
-    @GetMapping("/redirect")
-    public String redirectForOAuth(
-            @RequestParam String email,
-            @RequestParam String name,
-            @RequestParam String provider,
-            @RequestParam boolean isExist,
-            Model model
-            ) {
-        log.info("email: {}, name: {}, provider: {}, isExist: {}", email, name, provider, isExist);
-
-        model.addAttribute("email", email);
-        model.addAttribute("name", name);
-        model.addAttribute("provider", provider);
-        model.addAttribute("isExist", isExist);
-        return "auth/redirect";
     }
 
     @PostMapping("/oauth")

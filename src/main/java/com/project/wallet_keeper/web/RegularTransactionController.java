@@ -9,6 +9,7 @@ import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
 import com.project.wallet_keeper.service.TransactionScheduler;
 import com.project.wallet_keeper.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,9 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
+@Tag(name = "RegularTransactionController", description = "정기 거래 컨트롤러 API")
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/transaction/scheduler")
 public class RegularTransactionController {

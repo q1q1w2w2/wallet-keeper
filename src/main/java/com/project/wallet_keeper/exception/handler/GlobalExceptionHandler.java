@@ -12,6 +12,7 @@ import com.project.wallet_keeper.exception.transaction.TransactionNotFoundExcept
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotActiveException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -21,17 +22,19 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static com.project.wallet_keeper.exception.messages.ErrorMessages.*;
 import static org.springframework.http.HttpStatus.*;
 
-@ControllerAdvice
+@Hidden
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGeneralException(Exception e) {
-        return createErrorResponse(e, INTERNAL_SERVER_ERROR, UNEXPECTED_ERROR);
+        return createErrorResponse(e, INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
