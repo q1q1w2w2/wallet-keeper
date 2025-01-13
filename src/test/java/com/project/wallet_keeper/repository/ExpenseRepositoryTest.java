@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.repository;
 
-import com.project.wallet_keeper.domain.*;
+import com.project.wallet_keeper.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.project.wallet_keeper.domain.Role.ROLE_USER;
+import static com.project.wallet_keeper.entity.Role.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest

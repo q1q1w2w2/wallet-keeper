@@ -1,7 +1,7 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.domain.Reason;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Reason;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.user.ResetPasswordDto;
 import com.project.wallet_keeper.dto.user.SignupDto;
 import com.project.wallet_keeper.dto.user.UpdatePasswordDto;
@@ -21,7 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.project.wallet_keeper.domain.Role.*;
+import static com.project.wallet_keeper.entity.Role.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 

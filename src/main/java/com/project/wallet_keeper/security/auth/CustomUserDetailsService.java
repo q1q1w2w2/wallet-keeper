@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.security.auth;
 
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

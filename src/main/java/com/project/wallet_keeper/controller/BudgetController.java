@@ -1,7 +1,7 @@
-package com.project.wallet_keeper.web;
+package com.project.wallet_keeper.controller;
 
-import com.project.wallet_keeper.domain.Budget;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Budget;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.budget.BudgetDto;
 import com.project.wallet_keeper.dto.budget.BudgetReport;
 import com.project.wallet_keeper.dto.budget.BudgetResponseDto;
@@ -14,10 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 
 import static org.springframework.http.HttpStatus.*;
 

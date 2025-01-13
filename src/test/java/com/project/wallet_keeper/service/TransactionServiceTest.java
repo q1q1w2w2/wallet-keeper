@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.domain.*;
+import com.project.wallet_keeper.entity.*;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
 import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
@@ -10,11 +10,9 @@ import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
 import com.project.wallet_keeper.repository.ExpenseRepository;
 import com.project.wallet_keeper.repository.IncomeCategoryRepository;
 import com.project.wallet_keeper.repository.IncomeRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,9 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.project.wallet_keeper.domain.Role.*;
+import static com.project.wallet_keeper.entity.Role.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)

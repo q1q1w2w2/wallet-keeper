@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.domain;
+package com.project.wallet_keeper.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

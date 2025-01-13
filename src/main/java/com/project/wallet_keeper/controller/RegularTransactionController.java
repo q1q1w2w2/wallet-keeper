@@ -1,12 +1,11 @@
-package com.project.wallet_keeper.web;
+package com.project.wallet_keeper.controller;
 
-import com.project.wallet_keeper.domain.RegularExpense;
-import com.project.wallet_keeper.domain.RegularIncome;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.RegularExpense;
+import com.project.wallet_keeper.entity.RegularIncome;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.dto.transaction.RegularTransactionResponseDto;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
-import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
 import com.project.wallet_keeper.service.TransactionScheduler;
 import com.project.wallet_keeper.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

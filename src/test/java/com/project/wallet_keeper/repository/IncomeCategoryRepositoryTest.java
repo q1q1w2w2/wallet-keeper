@@ -1,18 +1,14 @@
 package com.project.wallet_keeper.repository;
 
-import com.project.wallet_keeper.domain.IncomeCategory;
-import com.project.wallet_keeper.domain.User;
-import org.assertj.core.api.Assertions;
+import com.project.wallet_keeper.entity.IncomeCategory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @DisplayName("IncomeCategoryRepository 테스트")

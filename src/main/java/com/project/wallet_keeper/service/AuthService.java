@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.auth.LoginDto;
 import com.project.wallet_keeper.dto.auth.OAuthDto;
 import com.project.wallet_keeper.dto.auth.RefreshTokenDto;
@@ -27,7 +27,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.project.wallet_keeper.domain.Role.ROLE_USER;
+import static com.project.wallet_keeper.entity.Role.ROLE_USER;
 import static com.project.wallet_keeper.security.jwt.TokenProvider.*;
 
 @Service

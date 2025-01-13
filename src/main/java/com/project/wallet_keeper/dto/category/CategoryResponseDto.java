@@ -1,7 +1,7 @@
 package com.project.wallet_keeper.dto.category;
 
-import com.project.wallet_keeper.domain.ExpenseCategory;
-import com.project.wallet_keeper.domain.IncomeCategory;
+import com.project.wallet_keeper.entity.ExpenseCategory;
+import com.project.wallet_keeper.entity.IncomeCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,8 +1,8 @@
-package com.project.wallet_keeper.web;
+package com.project.wallet_keeper.controller;
 
-import com.project.wallet_keeper.domain.Expense;
-import com.project.wallet_keeper.domain.Income;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Expense;
+import com.project.wallet_keeper.entity.Income;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.transaction.AnnualSummary;
 import com.project.wallet_keeper.dto.transaction.ExpenseSummary;
 import com.project.wallet_keeper.dto.common.ApiResponse;
@@ -11,16 +11,13 @@ import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
 import com.project.wallet_keeper.service.TransactionService;
 import com.project.wallet_keeper.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 

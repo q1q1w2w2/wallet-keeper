@@ -12,7 +12,7 @@ import org.springframework.util.StopWatch;
 @Slf4j
 public class TimeTraceAop {
 
-    @Around("execution(* com.project.wallet_keeper.web..*(..))")
+    @Around("execution(* com.project.wallet_keeper.controller..*(..))")
     public Object trace(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();

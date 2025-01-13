@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.web;
+package com.project.wallet_keeper.controller;
 
 import com.project.wallet_keeper.dto.auth.*;
 import com.project.wallet_keeper.dto.common.ApiResponse;

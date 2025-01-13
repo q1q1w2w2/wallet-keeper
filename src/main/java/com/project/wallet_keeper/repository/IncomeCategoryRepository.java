@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.repository;
 
-import com.project.wallet_keeper.domain.IncomeCategory;
+import com.project.wallet_keeper.entity.IncomeCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.web;
+package com.project.wallet_keeper.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

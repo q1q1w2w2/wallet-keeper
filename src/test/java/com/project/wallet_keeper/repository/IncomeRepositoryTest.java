@@ -1,8 +1,8 @@
 package com.project.wallet_keeper.repository;
 
-import com.project.wallet_keeper.domain.Income;
-import com.project.wallet_keeper.domain.IncomeCategory;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Income;
+import com.project.wallet_keeper.entity.IncomeCategory;
+import com.project.wallet_keeper.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.project.wallet_keeper.domain.Role.*;
+import static com.project.wallet_keeper.entity.Role.*;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest

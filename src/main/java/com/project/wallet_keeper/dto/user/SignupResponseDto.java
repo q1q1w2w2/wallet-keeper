@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.dto.user;
 
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

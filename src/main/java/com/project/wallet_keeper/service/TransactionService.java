@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.domain.*;
+import com.project.wallet_keeper.entity.*;
 import com.project.wallet_keeper.dto.transaction.*;
 import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service

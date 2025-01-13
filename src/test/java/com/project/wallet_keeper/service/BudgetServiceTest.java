@@ -1,15 +1,13 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.domain.Budget;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Budget;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.budget.BudgetDto;
 import com.project.wallet_keeper.dto.budget.BudgetResultDto;
 import com.project.wallet_keeper.repository.BudgetRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,7 +16,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)

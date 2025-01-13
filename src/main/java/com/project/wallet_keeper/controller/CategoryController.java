@@ -1,7 +1,7 @@
-package com.project.wallet_keeper.web;
+package com.project.wallet_keeper.controller;
 
-import com.project.wallet_keeper.domain.ExpenseCategory;
-import com.project.wallet_keeper.domain.IncomeCategory;
+import com.project.wallet_keeper.entity.ExpenseCategory;
+import com.project.wallet_keeper.entity.IncomeCategory;
 import com.project.wallet_keeper.dto.category.CategoryResponseDto;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
 import com.project.wallet_keeper.dto.common.ApiResponse;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

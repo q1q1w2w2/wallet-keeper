@@ -1,7 +1,7 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.domain.ExpenseCategory;
-import com.project.wallet_keeper.domain.IncomeCategory;
+import com.project.wallet_keeper.entity.ExpenseCategory;
+import com.project.wallet_keeper.entity.IncomeCategory;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
 import com.project.wallet_keeper.exception.transaction.CategoryAlreadyExistException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;

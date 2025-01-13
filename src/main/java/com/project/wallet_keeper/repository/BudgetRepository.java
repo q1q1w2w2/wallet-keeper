@@ -1,7 +1,7 @@
 package com.project.wallet_keeper.repository;
 
-import com.project.wallet_keeper.domain.Budget;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Budget;
+import com.project.wallet_keeper.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

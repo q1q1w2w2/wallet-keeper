@@ -1,10 +1,7 @@
 package com.project.wallet_keeper.security.oauth;
 
-import com.project.wallet_keeper.domain.Role;
-import com.project.wallet_keeper.domain.User;
-import com.project.wallet_keeper.dto.user.SignupDto;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.repository.UserRepository;
-import com.project.wallet_keeper.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,7 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.project.wallet_keeper.domain.Role.*;
+import static com.project.wallet_keeper.entity.Role.*;
 
 // OAuth 인증을 통해 사용자 정보를 가져온다.
 @Service

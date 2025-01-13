@@ -1,19 +1,18 @@
 package com.project.wallet_keeper.repository;
 
-import com.project.wallet_keeper.domain.Role;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Role;
+import com.project.wallet_keeper.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.project.wallet_keeper.domain.Role.*;
+import static com.project.wallet_keeper.entity.Role.*;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest

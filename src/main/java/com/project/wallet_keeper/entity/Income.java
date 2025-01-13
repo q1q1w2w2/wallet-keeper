@@ -1,6 +1,5 @@
-package com.project.wallet_keeper.domain;
+package com.project.wallet_keeper.entity;
 
-import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

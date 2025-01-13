@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.dto.transaction;
 
-import com.project.wallet_keeper.domain.*;
+import com.project.wallet_keeper.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

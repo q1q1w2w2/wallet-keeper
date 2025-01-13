@@ -1,11 +1,10 @@
 package com.project.wallet_keeper.repository;
 
-import com.project.wallet_keeper.domain.Expense;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Expense;
+import com.project.wallet_keeper.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

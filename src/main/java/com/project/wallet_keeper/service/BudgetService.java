@@ -1,12 +1,11 @@
 package com.project.wallet_keeper.service;
 
-import com.project.wallet_keeper.domain.Budget;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Budget;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.budget.BudgetDto;
 import com.project.wallet_keeper.dto.budget.BudgetReport;
 import com.project.wallet_keeper.dto.budget.BudgetResultDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
-import com.project.wallet_keeper.exception.budget.BudgetNotFoundException;
 import com.project.wallet_keeper.repository.BudgetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

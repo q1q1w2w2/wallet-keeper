@@ -1,9 +1,8 @@
-package com.project.wallet_keeper.web;
+package com.project.wallet_keeper.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.wallet_keeper.domain.Reason;
-import com.project.wallet_keeper.domain.Role;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.Role;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.user.*;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;

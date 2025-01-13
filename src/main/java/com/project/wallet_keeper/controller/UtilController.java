@@ -1,6 +1,6 @@
-package com.project.wallet_keeper.web;
+package com.project.wallet_keeper.controller;
 
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.service.TransactionService;
 import com.project.wallet_keeper.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,7 +1,6 @@
 package com.project.wallet_keeper.dto.user;
 
-import com.project.wallet_keeper.domain.Role;
-import com.project.wallet_keeper.domain.User;
+import com.project.wallet_keeper.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
