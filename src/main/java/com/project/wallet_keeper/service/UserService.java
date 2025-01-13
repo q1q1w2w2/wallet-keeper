@@ -36,13 +36,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final ReasonRepository reasonRepository;
 
-    /**
-     * 사용자 회원가입
-     *
-     * @param signupDto 사용자 가입에 필요한 정보
-     * @return 생성된 사용자 객체
-     * @throws UserAlreadyExistException 이미 존재하는 이메일일 경우 예외 발생
-     */
     @Transactional
     public User signUp(SignupDto signupDto) {
         if (userRepository.findByEmail(signupDto.getEmail()).isPresent()) {
@@ -60,60 +53,28 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    /**
-     * 현재 로그인한 사용자 정보 수정
-     *
-     * @param user 현재 로그인한 사용자
-     * @param updateDto 변경할 nickname과 birth
-     * @return 변경된 User 객체
-     */
     @Transactional
     public User updateUser(User user, UserProfileUpdateDto updateDto) {
          return user.update(updateDto.getNickname(), updateDto.getBirth());
     }
 
-    /**
-     * 현재 로그인한 사용자 회원 탈퇴 및 연관 데이터 삭제
-     *
-     * @param user 현재 로그인한 사용자
-     * @throws
-     */
     @Transactional
     public void deleteUser(User user, String reason) {
         user.deleteUser();
         reasonRepository.save(new Reason(reason));
     }
 
-    /**
-     * userId로 사용자 정보를 반환
-     *
-     * @param userId 유저 고유 번호
-     * @return User 객체
-     * @throws UserNotFoundException 해당 ID의 사용자가 존재하지 않을 경우 예외 발생
-     */
     public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    /**
-     * 현재 로그인한 사용자 정보를 반환
-     *
-     * @return 현재 사용자 User 객체
-     * @throws UserNotFoundException 현재 로그인한 사용자가 없을 경우 예외 발생
-     */
     public User getCurrentUser() {
         String email = getEmailFromAuthentication();
         return userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    /**
-     * 현재 로그인한 사용자의 이메일 반환
-     *
-     * @return 현재 사용자의 이메일
-     * @throws UserNotFoundException 현재 로그인한 사용자가 없을 경우 예외 발생
-     */
     public String getEmailFromAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

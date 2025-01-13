@@ -23,10 +23,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) {
+        // email이 틀려도 AbstractUserDetailsAuthenticationProvider에서 BadCredentialException으로 변환
         return userRepository.findByEmail(email)
                 .map(user -> createUser(email, user))
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-        // email 틀려도 AbstractUserDetailsAuthenticationProvider에서 BadCredentialException으로 변환
     }
 
     private org.springframework.security.core.userdetails.User createUser(String email, User user) {

@@ -189,7 +189,7 @@ public class TransactionService {
         }
 
         int totalSpentAmount = categoryMap.values().stream().mapToInt(Integer::intValue).sum();
-        ArrayList<ExpenseSummary> summaryList = new ArrayList<>();
+        List<ExpenseSummary> summaryList = new ArrayList<>();
         for (Map.Entry<ExpenseCategory, Integer> entry : categoryMap.entrySet()) {
             if (entry.getValue() > 0) {
                 ExpenseSummary summary = new ExpenseSummary();

@@ -12,10 +12,9 @@ public class AesUtil {
 
     public static final String ALGORITHM = "AES";
 
-    // 비밀키 생성
     public static SecretKey generateKey() throws Exception {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
-        keyGenerator.init(128); // 128 비트로 설정
+        keyGenerator.init(128);
         return keyGenerator.generateKey();
     }
 
@@ -25,15 +24,13 @@ public class AesUtil {
         return new SecretKeySpec(key, 0, 16, ALGORITHM);
     }
 
-    // 문자열 암호화
     public static String encrypt(String data, SecretKey key) throws Exception {
-        Cipher cipher = Cipher.getInstance(ALGORITHM); //  AES 사용하는 Chiper 객체 생성
-        cipher.init(Cipher.ENCRYPT_MODE, key); // 암호화 모드로 초기화
-        byte[] encrypted = cipher.doFinal(data.getBytes()); // 암호화
-        return Base64.getEncoder().encodeToString(encrypted); // 암호화된 바이트 배열을 BASE64로 인코딩하여 문자열로 변환
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encrypted = cipher.doFinal(data.getBytes());
+        return Base64.getEncoder().encodeToString(encrypted);
     }
 
-    // 문자열 복호화
     public static String decrypt(String data, SecretKey key) throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, key);
