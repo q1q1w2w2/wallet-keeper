@@ -1,11 +1,8 @@
-package com.project.wallet_keeper.security.auth;
+package com.project.wallet_keeper.util.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.wallet_keeper.dto.common.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;

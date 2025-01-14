@@ -11,7 +11,7 @@ import com.project.wallet_keeper.exception.auth.TokenValidationException;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.repository.UserRepository;
-import com.project.wallet_keeper.security.jwt.TokenProvider;
+import com.project.wallet_keeper.util.jwt.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.security.auth;
+package com.project.wallet_keeper.util.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.wallet_keeper.dto.common.ApiResponse;

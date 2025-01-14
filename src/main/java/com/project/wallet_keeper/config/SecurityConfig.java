@@ -1,13 +1,13 @@
 package com.project.wallet_keeper.config;
 
-import com.project.wallet_keeper.security.auth.CustomAccessDeniedHandler;
-import com.project.wallet_keeper.security.auth.CustomAuthenticationEntryPoint;
-import com.project.wallet_keeper.security.auth.CustomUserDetailsService;
-import com.project.wallet_keeper.security.jwt.JwtFilter;
-import com.project.wallet_keeper.security.jwt.TokenProvider;
-import com.project.wallet_keeper.security.oauth.CustomAuthenticationFailureHandler;
-import com.project.wallet_keeper.security.oauth.CustomAuthenticationSuccessHandler;
-import com.project.wallet_keeper.security.oauth.CustomOAuth2UserService;
+import com.project.wallet_keeper.util.auth.CustomAccessDeniedHandler;
+import com.project.wallet_keeper.util.auth.CustomAuthenticationEntryPoint;
+import com.project.wallet_keeper.util.auth.CustomUserDetailsService;
+import com.project.wallet_keeper.util.jwt.JwtFilter;
+import com.project.wallet_keeper.util.jwt.TokenProvider;
+import com.project.wallet_keeper.util.oauth.CustomAuthenticationFailureHandler;
+import com.project.wallet_keeper.util.oauth.CustomAuthenticationSuccessHandler;
+import com.project.wallet_keeper.util.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

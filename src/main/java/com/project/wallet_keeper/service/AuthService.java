@@ -11,7 +11,7 @@ import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotActiveException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import com.project.wallet_keeper.repository.UserRepository;
-import com.project.wallet_keeper.security.jwt.TokenProvider;
+import com.project.wallet_keeper.util.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.project.wallet_keeper.entity.Role.ROLE_USER;
-import static com.project.wallet_keeper.security.jwt.TokenProvider.*;
+import static com.project.wallet_keeper.util.jwt.TokenProvider.*;
 
 @Service
 @RequiredArgsConstructor

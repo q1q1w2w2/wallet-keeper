@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.security.oauth;
+package com.project.wallet_keeper.util.oauth;
 
 import lombok.AccessLevel;
 import lombok.Builder;

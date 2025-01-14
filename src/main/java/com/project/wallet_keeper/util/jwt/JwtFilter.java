@@ -1,8 +1,8 @@
-package com.project.wallet_keeper.security.jwt;
+package com.project.wallet_keeper.util.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.wallet_keeper.dto.common.ApiResponse;
-import com.project.wallet_keeper.security.auth.CustomAuthenticationEntryPoint;
+import com.project.wallet_keeper.util.auth.CustomAuthenticationEntryPoint;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
-import static io.lettuce.core.pubsub.PubSubOutput.Type.message;
 
 @Slf4j
 @Component

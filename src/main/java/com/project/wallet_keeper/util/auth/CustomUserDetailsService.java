@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.security.auth;
+package com.project.wallet_keeper.util.auth;
 
 import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.repository.UserRepository;

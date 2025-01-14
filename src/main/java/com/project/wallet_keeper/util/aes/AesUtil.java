@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.security.util;
+package com.project.wallet_keeper.util.aes;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;

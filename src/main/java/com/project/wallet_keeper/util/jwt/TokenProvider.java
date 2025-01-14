@@ -1,6 +1,6 @@
-package com.project.wallet_keeper.security.jwt;
+package com.project.wallet_keeper.util.jwt;
 
-import com.project.wallet_keeper.security.util.AesUtil;
+import com.project.wallet_keeper.util.aes.AesUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
