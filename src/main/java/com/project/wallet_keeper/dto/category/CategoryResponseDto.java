@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class CategoryResponseDto {
+public class CategoryResponseDto implements Serializable {
 
     private Long categoryId;
     private String categoryName;

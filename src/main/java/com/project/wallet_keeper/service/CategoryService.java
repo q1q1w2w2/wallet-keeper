@@ -1,5 +1,6 @@
 package com.project.wallet_keeper.service;
 
+import com.project.wallet_keeper.dto.category.CategoryResponseDto;
 import com.project.wallet_keeper.entity.ExpenseCategory;
 import com.project.wallet_keeper.entity.IncomeCategory;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
@@ -8,9 +9,12 @@ import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFou
 import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
 import com.project.wallet_keeper.repository.IncomeCategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +27,7 @@ public class CategoryService {
     private final ExpenseCategoryRepository expenseCategoryRepository;
 
     @Transactional
+    @CacheEvict(value = "incomeCategories", allEntries = true)
     public IncomeCategory createIncomeCategory(CreateCategoryDto categoryDto) {
         Optional<IncomeCategory> findCategory = incomeCategoryRepository.findByCategoryName(categoryDto.getCategoryName());
         if (findCategory.isPresent()) {
@@ -38,6 +43,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "expenseCategories", allEntries = true)
     public ExpenseCategory createExpenseCategory(CreateCategoryDto categoryDto) {
         Optional<ExpenseCategory> findCategory = expenseCategoryRepository.findByCategoryName(categoryDto.getCategoryName());
         if (findCategory.isPresent()) {
@@ -52,15 +58,32 @@ public class CategoryService {
         return expenseCategoryRepository.save(expenseCategory);
     }
 
-    public List<IncomeCategory> getIncomeCategories() {
-        return incomeCategoryRepository.findAllByIsDeletedFalse();
+    @Cacheable(value = "incomeCategories")
+    public List<CategoryResponseDto> getIncomeCategories() {
+        ArrayList<CategoryResponseDto> response = new ArrayList<>();
+
+        List<IncomeCategory> categoryList = incomeCategoryRepository.findAllByIsDeletedFalse();
+        for (IncomeCategory incomeCategory : categoryList) {
+            response.add(new CategoryResponseDto(incomeCategory));
+        }
+
+        return response;
     }
 
-    public List<ExpenseCategory> getExpenseCategories() {
-        return expenseCategoryRepository.findAllByIsDeletedFalse();
+    @Cacheable(value = "expenseCategories")
+    public List<CategoryResponseDto> getExpenseCategories() {
+        ArrayList<CategoryResponseDto> response = new ArrayList<>();
+
+        List<ExpenseCategory> categoryList = expenseCategoryRepository.findAllByIsDeletedFalse();
+        for (ExpenseCategory expenseCategory : categoryList) {
+            response.add(new CategoryResponseDto(expenseCategory));
+        }
+
+        return response;
     }
 
     @Transactional
+    @CacheEvict(value = "incomeCategories", allEntries = true)
     public void deleteIncomeCategory(Long categoryId) {
         IncomeCategory category = incomeCategoryRepository.findById(categoryId)
                 .orElseThrow(TransactionCategoryNotFoundException::new);
@@ -68,6 +91,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "expenseCategories", allEntries = true)
     public void deleteExpenseCategory(Long categoryId) {
         ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
                 .orElseThrow(TransactionCategoryNotFoundException::new);

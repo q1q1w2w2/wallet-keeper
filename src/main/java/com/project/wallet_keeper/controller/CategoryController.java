@@ -42,28 +42,18 @@ public class CategoryController {
     }
 
     @GetMapping("/income")
-    public ResponseEntity<ApiResponse<ArrayList<CategoryResponseDto>>> getIncomeCategoryList() {
-        List<IncomeCategory> incomeCategories = categoryService.getIncomeCategories();
+    public ResponseEntity<ApiResponse<List<CategoryResponseDto>>> getIncomeCategoryList() {
+        List<CategoryResponseDto> incomeCategories = categoryService.getIncomeCategories();
 
-        ArrayList<CategoryResponseDto> categoryList = new ArrayList<>();
-        for (IncomeCategory incomeCategory : incomeCategories) {
-            categoryList.add(new CategoryResponseDto(incomeCategory));
-        }
-
-        ApiResponse<ArrayList<CategoryResponseDto>> response = ApiResponse.success(OK, categoryList);
+        ApiResponse<List<CategoryResponseDto>> response = ApiResponse.success(OK, incomeCategories);
         return ResponseEntity.status(OK).body(response);
     }
 
     @GetMapping("/expense")
-    public ResponseEntity<ApiResponse<ArrayList<CategoryResponseDto>>> getExpenseCategoryList() {
-        List<ExpenseCategory> expenseCategories = categoryService.getExpenseCategories();
+    public ResponseEntity<ApiResponse<List<CategoryResponseDto>>> getExpenseCategoryList() {
+        List<CategoryResponseDto> expenseCategories = categoryService.getExpenseCategories();
 
-        ArrayList<CategoryResponseDto> categoryList = new ArrayList<>();
-        for (ExpenseCategory expenseCategory : expenseCategories) {
-            categoryList.add(new CategoryResponseDto(expenseCategory));
-        }
-
-        ApiResponse<ArrayList<CategoryResponseDto>> response = ApiResponse.success(OK, categoryList);
+        ApiResponse<List<CategoryResponseDto>> response = ApiResponse.success(OK, expenseCategories);
         return ResponseEntity.status(OK).body(response);
     }
 

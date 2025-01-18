@@ -1,6 +1,7 @@
 package com.project.wallet_keeper.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.wallet_keeper.dto.category.CategoryResponseDto;
 import com.project.wallet_keeper.entity.ExpenseCategory;
 import com.project.wallet_keeper.entity.IncomeCategory;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
@@ -132,9 +133,9 @@ class CategoryControllerTest {
     @DisplayName("수입 카테고리 목록 조회 성공")
     void getIncomeCategoryList() throws Exception {
         // given
-        List<IncomeCategory> list = new ArrayList<>();
+        List<CategoryResponseDto> list = new ArrayList<>();
         IncomeCategory category = new IncomeCategory(categoryName);
-        list.add(category);
+        list.add(new CategoryResponseDto(category));
 
         given(categoryService.getIncomeCategories()).willReturn(list);
 
@@ -149,9 +150,9 @@ class CategoryControllerTest {
     @DisplayName("지출 카테고리 목록 조회 성공")
     void getExpenseCategoryList() throws Exception {
         // given
-        List<ExpenseCategory> list = new ArrayList<>();
+        List<CategoryResponseDto> list = new ArrayList<>();
         ExpenseCategory category = new ExpenseCategory(categoryName);
-        list.add(category);
+        list.add(new CategoryResponseDto(category));
 
         given(categoryService.getExpenseCategories()).willReturn(list);
 

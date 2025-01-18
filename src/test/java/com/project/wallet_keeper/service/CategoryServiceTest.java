@@ -1,5 +1,6 @@
 package com.project.wallet_keeper.service;
 
+import com.project.wallet_keeper.dto.category.CategoryResponseDto;
 import com.project.wallet_keeper.entity.ExpenseCategory;
 import com.project.wallet_keeper.entity.IncomeCategory;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
@@ -143,7 +144,7 @@ class CategoryServiceTest {
         given(incomeCategoryRepository.findAllByIsDeletedFalse()).willReturn(categoryList);
 
         // when
-        List<IncomeCategory> incomeCategories = categoryService.getIncomeCategories();
+        List<CategoryResponseDto> incomeCategories = categoryService.getIncomeCategories();
 
         // then
         assertThat(incomeCategories.size()).isEqualTo(1);
@@ -160,7 +161,7 @@ class CategoryServiceTest {
         given(expenseCategoryRepository.findAllByIsDeletedFalse()).willReturn(categoryList);
 
         // when
-        List<ExpenseCategory> expenseCategories = categoryService.getExpenseCategories();
+        List<CategoryResponseDto> expenseCategories = categoryService.getExpenseCategories();
 
         // then
         assertThat(expenseCategories.size()).isEqualTo(1);
