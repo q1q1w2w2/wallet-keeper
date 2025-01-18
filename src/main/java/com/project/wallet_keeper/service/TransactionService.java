@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,7 @@ public class TransactionService {
     private final ExpenseCategoryRepository expenseCategoryRepository;
 
     @Transactional
+    @CacheEvict(value = "transactions", key = "#user.id + '_' + #startDate + '_' + #endDate")
     public Income saveIncome(User user, TransactionDto incomeDto) {
         Long categoryId = incomeDto.getTransactionCategoryId();
         IncomeCategory category = incomeCategoryRepository.findById(categoryId)
@@ -50,6 +54,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @CacheEvict(value = "transactions", key = "#user.id + '_' + #startDate + '_' + #endDate")
     public Expense saveExpense(User user, TransactionDto expenseDto) {
         Long categoryId = expenseDto.getTransactionCategoryId();
         ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
@@ -77,6 +82,7 @@ public class TransactionService {
         return sortAndConvertToDto(transactionList);
     }
 
+    @Cacheable(value = "transactions", key = "#user.id + '_' + #startDate + '_' + #endDate")
     public List<TransactionResponseDto> getTransactionList(User user, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
@@ -96,6 +102,7 @@ public class TransactionService {
         return sortAndConvertToDto(expenseList);
     }
 
+    @Cacheable(value = "expenses", key = "#user.id + '_' + #startDate + '_' + #endDate")
     public List<TransactionResponseDto> getExpenseList(User user, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
@@ -122,6 +129,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @CacheEvict(value = "transactions", key = "#user.id + '_' + #startDate + '_' + #endDate")
     public Income updateIncome(Long incomeId, TransactionDto incomeDto, User user) {
         Income income = getIncome(incomeId);
 
@@ -134,6 +142,12 @@ public class TransactionService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "transactions", key = "#user.id + '_' + #startDate + '_' + #endDate"),
+                    @CacheEvict(value = "expenses", key = "#user.id + '_' + #startDate + '_' + #endDate")
+            }
+    )
     public Expense updateExpense(Long expenseId, TransactionDto expenseDto, User user) {
         Expense expense = getExpense(expenseId);
 
@@ -146,6 +160,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @CacheEvict(value = "transactions", key = "#user.id + '_' + #startDate + '_' + #endDate")
     public void deleteIncome(Long incomeId, User user) {
         Income income = getIncome(incomeId);
         checkTransactionOwnership(income, user);
@@ -154,6 +169,12 @@ public class TransactionService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "transactions", key = "#user.id + '_' + #startDate + '_' + #endDate"),
+                    @CacheEvict(value = "expenses", key = "#user.id + '_' + #startDate + '_' + #endDate")
+            }
+    )
     public void deleteExpense(Long expenseId, User user) {
         Expense expense = getExpense(expenseId);
         checkTransactionOwnership(expense, user);

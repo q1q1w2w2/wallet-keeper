@@ -7,12 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class TransactionResponseDto {
+public class TransactionResponseDto implements Serializable {
 
     private static final String INCOME = "INCOME";
     private static final String EXPENSE = "EXPENSE";
