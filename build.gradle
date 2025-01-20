@@ -88,8 +88,3 @@ tasks.named('test') {
 clean {
 	delete file('src/main/generated')
 }
-
-// docker -> jar 파일이 두 개가 생겨 Docker image가 생성되지 않을 수 있음
-//jar {
-//	enabled = false
-//}

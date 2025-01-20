@@ -9,6 +9,8 @@ import com.project.wallet_keeper.exception.transaction.TransactionNotFoundExcept
 import com.project.wallet_keeper.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,7 +137,13 @@ public class TransactionScheduler {
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 4 1 * ?") // 매달 1일 새벽 4시
+    @Scheduled(cron = "0 0 4 1 * ?")
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "transactions", allEntries = true),
+                    @CacheEvict(value = "expenses", allEntries = true)
+            }
+    )
     public void saveRegularIncomes() {
         try {
             List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
@@ -167,6 +175,12 @@ public class TransactionScheduler {
 
     @Transactional
     @Scheduled(cron = "0 0 4 1 * ?")
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "transactions", allEntries = true),
+                    @CacheEvict(value = "expenses", allEntries = true)
+            }
+    )
     public void saveRegularExpenses() {
         try {
             List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();

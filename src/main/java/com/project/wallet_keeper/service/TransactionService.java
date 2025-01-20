@@ -36,7 +36,7 @@ public class TransactionService {
     private final ExpenseCategoryRepository expenseCategoryRepository;
 
     @Transactional
-    @CacheEvict(value = "transactions", allEntries = true)
+    @CacheEvict(value = "transactions", key = "#user.id")
     public Income saveIncome(User user, TransactionDto incomeDto) {
         Long categoryId = incomeDto.getTransactionCategoryId();
         IncomeCategory category = incomeCategoryRepository.findById(categoryId)
@@ -54,7 +54,7 @@ public class TransactionService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactions", allEntries = true)
+    @CacheEvict(value = "transactions", key = "#user.id")
     public Expense saveExpense(User user, TransactionDto expenseDto) {
         Long categoryId = expenseDto.getTransactionCategoryId();
         ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
@@ -82,7 +82,7 @@ public class TransactionService {
         return sortAndConvertToDto(transactionList);
     }
 
-    @Cacheable(value = "transactions", key = "#user.id + '_' + #startDate + '_' + #endDate")
+    @Cacheable(value = "transactions", key = "#user.id")
     public List<TransactionResponseDto> getTransactionList(User user, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
@@ -102,7 +102,7 @@ public class TransactionService {
         return sortAndConvertToDto(expenseList);
     }
 
-    @Cacheable(value = "expenses", key = "#user.id + '_' + #startDate + '_' + #endDate")
+    @Cacheable(value = "expenses", key = "#user.id")
     public List<TransactionResponseDto> getExpenseList(User user, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
@@ -129,7 +129,7 @@ public class TransactionService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactions", allEntries = true)
+    @CacheEvict(value = "transactions", key = "#user.id")
     public Income updateIncome(Long incomeId, TransactionDto incomeDto, User user) {
         Income income = getIncome(incomeId);
 
@@ -144,8 +144,8 @@ public class TransactionService {
     @Transactional
     @Caching(
             evict = {
-                    @CacheEvict(value = "transactions", allEntries = true),
-                    @CacheEvict(value = "expenses", allEntries = true)
+                    @CacheEvict(value = "transactions", key = "#user.id"),
+                    @CacheEvict(value = "expenses", key = "#user.id")
             }
     )
     public Expense updateExpense(Long expenseId, TransactionDto expenseDto, User user) {
@@ -160,7 +160,7 @@ public class TransactionService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactions", allEntries = true)
+    @CacheEvict(value = "transactions", key = "#user.id")
     public void deleteIncome(Long incomeId, User user) {
         Income income = getIncome(incomeId);
         checkTransactionOwnership(income, user);
@@ -171,8 +171,8 @@ public class TransactionService {
     @Transactional
     @Caching(
             evict = {
-                    @CacheEvict(value = "transactions", allEntries = true),
-                    @CacheEvict(value = "expenses", allEntries = true)
+                    @CacheEvict(value = "transactions", key = "#user.id"),
+                    @CacheEvict(value = "expenses", key = "#user.id")
             }
     )
     public void deleteExpense(Long expenseId, User user) {
