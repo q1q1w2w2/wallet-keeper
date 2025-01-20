@@ -12,6 +12,8 @@ import com.project.wallet_keeper.repository.ReasonRepository;
 import com.project.wallet_keeper.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,11 +52,13 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "user", key = "#user.email")
     public User updateUser(User user, UserProfileUpdateDto updateDto) {
          return user.update(updateDto.getNickname(), updateDto.getBirth());
     }
 
     @Transactional
+    @CacheEvict(value = "user", key = "#user.email")
     public void deleteUser(User user, String reason) {
         user.deleteUser();
         reasonRepository.save(new Reason(reason));
@@ -67,6 +71,11 @@ public class UserService {
 
     public User getCurrentUser() {
         String email = getEmailFromAuthentication();
+        return getUserByEmail(email);
+    }
+
+    @Cacheable(value = "user", key = "#email")
+    public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
     }
@@ -88,6 +97,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "user", key = "#user.email")
     public void updatePassword(User user, UpdatePasswordDto passwordDto) {
         String oldPassword = passwordDto.getOldPassword();
         String newPassword = passwordDto.getNewPassword();
