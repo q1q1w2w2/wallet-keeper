@@ -111,7 +111,25 @@ public class AuthService {
         String subject = tokenProvider.extractEmailFromToken(refreshToken);
         User user = userRepository.findByEmail(subject)
                 .orElseThrow(UserNotFoundException::new);
+
         return tokenProvider.generateAccessToken(subject, user.getRole().toString());
+    }
+
+    @Transactional
+    public TokenDto generateNewTokens(RefreshTokenDto tokenDto) throws Exception {
+        String refreshToken = tokenDto.getRefreshToken();
+        if (!tokenProvider.validateToken(refreshToken)) {
+            throw new TokenValidationException();
+        }
+
+        String subject = tokenProvider.extractEmailFromToken(refreshToken);
+        User user = userRepository.findByEmail(subject)
+                .orElseThrow(UserNotFoundException::new);
+
+        String newAccessToken = tokenProvider.generateAccessToken(subject, user.getRole().toString());
+        String newRefreshToken = tokenProvider.generateRefreshToken(subject);
+
+        return new TokenDto(newAccessToken, newRefreshToken);
     }
 
     @Transactional

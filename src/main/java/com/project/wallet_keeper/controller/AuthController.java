@@ -38,11 +38,10 @@ public class AuthController {
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<ApiResponse<AccessTokenDto>> refreshToken(@Valid @RequestBody RefreshTokenDto tokenDto) throws Exception {
-        String newAccessToken = authService.generateNewAccessTokens(tokenDto);
+    public ResponseEntity<ApiResponse<TokenDto>> refreshToken(@Valid @RequestBody RefreshTokenDto tokenDto) throws Exception {
+        TokenDto tokens = authService.generateNewTokens(tokenDto);
 
-        AccessTokenDto data = new AccessTokenDto(newAccessToken);
-        ApiResponse<AccessTokenDto> response = ApiResponse.success(OK, "토큰이 재발급 되었습니다.", data);
+        ApiResponse<TokenDto> response = ApiResponse.success(OK, "토큰이 재발급 되었습니다.", tokens);
         return ResponseEntity.status(OK).body(response);
     }
 
