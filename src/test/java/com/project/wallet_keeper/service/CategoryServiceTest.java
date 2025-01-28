@@ -35,7 +35,7 @@ class CategoryServiceTest {
     @Mock
     private ExpenseCategoryRepository expenseCategoryRepository;
 
-    private static String categoryName = "카테고리";
+    private static final String categoryName = "카테고리";
 
     @Test
     @DisplayName("수입 카테고리 생성 성공")

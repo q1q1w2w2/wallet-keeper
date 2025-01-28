@@ -48,10 +48,10 @@ class AuthServiceTest {
     @Mock
     private UserRepository userRepository;;
 
-    private static String email = "test@email.com";
-    private static String password = "test";
-    private static String accessToken = "accessToken";
-    private static String refreshToken = "refreshToken";
+    private static final String email = "test@email.com";
+    private static final String password = "test";
+    private static final String accessToken = "accessToken";
+    private static final String refreshToken = "refreshToken";
 
     @Test
     @DisplayName("로그인 성공")

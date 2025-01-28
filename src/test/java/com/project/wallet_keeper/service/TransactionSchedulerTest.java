@@ -49,10 +49,10 @@ class TransactionSchedulerTest {
     @Mock
     private User user;
 
-    private static String detail = "내용";
-    private static int amount = 100000;
-    private static LocalDateTime date = LocalDateTime.of(2000, 1, 1, 0, 0);
-    private static Long categoryId = 1L;
+    private static final String detail = "내용";
+    private static final int amount = 100000;
+    private static final LocalDateTime date = LocalDateTime.of(2000, 1, 1, 0, 0);
+    private static final Long categoryId = 1L;
 
     @Test
     @DisplayName("정기 수입 저장 성공")

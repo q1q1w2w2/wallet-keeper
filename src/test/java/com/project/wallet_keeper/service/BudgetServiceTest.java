@@ -34,9 +34,9 @@ class BudgetServiceTest {
     @Mock
     private User user;
 
-    private static int amount = 100000;
-    private static int year = 2025;
-    private static int month = 1;
+    private static final int amount = 100000;
+    private static final int year = 2025;
+    private static final int month = 1;
 
     @Test
     @DisplayName("초기 예산 저장 성공")
