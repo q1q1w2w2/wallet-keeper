@@ -5,12 +5,11 @@ import com.project.wallet_keeper.dto.transaction.*;
 import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
 import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
-import com.project.wallet_keeper.repository.ExpenseCategoryRepository;
-import com.project.wallet_keeper.repository.ExpenseRepository;
-import com.project.wallet_keeper.repository.IncomeCategoryRepository;
-import com.project.wallet_keeper.repository.IncomeRepository;
+import com.project.wallet_keeper.repository.*;
+import com.project.wallet_keeper.util.websocket.NotificationWebSocketHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,8 +35,10 @@ public class TransactionService {
     private final ExpenseRepository expenseRepository;
     private final ExpenseCategoryRepository expenseCategoryRepository;
 
+    private final NotificationWebSocketHandler notificationWebSocketHandler;
+    private final BudgetRepository budgetRepository;
+
     @Transactional
-    @CacheEvict(value = "transactions", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public Income saveIncome(User user, TransactionDto incomeDto) {
         Long categoryId = incomeDto.getTransactionCategoryId();
         IncomeCategory category = incomeCategoryRepository.findById(categoryId)
@@ -54,11 +56,29 @@ public class TransactionService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactions", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public Expense saveExpense(User user, TransactionDto expenseDto) {
         Long categoryId = expenseDto.getTransactionCategoryId();
         ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
                 .orElseThrow(TransactionCategoryNotFoundException::new);
+
+        LocalDateTime startDateTime = LocalDateTime.of(expenseDto.getTransactionAt().getYear(), expenseDto.getTransactionAt().getMonthValue(), 1, 0, 0);
+
+        LocalDate lastDayOfMonth = expenseDto.getTransactionAt().toLocalDate().withDayOfMonth(expenseDto.getTransactionAt().toLocalDate().lengthOfMonth());
+        LocalDateTime endDateTime = LocalDateTime.of(lastDayOfMonth.getYear(), lastDayOfMonth.getMonthValue(), lastDayOfMonth.getDayOfMonth(), 23, 59, 59);
+
+        List<Expense> expenses = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
+        int totalAmount = expenses.stream().mapToInt(Transaction::getAmount).sum();
+
+        budgetRepository.findByUserAndYearAndMonth(user, expenseDto.getTransactionAt().getYear(), expenseDto.getTransactionAt().getMonthValue())
+                .ifPresent(budget -> {
+                    if (budget.getAmount() < totalAmount + expenseDto.getAmount()) {
+                        try {
+                            notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + budget.getAmount() + "원");
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
 
         Expense expense = Expense.builder()
                 .user(user)
@@ -82,7 +102,6 @@ public class TransactionService {
         return sortAndConvertToDto(transactionList);
     }
 
-    @Cacheable(value = "transactions", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public List<TransactionResponseDto> getTransactionList(User user, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
@@ -102,7 +121,6 @@ public class TransactionService {
         return sortAndConvertToDto(expenseList);
     }
 
-    @Cacheable(value = "expenses", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public List<TransactionResponseDto> getExpenseList(User user, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
@@ -129,7 +147,6 @@ public class TransactionService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactions", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public Income updateIncome(Long incomeId, TransactionDto incomeDto, User user) {
         Income income = getIncome(incomeId);
 
@@ -142,12 +159,6 @@ public class TransactionService {
     }
 
     @Transactional
-    @Caching(
-            evict = {
-                    @CacheEvict(value = "transactions", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()"),
-                    @CacheEvict(value = "expenses", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
-            }
-    )
     public Expense updateExpense(Long expenseId, TransactionDto expenseDto, User user) {
         Expense expense = getExpense(expenseId);
 

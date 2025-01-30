@@ -138,12 +138,6 @@ public class TransactionScheduler {
 
     @Transactional
     @Scheduled(cron = "0 0 4 1 * ?")
-    @Caching(
-            evict = {
-                    @CacheEvict(value = "transactions", allEntries = true),
-                    @CacheEvict(value = "expenses", allEntries = true)
-            }
-    )
     public void saveRegularIncomes() {
         try {
             List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
@@ -175,12 +169,6 @@ public class TransactionScheduler {
 
     @Transactional
     @Scheduled(cron = "0 0 4 1 * ?")
-    @Caching(
-            evict = {
-                    @CacheEvict(value = "transactions", allEntries = true),
-                    @CacheEvict(value = "expenses", allEntries = true)
-            }
-    )
     public void saveRegularExpenses() {
         try {
             List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();

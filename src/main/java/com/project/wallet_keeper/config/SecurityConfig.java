@@ -57,6 +57,8 @@ public class SecurityConfig {
                                 .requestMatchers("/api/users").permitAll()
                                 .requestMatchers("/api/mail/verification", "/api/mail/verification/code").permitAll()
                                 .requestMatchers("/api/users/reset-password").permitAll()
+
+                                .requestMatchers("/ws/notification").permitAll()
                                 .anyRequest().authenticated()
                 )
 
