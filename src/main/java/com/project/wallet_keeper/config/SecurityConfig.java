@@ -22,6 +22,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -59,6 +65,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/users/reset-password").permitAll()
 
                                 .requestMatchers("/ws/notification").permitAll()
+                                .requestMatchers("/ws/notification/**").permitAll()
                                 .anyRequest().authenticated()
                 )
 
@@ -108,5 +115,19 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
                 .requestMatchers("/error", "/favicon.ico");
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowedOrigins(List.of("http://localhost:8083"));
+        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
+        config.addExposedHeader(JwtFilter.AUTHORIZATION_HEADER);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }

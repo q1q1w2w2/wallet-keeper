@@ -72,11 +72,7 @@ public class TransactionService {
         budgetRepository.findByUserAndYearAndMonth(user, expenseDto.getTransactionAt().getYear(), expenseDto.getTransactionAt().getMonthValue())
                 .ifPresent(budget -> {
                     if (budget.getAmount() < totalAmount + expenseDto.getAmount()) {
-                        try {
-                            notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + budget.getAmount() + "원");
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + budget.getAmount() + "원");
                     }
                 });
 
