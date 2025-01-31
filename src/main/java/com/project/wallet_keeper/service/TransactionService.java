@@ -13,15 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 
 @Slf4j
@@ -61,20 +58,7 @@ public class TransactionService {
         ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
                 .orElseThrow(TransactionCategoryNotFoundException::new);
 
-        LocalDateTime startDateTime = LocalDateTime.of(expenseDto.getTransactionAt().getYear(), expenseDto.getTransactionAt().getMonthValue(), 1, 0, 0);
-
-        LocalDate lastDayOfMonth = expenseDto.getTransactionAt().toLocalDate().withDayOfMonth(expenseDto.getTransactionAt().toLocalDate().lengthOfMonth());
-        LocalDateTime endDateTime = LocalDateTime.of(lastDayOfMonth.getYear(), lastDayOfMonth.getMonthValue(), lastDayOfMonth.getDayOfMonth(), 23, 59, 59);
-
-        List<Expense> expenses = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
-        int totalAmount = expenses.stream().mapToInt(Transaction::getAmount).sum();
-
-        budgetRepository.findByUserAndYearAndMonth(user, expenseDto.getTransactionAt().getYear(), expenseDto.getTransactionAt().getMonthValue())
-                .ifPresent(budget -> {
-                    if (budget.getAmount() < totalAmount + expenseDto.getAmount()) {
-                        notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + budget.getAmount() + "원");
-                    }
-                });
+        checkBudget(user, expenseDto);
 
         Expense expense = Expense.builder()
                 .user(user)
@@ -85,6 +69,21 @@ public class TransactionService {
                 .expenseAt(expenseDto.getTransactionAt())
                 .build();
         return expenseRepository.save(expense);
+    }
+
+    private void checkBudget(User user, TransactionDto expenseDto) {
+        YearMonth yearMonth = YearMonth.from(expenseDto.getTransactionAt());
+        LocalDateTime startDateTime = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime endDateTime = yearMonth.atEndOfMonth().atTime(LocalTime.MAX);
+
+        int totalAmount = expenseRepository.getTotalAmountByUserAndDate(user, startDateTime, endDateTime);
+
+        if (LocalDateTime.now().getMonth() == yearMonth.getMonth() &&
+                LocalDateTime.now().getYear() == yearMonth.getYear()) {
+            budgetRepository.findByUserAndYearAndMonth(user, yearMonth.getYear(), yearMonth.getMonthValue())
+                    .filter(budget -> budget.getAmount() > totalAmount + expenseDto.getAmount())
+                    .ifPresent(budget -> notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + totalAmount + "원"));
+        }
     }
 
     public List<TransactionResponseDto> getTransactionList(User user) {
