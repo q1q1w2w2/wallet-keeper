@@ -12,14 +12,13 @@ import com.project.wallet_keeper.util.websocket.NotificationWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -192,11 +191,16 @@ public class TransactionScheduler {
         try {
             List<Income> savedIncomes = saveRegularIncomes();
             List<Expense> savedExpenses = saveRegularExpenses();
-            int totalSavedTransactions = savedIncomes.size() + savedExpenses.size();
 
             log.info("정기 거래 저장 스케줄러 실행됨: {}", LocalDateTime.now());
-            if (!savedIncomes.isEmpty() || !savedExpenses.isEmpty()) {
-                notificationWebSocketHandler.sendNotification(totalSavedTransactions + "개의 정기 거래가 저장되었습니다. 새로고침 해주세요.");
+
+            Set<Long> userIds = new HashSet<>();
+
+            savedIncomes.forEach(income -> userIds.add(income.getUser().getId()));
+            savedExpenses.forEach(expense -> userIds.add(expense.getUser().getId()));
+
+            for (Long userId : userIds) {
+                notificationWebSocketHandler.sendNotification("정기 거래가 저장되었습니다. 새로고침 해주세요.", userId);
             }
         } catch (Exception e) {
             throw new SchedulerExecutionException("정기 거래 저장 스케줄러 실행 중 오류 발생");

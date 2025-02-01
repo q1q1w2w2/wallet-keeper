@@ -457,7 +457,7 @@
 
         stompClient.connect({}, function (frame) {
             console.log("Connected: " + frame);
-            stompClient.subscribe(`/topic/notification`, function (response) {
+            stompClient.subscribe(`/topic/notification/${userId}`, function (response) {
                 alert(response.body);
             });
         });

@@ -83,7 +83,7 @@ public class TransactionService {
                 LocalDateTime.now().getYear() == yearMonth.getYear()) {
             budgetRepository.findByUserAndYearAndMonth(user, yearMonth.getYear(), yearMonth.getMonthValue())
                     .filter(budget -> budget.getAmount() < totalAmount + afterAmount)
-                    .ifPresent(budget -> notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + afterAmount + "원"));
+                    .ifPresent(budget -> notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + afterAmount + "원", user.getId()));
         }
     }
 
