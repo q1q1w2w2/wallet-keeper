@@ -3,20 +3,21 @@ package com.project.wallet_keeper.service;
 import com.project.wallet_keeper.entity.*;
 import com.project.wallet_keeper.dto.transaction.RegularTransactionResponseDto;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
+import com.project.wallet_keeper.exception.scheduler.SchedulerExecutionException;
 import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
 import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
 import com.project.wallet_keeper.repository.*;
+import com.project.wallet_keeper.util.websocket.NotificationWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -33,6 +34,7 @@ public class TransactionScheduler {
     private final ExpenseCategoryRepository expenseCategoryRepository;
     private final RegularIncomeRepository regularIncomeRepository;
     private final RegularExpenseRepository regularExpenseRepository;
+    private final NotificationWebSocketHandler notificationWebSocketHandler;
 
     @Transactional
     public RegularIncome saveRegularIncome(User user, TransactionDto transactionDto) {
@@ -136,64 +138,68 @@ public class TransactionScheduler {
         }
     }
 
-    @Transactional
-    @Scheduled(cron = "0 0 4 1 * ?")
-    public void saveRegularIncomes() {
-        try {
-            List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
-            LocalDate now = LocalDate.now();
+    private List<Income> saveRegularIncomes() {
+        List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
+        LocalDate now = LocalDate.now();
 
-            for (RegularIncome regularIncome : regularIncomes) {
-                LocalDateTime incomeAt = regularIncome.getIncomeAt();
-                int dayOfMonth = incomeAt.getDayOfMonth();
+        List<Income> incomesToSave = new ArrayList<>();
+        for (RegularIncome regularIncome : regularIncomes) {
+            LocalDateTime incomeAt = regularIncome.getIncomeAt();
+            int dayOfMonth = incomeAt.getDayOfMonth();
 
-                LocalDateTime nextIncomeDateTime = LocalDateTime.of(now.getYear(), now.getMonth(), dayOfMonth, 0, 0);
+            LocalDateTime nextIncomeDateTime = LocalDateTime.of(now.getYear(), now.getMonth(), dayOfMonth, 0, 0);
 
-                Income income = Income.builder()
-                        .user(regularIncome.getUser())
-                        .detail(regularIncome.getDetail())
-                        .amount(regularIncome.getAmount())
-                        .description(regularIncome.getDescription() != null ? regularIncome.getDescription() : "")
-                        .incomeCategory(regularIncome.getIncomeCategory())
-                        .incomeAt(nextIncomeDateTime)
-                        .build();
-
-                incomeRepository.save(income);
-                log.info("정기 수입 저장 스케줄러 실행됨: {}", LocalDateTime.now());
-            }
-        } catch (Exception e) {
-            log.error("정기 수입 항목을 저장하던 중 오류가 발생했습니다: {}", e.getMessage());
+            Income income = Income.builder()
+                    .user(regularIncome.getUser())
+                    .detail(regularIncome.getDetail())
+                    .amount(regularIncome.getAmount())
+                    .description(regularIncome.getDescription() != null ? regularIncome.getDescription() : "")
+                    .incomeCategory(regularIncome.getIncomeCategory())
+                    .incomeAt(nextIncomeDateTime)
+                    .build();
+            incomesToSave.add(income);
         }
+        return incomeRepository.saveAll(incomesToSave);
+    }
 
+    private List<Expense> saveRegularExpenses() {
+        List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
+        LocalDate now = LocalDate.now();
+
+        List<Expense> expensesToSave = new ArrayList<>();
+        for (RegularExpense regularExpense : regularExpenses) {
+            LocalDateTime incomeAt = regularExpense.getExpenseAt();
+            int dayOfMonth = incomeAt.getDayOfMonth();
+
+            LocalDateTime nextIncomeDateTime = LocalDateTime.of(now.getYear(), now.getMonth(), dayOfMonth, 0, 0);
+
+            Expense expense = Expense.builder()
+                    .user(regularExpense.getUser())
+                    .detail(regularExpense.getDetail())
+                    .amount(regularExpense.getAmount())
+                    .description(regularExpense.getDescription() != null ? regularExpense.getDescription() : "")
+                    .expenseCategory(regularExpense.getExpenseCategory())
+                    .expenseAt(nextIncomeDateTime)
+                    .build();
+            expensesToSave.add(expense);
+        }
+        return expenseRepository.saveAll(expensesToSave);
     }
 
     @Transactional
     @Scheduled(cron = "0 0 4 1 * ?")
-    public void saveRegularExpenses() {
+    public void saveRegularTransactions() {
         try {
-            List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
-            LocalDate now = LocalDate.now();
+            List<Income> savedIncomes = saveRegularIncomes();
+            List<Expense> savedExpenses = saveRegularExpenses();
+            int totalSavedTransactions = savedIncomes.size() + savedExpenses.size();
 
-            for (RegularExpense regularExpense : regularExpenses) {
-                LocalDateTime incomeAt = regularExpense.getExpenseAt();
-                int dayOfMonth = incomeAt.getDayOfMonth();
-
-                LocalDateTime nextIncomeDateTime = LocalDateTime.of(now.getYear(), now.getMonth(), dayOfMonth, 0, 0);
-
-                Expense expense = Expense.builder()
-                        .user(regularExpense.getUser())
-                        .detail(regularExpense.getDetail())
-                        .amount(regularExpense.getAmount())
-                        .description(regularExpense.getDescription() != null ? regularExpense.getDescription() : "")
-                        .expenseCategory(regularExpense.getExpenseCategory())
-                        .expenseAt(nextIncomeDateTime)
-                        .build();
-
-                expenseRepository.save(expense);
-                log.info("정기 지출 저장 스케줄러 실행됨: {}", LocalDateTime.now());
+            log.info("정기 거래 저장 스케줄러 실행됨: {}", LocalDateTime.now());
+            if (!savedIncomes.isEmpty() || !savedExpenses.isEmpty()) {
+                notificationWebSocketHandler.sendNotification(totalSavedTransactions + "개의 정기 거래가 저장되었습니다. 새로고침 해주세요.");
             }
         } catch (Exception e) {
-            log.error("정기 지출 항목을 저장하던 중 오류가 발생했습니다: {}", e.getMessage());
+            throw new SchedulerExecutionException("정기 거래 저장 스케줄러 실행 중 오류 발생");
         }
     }
 }
