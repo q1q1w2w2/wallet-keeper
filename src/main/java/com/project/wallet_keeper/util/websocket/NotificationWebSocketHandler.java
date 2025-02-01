@@ -13,7 +13,6 @@ public class NotificationWebSocketHandler {
     private final SimpMessagingTemplate messagingTemplate;
 
     public void sendNotification(String message) {
-        log.info("예산 초과!!");
         messagingTemplate.convertAndSend("/topic/notification", message);
     }
 }

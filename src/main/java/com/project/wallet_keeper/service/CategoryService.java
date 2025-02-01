@@ -31,9 +31,10 @@ public class CategoryService {
     public IncomeCategory createIncomeCategory(CreateCategoryDto categoryDto) {
         Optional<IncomeCategory> findCategory = incomeCategoryRepository.findByCategoryName(categoryDto.getCategoryName());
         if (findCategory.isPresent()) {
-            if (findCategory.get().isDeleted()) {
-                findCategory.get().active();
-                return findCategory.get();
+            IncomeCategory incomeCategory = findCategory.get();
+            if (incomeCategory.isDeleted()) {
+                incomeCategory.active();
+                return incomeCategory;
             }
             throw new CategoryAlreadyExistException();
         }
@@ -47,9 +48,10 @@ public class CategoryService {
     public ExpenseCategory createExpenseCategory(CreateCategoryDto categoryDto) {
         Optional<ExpenseCategory> findCategory = expenseCategoryRepository.findByCategoryName(categoryDto.getCategoryName());
         if (findCategory.isPresent()) {
-            if (findCategory.get().isDeleted()) {
-                findCategory.get().active();
-                return findCategory.get();
+            ExpenseCategory expenseCategory = findCategory.get();
+            if (expenseCategory.isDeleted()) {
+                expenseCategory.active();
+                return expenseCategory;
             }
             throw new CategoryAlreadyExistException();
         }

@@ -45,7 +45,7 @@ public class TransactionService {
                 .user(user)
                 .detail(incomeDto.getDetail())
                 .amount(incomeDto.getAmount())
-                .description(incomeDto.getDescription() != null ? incomeDto.getDescription() : "")
+                .description(Optional.ofNullable(incomeDto.getDescription()).orElse(""))
                 .incomeCategory(category)
                 .incomeAt(incomeDto.getTransactionAt())
                 .build();
@@ -64,7 +64,7 @@ public class TransactionService {
                 .user(user)
                 .detail(expenseDto.getDetail())
                 .amount(expenseDto.getAmount())
-                .description(expenseDto.getDescription() != null ? expenseDto.getDescription() : "")
+                .description(Optional.ofNullable(expenseDto.getDescription()).orElse(""))
                 .expenseCategory(category)
                 .expenseAt(expenseDto.getTransactionAt())
                 .build();
