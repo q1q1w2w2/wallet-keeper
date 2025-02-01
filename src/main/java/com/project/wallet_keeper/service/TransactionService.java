@@ -77,12 +77,13 @@ public class TransactionService {
         LocalDateTime endDateTime = yearMonth.atEndOfMonth().atTime(LocalTime.MAX);
 
         int totalAmount = expenseRepository.getTotalAmountByUserAndDate(user, startDateTime, endDateTime);
+        int afterAmount = totalAmount + expenseDto.getAmount();
 
         if (LocalDateTime.now().getMonth() == yearMonth.getMonth() &&
                 LocalDateTime.now().getYear() == yearMonth.getYear()) {
             budgetRepository.findByUserAndYearAndMonth(user, yearMonth.getYear(), yearMonth.getMonthValue())
-                    .filter(budget -> budget.getAmount() > totalAmount + expenseDto.getAmount())
-                    .ifPresent(budget -> notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + totalAmount + "원"));
+                    .filter(budget -> budget.getAmount() < totalAmount + afterAmount)
+                    .ifPresent(budget -> notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + afterAmount + "원"));
         }
     }
 

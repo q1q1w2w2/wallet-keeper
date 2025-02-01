@@ -16,6 +16,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     List<Expense> findByUserAndExpenseAtBetween(User user, LocalDateTime startDate, LocalDateTime endDate);
 
-    @Query("select sum(e.amount) from Expense e where e.user = :user and e.expenseAt between :start and :end")
+    @Query("select coalesce(sum(e.amount), 0) from Expense e where e.user = :user and e.expenseAt between :start and :end")
     int getTotalAmountByUserAndDate(@Param("user") User user, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }

@@ -138,7 +138,7 @@ public class TransactionScheduler {
         }
     }
 
-    private List<Income> saveRegularIncomes() {
+    public List<Income> saveRegularIncomes() {
         List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
         LocalDate now = LocalDate.now();
 
@@ -162,7 +162,7 @@ public class TransactionScheduler {
         return incomeRepository.saveAll(incomesToSave);
     }
 
-    private List<Expense> saveRegularExpenses() {
+    public List<Expense> saveRegularExpenses() {
         List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
         LocalDate now = LocalDate.now();
 
