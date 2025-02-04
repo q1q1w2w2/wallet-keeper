@@ -82,8 +82,13 @@ public class TransactionService {
         if (LocalDateTime.now().getMonth() == yearMonth.getMonth() &&
                 LocalDateTime.now().getYear() == yearMonth.getYear()) {
             budgetRepository.findByUserAndYearAndMonth(user, yearMonth.getYear(), yearMonth.getMonthValue())
-                    .filter(budget -> budget.getAmount() < totalAmount + afterAmount)
-                    .ifPresent(budget -> notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + afterAmount + "원", user.getId()));
+                    .ifPresent(budget -> {
+                        if (budget.getAmount() < afterAmount) {
+                            notificationWebSocketHandler.sendNotification("이번 달 예산을 초과하였습니다. 현재 지출: " + afterAmount + "원", user.getId());
+                        } else if (budget.getAmount() < afterAmount * 0.8) {
+                            notificationWebSocketHandler.sendNotification("경고: 이번 달 예산의 80%를 사용하였습니다. 현재 지출: " + afterAmount + "원", user.getId());
+                        }
+                    });
         }
     }
 
@@ -202,10 +207,7 @@ public class TransactionService {
         List<ExpenseCategory> expenseCategories = expenseCategoryRepository.findAllByIsDeletedFalse();
 
         Map<ExpenseCategory, Integer> categoryMap = new HashMap<>();
-
-        for (ExpenseCategory expenseCategory : expenseCategories) {
-            categoryMap.put(expenseCategory, 0);
-        }
+        expenseCategories.forEach(category -> categoryMap.put(category, 0));
 
         for (Expense expense : expenseList) {
             ExpenseCategory category = expense.getExpenseCategory();
