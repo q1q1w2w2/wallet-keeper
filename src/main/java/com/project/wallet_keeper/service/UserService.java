@@ -52,13 +52,13 @@ public class UserService {
     }
 
     @Transactional
-    @CacheEvict(value = "user", key = "#user.email")
+    @CacheEvict(value = "user", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public User updateUser(User user, UserProfileUpdateDto updateDto) {
          return user.update(updateDto.getNickname(), updateDto.getBirth());
     }
 
     @Transactional
-    @CacheEvict(value = "user", key = "#user.email")
+    @CacheEvict(value = "user", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public void deleteUser(User user, String reason) {
         user.deleteUser();
         reasonRepository.save(new Reason(reason));
@@ -69,12 +69,12 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
+    @Cacheable(value = "user", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public User getCurrentUser() {
         String email = getEmailFromAuthentication();
         return getUserByEmail(email);
     }
 
-    @Cacheable(value = "user", key = "#email")
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
@@ -97,7 +97,7 @@ public class UserService {
     }
 
     @Transactional
-    @CacheEvict(value = "user", key = "#user.email")
+    @CacheEvict(value = "user", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public void updatePassword(User user, UpdatePasswordDto passwordDto) {
         String oldPassword = passwordDto.getOldPassword();
         String newPassword = passwordDto.getNewPassword();
