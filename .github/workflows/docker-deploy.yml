@@ -19,6 +19,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Set environment variables
+        run: |
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
+          echo "JWT_CLAIM_KEY=${{ secrets.JWT_CLAIM_KEY }}" >> $GITHUB_ENV 
+
       - name: Grant to Gradlew
         run: chmod +x ./gradlew
 

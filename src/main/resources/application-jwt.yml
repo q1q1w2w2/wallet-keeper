@@ -1,0 +1,6 @@
+jwt:
+  header: Authorization
+  secret: ${JWT_SECRET}
+  access-token-expire-time: 43200 # 12시간
+  refresh-token-expire-time: 604800 # 7일
+  claim-key: ${JWT_CLAIM_KEY}

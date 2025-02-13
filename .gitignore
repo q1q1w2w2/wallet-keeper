@@ -39,5 +39,5 @@ out/
 ### yml ###
 application.yml
 application-email.yml
-application-jwt.yml
+#application-jwt.yml
 application-oauth.yml
