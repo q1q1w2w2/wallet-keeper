@@ -37,7 +37,8 @@ out/
 .vscode/
 
 ### yml ###
-application.yml
-application-email.yml
+#*.yml
+#application.yml
+#application-email.yml
 #application-jwt.yml
-application-oauth.yml
+#application-oauth.yml
