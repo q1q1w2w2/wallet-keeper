@@ -1,0 +1,59 @@
+spring:
+  datasource:
+#    url: jdbc:mysql://localhost:3306/wallet_recode?useSSL=false&serverTimezone=Asia/Seoul&rewriteBatchedStatements=true
+#    username: root
+#    password: 1234
+    url: ${RDS_JDBC}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
+
+  data:
+    redis:
+#      host: localhost
+      host: ${EC2_HOST}
+      port: 6379
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  logging:
+    level:
+      org.hibernate.sql: debug
+      org.hibernate.orm.jdbc.bind: trace
+
+#  profiles:
+#    include: email, jwt, oauth
+
+  config:
+    import:
+      - classpath:application-jwt.yml
+      - classpath:application-email.yml
+      - classpath:application-oauth.yml
+
+  cache:
+    redis:
+      time-to-live: 60000
+
+server:
+  error:
+    include-stacktrace: never
+  port: 8083
+
+app:
+  base-url: http://localhost:${server.port}
+
+springdoc:
+  packages-to-scan: com.project.wallet_keeper.web
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
+  override-with-generic-response: false

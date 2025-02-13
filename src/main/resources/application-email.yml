@@ -1,0 +1,3 @@
+email:
+  googleId: ${GOOGLE_EMAIL}
+  appPassword: ${GOOGLE_APP_PASSWORD}
