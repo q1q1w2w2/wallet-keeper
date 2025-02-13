@@ -23,6 +23,13 @@ jobs:
         run: |
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
           echo "JWT_CLAIM_KEY=${{ secrets.JWT_CLAIM_KEY }}" >> $GITHUB_ENV 
+          echo "EC2_HOST=${{ secrets.EC2_HOST }}" >> $GITHUB_ENV 
+          echo "RDS_JDBC=${{ secrets.RDS_JDBC }}" >> $GITHUB_ENV 
+          echo "JRDS_USERNAME=${{ secrets.RDS_USERNAME }}" >> $GITHUB_ENV 
+          echo "GOOGLE_APP_PASSWORD=${{ secrets.GOOGLE_APP_PASSWORD }}" >> $GITHUB_ENV 
+          echo "GOOGLE_APP_PASSWORD=${{ secrets.GOOGLE_APP_PASSWORD }}" >> $GITHUB_ENV 
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV 
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> $GITHUB_ENV 
 
       - name: Grant to Gradlew
         run: chmod +x ./gradlew
