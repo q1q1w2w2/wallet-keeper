@@ -25,8 +25,7 @@ jobs:
           echo "JWT_CLAIM_KEY=${{ secrets.JWT_CLAIM_KEY }}" >> $GITHUB_ENV 
           echo "EC2_HOST=${{ secrets.EC2_HOST }}" >> $GITHUB_ENV 
           echo "RDS_JDBC=${{ secrets.RDS_JDBC }}" >> $GITHUB_ENV 
-          echo "JRDS_USERNAME=${{ secrets.RDS_USERNAME }}" >> $GITHUB_ENV 
-          echo "GOOGLE_APP_PASSWORD=${{ secrets.GOOGLE_APP_PASSWORD }}" >> $GITHUB_ENV 
+          echo "RDS_USERNAME=${{ secrets.RDS_USERNAME }}" >> $GITHUB_ENV 
           echo "GOOGLE_APP_PASSWORD=${{ secrets.GOOGLE_APP_PASSWORD }}" >> $GITHUB_ENV 
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV 
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> $GITHUB_ENV 
@@ -67,6 +66,12 @@ jobs:
             docker run -d -p 8083:8083 \
               -e JWT_CLAIM_KEY=${{ secrets.JWT_CLAIM_KEY }} \
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e EC2_HOST=${{ secrets.EC2_HOST }} \
+              -e RDS_JDBC=${{ secrets.RDS_JDBC }} \
+              -e RDS_USERNAME=${{ secrets.RDS_USERNAME }} \
+              -e GOOGLE_APP_PASSWORD=${{ secrets.GOOGLE_APP_PASSWORD }} \
+              -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+              -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
               q1q1w2w2/wallet-keeper
 
 #            docker run -d -p 8083:8083 q1q1w2w2/wallet-keeper
