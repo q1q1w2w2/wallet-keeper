@@ -49,10 +49,4 @@ jobs:
             docker pull q1q1w2w2/wallet-keeper
             docker stop wallet-keeper || true
             docker rm wallet-keeper || true
-            docker run -d -p 8083:8083 \
-              -e SPRING_PROFILES_ACTIVE=jwt,oauth,email \
-              -e jwt.claim-key=${{ secrets.JWT_CLAIM_KEY }} \
-              -e jwt.secret=${{ secrets.JWT_SECRET }} \
-              q1q1w2w2/wallet-keeper
-
-#            docker run -d -p 8083:8083 q1q1w2w2/wallet-keeper
+            docker run -d -p 8083:8083 q1q1w2w2/wallet-keeper
