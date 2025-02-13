@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ public class TransactionService {
     private final BudgetRepository budgetRepository;
 
     @Transactional
+    @CacheEvict(value = "annualSummary", allEntries = true)
     public Income saveIncome(User user, TransactionDto incomeDto) {
         Long categoryId = incomeDto.getTransactionCategoryId();
         IncomeCategory category = incomeCategoryRepository.findById(categoryId)
@@ -53,6 +55,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @CacheEvict(value = "annualSummary", allEntries = true)
     public Expense saveExpense(User user, TransactionDto expenseDto) {
         Long categoryId = expenseDto.getTransactionCategoryId();
         ExpenseCategory category = expenseCategoryRepository.findById(categoryId)
@@ -148,6 +151,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @CacheEvict(value = "annualSummary", allEntries = true)
     public Income updateIncome(Long incomeId, TransactionDto incomeDto, User user) {
         Income income = getIncome(incomeId);
 
@@ -160,6 +164,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @CacheEvict(value = "annualSummary", allEntries = true)
     public Expense updateExpense(Long expenseId, TransactionDto expenseDto, User user) {
         Expense expense = getExpense(expenseId);
 
@@ -172,7 +177,7 @@ public class TransactionService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactions", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
+    @CacheEvict(value = "annualSummary", allEntries = true)
     public void deleteIncome(Long incomeId, User user) {
         Income income = getIncome(incomeId);
         checkTransactionOwnership(income, user);
@@ -181,12 +186,7 @@ public class TransactionService {
     }
 
     @Transactional
-    @Caching(
-            evict = {
-                    @CacheEvict(value = "transactions", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()"),
-                    @CacheEvict(value = "expenses", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
-            }
-    )
+    @CacheEvict(value = "annualSummary", allEntries = true)
     public void deleteExpense(Long expenseId, User user) {
         Expense expense = getExpense(expenseId);
         checkTransactionOwnership(expense, user);
@@ -236,6 +236,7 @@ public class TransactionService {
         return summaryList;
     }
 
+    @Cacheable(value = "annualSummary", key = "#user.getEmail() + ':' + #year")
     public AnnualSummary getAnnualSummary(User user, int year) {
         LocalDateTime startDateTime = LocalDateTime.of(year, 1, 1, 0, 0);
         LocalDateTime endDateTime = LocalDateTime.of(year, 12, 31, 23, 59);
