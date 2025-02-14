@@ -73,6 +73,5 @@ jobs:
               -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
               -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
               q1q1w2w2/wallet-keeper:latest
-            
 
 #            docker run -d -p 8083:8083 q1q1w2w2/wallet-keeper
