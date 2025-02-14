@@ -63,7 +63,7 @@ jobs:
             docker pull q1q1w2w2/wallet-keeper
             docker stop wallet-keeper || true
             docker rm wallet-keeper || true
-
+ 
             JWT_CLAIM_KEY="${{ secrets.JWT_CLAIM_KEY }}"
             JWT_SECRET="${{ secrets.JWT_SECRET }}"
             EC2_HOST="${{ secrets.EC2_HOST }}"
