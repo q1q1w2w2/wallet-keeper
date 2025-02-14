@@ -63,6 +63,16 @@ jobs:
             docker pull q1q1w2w2/wallet-keeper
             docker stop wallet-keeper || true
             docker rm wallet-keeper || true
+            
+            echo "JWT_CLAIM_KEY=${{ secrets.JWT_CLAIM_KEY }}"
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
+            echo "EC2_HOST=${{ secrets.EC2_HOST }} "
+            echo "RDS_JDBC=${{ secrets.RDS_JDBC }}"
+            echo "RDS_USERNAME=${{ secrets.RDS_USERNAME }}"
+            echo "GOOGLE_APP_PASSWORD=${{ secrets.GOOGLE_APP_PASSWORD }}"
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" 
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}"
+            
             docker run -d -p 8083:8083 \
               -e JWT_CLAIM_KEY=${{ secrets.JWT_CLAIM_KEY }} \
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
