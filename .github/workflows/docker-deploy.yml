@@ -69,9 +69,11 @@ jobs:
             EC2_HOST="${{ secrets.EC2_HOST }}"
             RDS_JDBC="${{ secrets.RDS_JDBC }}"
             RDS_USERNAME="${{ secrets.RDS_USERNAME }}"
+            RDS_PASSWORD="${{ secrets.RDS_PASSWORD }}"
             GOOGLE_APP_PASSWORD="${{ secrets.GOOGLE_APP_PASSWORD }}"
             GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
             GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
+            GOOGLE_EMAIL="${{ secrets.GOOGLE_EMAIL }}"
 
             docker run -d -p 8083:8083 \
               -e JWT_CLAIM_KEY="${JWT_CLAIM_KEY}" \
@@ -79,9 +81,11 @@ jobs:
               -e EC2_HOST="${EC2_HOST}" \
               -e RDS_JDBC="${RDS_JDBC}" \
               -e RDS_USERNAME="${RDS_USERNAME}" \
+              -e RDS_PASSWORD="${RDS_PASSWORD}" \
               -e GOOGLE_APP_PASSWORD="${GOOGLE_APP_PASSWORD}" \
               -e GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}" \
               -e GOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET}" \
+              -e GOOGLE_EMAIL="${GOOGLE_EMAIL}" \
               q1q1w2w2/wallet-keeper:latest
 
 #            docker run -d -p 8083:8083 q1q1w2w2/wallet-keeper
