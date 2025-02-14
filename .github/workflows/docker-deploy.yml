@@ -61,8 +61,8 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             docker pull q1q1w2w2/wallet-keeper
-            docker stop wallet-keeper || true
-            docker rm wallet-keeper || true
+            
+            docker ps -q filter "name=wallet-keeper" | grep -q . && docker stop wallet-keeper && docker rm wallet-keeper || true
  
             JWT_CLAIM_KEY="${{ secrets.JWT_CLAIM_KEY }}"
             JWT_SECRET="${{ secrets.JWT_SECRET }}"
@@ -75,7 +75,7 @@ jobs:
             GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
             GOOGLE_EMAIL="${{ secrets.GOOGLE_EMAIL }}"
 
-            docker run -d -p 8083:8083 \
+            docker run -d --name wallet-keeper -p 8083:8083 \
               -e JWT_CLAIM_KEY="${JWT_CLAIM_KEY}" \
               -e JWT_SECRET="${JWT_SECRET}" \
               -e EC2_HOST="${EC2_HOST}" \
