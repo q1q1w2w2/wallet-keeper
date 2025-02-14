@@ -73,7 +73,7 @@ jobs:
               TARGET_PORT="8084"
               CURRENT_COLOR="blue"
             fi
-            
+             
             echo "현재 연결된 포트: $CURRENT_PORT"
             echo "새로 연결할 포트: $TARGET_PORT ($TARGET_COLOR)"
             
