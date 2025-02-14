@@ -62,7 +62,7 @@ jobs:
           script: |
             docker pull q1q1w2w2/wallet-keeper
             
-            docker ps -q filter "name=wallet-keeper" | grep -q . && docker stop wallet-keeper && docker rm wallet-keeper || true
+            docker ps -q -f "name=wallet-keeper" | grep -q . && docker stop wallet-keeper && docker rm wallet-keeper || true
   
             JWT_CLAIM_KEY="${{ secrets.JWT_CLAIM_KEY }}"
             JWT_SECRET="${{ secrets.JWT_SECRET }}"
