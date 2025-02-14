@@ -102,7 +102,7 @@ jobs:
               q1q1w2w2/wallet-keeper:latest
             
             sudo sed -i "s/$CURRENT_PORT/$TARGET_PORT/" /etc/nginx/conf.d/wallet-keeper.conf
-            sudo nginx -s reload
+            sudo nginx -s reload 
             
             docker ps -q -f "name=wallet-keeper-$CURRENT_COLOR" | grep -q . && docker stop wallet-keeper-$CURRENT_COLOR && docker rm wallet-keeper-$CURRENT_COLOR || true
             
