@@ -62,8 +62,9 @@ jobs:
           script: |
             docker pull q1q1w2w2/wallet-keeper
             
-            CURRENT_PORT=$(sudo grep 'server 127.0.0.1:' /etc/nginx/conf.d/wallet-keeper.conf | awk -F: '{print $3}' | awk '{print $1}')
-            
+#            CURRENT_PORT=$(sudo grep 'server 127.0.0.1:' /etc/nginx/conf.d/wallet-keeper.conf | awk -F: '{print $3}' | awk '{print $1}')
+            CURRENT_PORT=$(sudo grep -oP 'server 127\.0\.0\.1:\K[0-9]+' /etc/nginx/conf.d/wallet-keeper.conf)
+          
             if [ "$CURRENT_PORT" = "8084" ]; then
               TARGET_COLOR="blue"
               TARGET_PORT="8083"
