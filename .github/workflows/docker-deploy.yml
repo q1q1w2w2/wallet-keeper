@@ -87,5 +87,8 @@ jobs:
               -e GOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET}" \
               -e GOOGLE_EMAIL="${GOOGLE_EMAIL}" \
               q1q1w2w2/wallet-keeper:latest
+            
+            docker container prune -f
+            docker rmi $(docker images -q -f "dangling=true")
 
 #            docker run -d -p 8083:8083 q1q1w2w2/wallet-keeper
