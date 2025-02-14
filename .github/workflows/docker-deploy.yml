@@ -62,7 +62,6 @@ jobs:
           script: |
             docker pull q1q1w2w2/wallet-keeper
             
-            # CURRENT_PORT=$(sudo grep 'server 127.0.0.1:' /etc/nginx/conf.d/wallet-keeper.conf | awk -F: '{print $3}' | awk '{print $1}')
             CURRENT_PORT=$(sudo grep -oP 'server 127\.0\.0\.1:\K[0-9]+' /etc/nginx/conf.d/wallet-keeper.conf)
             
             if [ "$CURRENT_PORT" = "8084" ]; then
@@ -89,7 +88,6 @@ jobs:
             GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
             GOOGLE_EMAIL="${{ secrets.GOOGLE_EMAIL }}"
             
-            # 환경변수를 넣어서 새 컨테이너 실행
             docker run -d --name wallet-keeper-$TARGET_COLOR -p $TARGET_PORT:8083 \
               -e JWT_CLAIM_KEY="${JWT_CLAIM_KEY}" \
               -e JWT_SECRET="${JWT_SECRET}" \
@@ -103,13 +101,10 @@ jobs:
               -e GOOGLE_EMAIL="${GOOGLE_EMAIL}" \
               q1q1w2w2/wallet-keeper:latest
             
-            # Nginx 컨테이너 교체 및 재시작
             sudo sed -i "s/$CURRENT_PORT/$TARGET_PORT/" /etc/nginx/conf.d/wallet-keeper.conf
             sudo nginx -s reload
             
-            # 기존 컨테이너 중지 및 삭제
             docker ps -q -f "name=wallet-keeper-$CURRENT_COLOR" | grep -q . && docker stop wallet-keeper-$CURRENT_COLOR && docker rm wallet-keeper-$CURRENT_COLOR || true
             
-            # 불필요한 컨테이너 및 이미지 정리
             docker container prune -f
             docker rmi $(docker images -q -f "dangling=true") || true
