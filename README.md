@@ -22,7 +22,7 @@
 ---
 ## 🛠아키텍처
 
-![가계부 프로젝트 drawio](https://github.com/user-attachments/assets/14aff948-daca-4426-b3f3-a1e7c8d20fe1)
+![가계부 프로젝트v2 drawio](https://github.com/user-attachments/assets/8eedf546-fcd2-4102-80d7-e50d8acf26b7)
 
 ---
 ## 🔧ERD 설계
