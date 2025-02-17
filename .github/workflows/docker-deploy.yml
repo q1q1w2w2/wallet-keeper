@@ -112,7 +112,7 @@ jobs:
               sleep 5
             done
              
-            if[ "$isSuccess" = true ]; then
+            if [ "$isSuccess" = true ]; then
               echo "새로운 컨테이너 정상 작동, Nginx 포트 전환"
               sudo sed -i "s/$CURRENT_PORT/$TARGET_PORT/" /etc/nginx/conf.d/wallet-keeper.conf
               sudo nginx -s reload
