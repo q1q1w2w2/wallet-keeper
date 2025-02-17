@@ -102,7 +102,6 @@ jobs:
               q1q1w2w2/wallet-keeper:latest
           
             isSuccess=false
-            
             for i in {1..24}; do
               if curl -s http://127.0.0.1:$TARGET_PORT/actuator/health | grep -q 'UP'; then
                 echo "새 컨테이너 정상 실행됨"
