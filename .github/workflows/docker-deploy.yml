@@ -100,24 +100,7 @@ jobs:
               -e GOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET}" \
               -e GOOGLE_EMAIL="${GOOGLE_EMAIL}" \
               q1q1w2w2/wallet-keeper:latest
-            
-#            for i in {1..24}; do
-#              if curl -s http://127.0.0.1:$TARGET_PORT/actuator/health | grep -q 'UP'; then
-#                echo "새 컨테이너 정상 실행됨"
-#                break
-#              fi
-#              echo "새 컨테이너 실행 대기 중"
-#              sleep 5
-#            done
-#
-#            sudo sed -i "s/$CURRENT_PORT/$TARGET_PORT/" /etc/nginx/conf.d/wallet-keeper.conf
-#            sudo nginx -s reload
-#
-#            docker ps -q -f "name=wallet-keeper-$CURRENT_COLOR" | grep -q . && docker stop wallet-keeper-$CURRENT_COLOR && docker rm wallet-keeper-$CURRENT_COLOR || true
-#
-#            docker container prune -f
-#            docker rmi $(docker images -q -f "dangling=true") || true
-
+          
             isSuccess=false
             
             for i in {1..24}; do
