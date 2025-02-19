@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.HttpStatus.*;
+
 @Tag(name = "MailController", description = "메일 컨트롤러 API")
 @RestController
 @RequiredArgsConstructor
@@ -26,16 +28,17 @@ public class MailController {
     @PostMapping("/verification")
     public ResponseEntity<ApiResponse<Object>> sendCode(@Valid @RequestBody EmailDto emailDto) throws MessagingException {
         mailService.sendMailForSignup(emailDto.getEmail());
-
-        ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "인증 메일이 발송되었습니다.");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return createResponse(OK, "인증 메일이 발송되었습니다.");
     }
 
     @PostMapping("/verification/code")
     public ResponseEntity<ApiResponse<Object>> verifyCode(@Valid @RequestBody VerifyCodeDto verifyCodeDto) {
         mailService.verifyCode(verifyCodeDto.getEmail(), verifyCodeDto.getCode());
+        return createResponse(OK, "인증이 완료되었습니다.");
+    }
 
-        ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "인증이 완료되었습니다.");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message) {
+        ApiResponse<T> response = ApiResponse.success(status, message);
+        return ResponseEntity.status(status).body(response);
     }
 }

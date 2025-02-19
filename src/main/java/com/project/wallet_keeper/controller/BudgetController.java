@@ -9,6 +9,7 @@ import com.project.wallet_keeper.dto.budget.BudgetResultDto;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.BudgetService;
 import com.project.wallet_keeper.service.UserService;
+import com.project.wallet_keeper.util.auth.LoginUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,9 @@ import static org.springframework.http.HttpStatus.*;
 public class BudgetController {
 
     private final BudgetService budgetService;
-    private final UserService userService;
 
     @PutMapping
-    public ResponseEntity<ApiResponse<BudgetResponseDto>> saveBudget(@Valid @RequestBody BudgetDto budgetDto) {
-        User user = getCurrentUser();
+    public ResponseEntity<ApiResponse<BudgetResponseDto>> saveBudget(@Valid @RequestBody BudgetDto budgetDto, @LoginUser User user) {
         BudgetResultDto budgetResultDto = budgetService.saveOrUpdate(user, budgetDto);
         Budget budget = budgetResultDto.getBudget();
 
@@ -40,23 +39,15 @@ public class BudgetController {
     }
 
     @GetMapping
-    public ResponseEntity getBudget(@RequestParam int year, @RequestParam int month) {
-        User user = getCurrentUser();
+    public ResponseEntity getBudget(@RequestParam int year, @RequestParam int month, @LoginUser User user) {
         Budget budget = budgetService.findBudgetByDate(user, year, month);
-
         return createResponse(OK, new BudgetResponseDto(budget));
     }
 
     @GetMapping("/report")
-    public ResponseEntity report(@RequestParam int year, @RequestParam int month) {
-        User user = getCurrentUser();
+    public ResponseEntity report(@RequestParam int year, @RequestParam int month, @LoginUser User user) {
         BudgetReport report = budgetService.report(user, year, month);
-
         return createResponse(OK, report);
-    }
-
-    private User getCurrentUser() {
-        return userService.getCurrentUser();
     }
 
     private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {

@@ -4,6 +4,7 @@ import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.user.*;
 import com.project.wallet_keeper.dto.common.ApiResponse;
 import com.project.wallet_keeper.service.UserService;
+import com.project.wallet_keeper.util.auth.LoginUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,48 +25,35 @@ public class UserController {
     @PostMapping
     public ResponseEntity<ApiResponse<SignupResponseDto>> signUp(@Valid @RequestBody SignupDto signupDto) {
         User user = userService.signUp(signupDto);
-
-        SignupResponseDto data = new SignupResponseDto(user);
-        return createResponse(CREATED, "회원가입이 완료되었습니다.", data);
+        return createResponse(CREATED, "회원가입이 완료되었습니다.", new SignupResponseDto(user));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<UserResponseDto>> getCurrentUser() {
-        User user = userService.getCurrentUser();
-
-        UserResponseDto data = new UserResponseDto(user);
-        return createResponse(OK, data);
+    public ResponseEntity<ApiResponse<UserResponseDto>> getCurrentUser(@LoginUser User user) {
+        return createResponse(OK, new UserResponseDto(user));
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<ApiResponse<UserResponseDto>> updateCurrentUser(@Valid @RequestBody UserProfileUpdateDto updateDto) {
-        User user = userService.getCurrentUser();
+    public ResponseEntity<ApiResponse<UserResponseDto>> updateCurrentUser(@Valid @RequestBody UserProfileUpdateDto updateDto, @LoginUser User user) {
         User updateUser = userService.updateUser(user, updateDto);
-
-        UserResponseDto data = new UserResponseDto(updateUser);
-        return createResponse(OK, "사용자 정보가 수정되었습니다.", data);
+        return createResponse(OK, "사용자 정보가 수정되었습니다.", new UserResponseDto(updateUser));
     }
 
     @PatchMapping("/me/status")
-    public ResponseEntity<ApiResponse<UserResponseDto>> deleteCurrentUser(@Valid @RequestBody ReasonDto reasonDto) {
-        User user = userService.getCurrentUser();
+    public ResponseEntity<ApiResponse<UserResponseDto>> deleteCurrentUser(@Valid @RequestBody ReasonDto reasonDto, @LoginUser User user) {
         userService.deleteUser(user, reasonDto.getReason());
-
         return createResponse(OK, "회원 탈퇴가 완료되었습니다.");
     }
 
     @PatchMapping("/me/password")
-    public ResponseEntity updatePassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) {
-        User user = userService.getCurrentUser();
+    public ResponseEntity updatePassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDto, @LoginUser User user) {
         userService.updatePassword(user, updatePasswordDto);
-
         return createResponse(OK, "비밀번호가 변경되었습니다.");
     }
 
     @PatchMapping("/reset-password")
     public ResponseEntity resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) {
         userService.resetPassword(resetPasswordDto);
-
         return createResponse(OK, "비밀번호가 변경되었습니다.");
     }
 

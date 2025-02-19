@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,32 +25,34 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenDto>> login(@Valid @RequestBody LoginDto loginDto) throws Exception {
         TokenDto tokens = authService.login(loginDto);
-
-        ApiResponse<TokenDto> response = ApiResponse.success(OK, "로그인 되었습니다.", tokens);
-        return ResponseEntity.status(OK).body(response);
+        return createResponse(OK, "로그인 되었습니다.", tokens);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<TokenDto>> logout(@Valid @RequestBody TokenDto tokenDto) throws Exception {
         authService.logout(tokenDto);
-
-        ApiResponse<TokenDto> response = ApiResponse.success(OK, "로그아웃 되었습니다.");
-        return ResponseEntity.status(OK).body(response);
+        return createResponse(OK, "로그아웃 되었습니다.");
     }
 
     @PostMapping("/token/refresh")
     public ResponseEntity<ApiResponse<TokenDto>> refreshToken(@Valid @RequestBody RefreshTokenDto tokenDto) throws Exception {
         TokenDto tokens = authService.generateNewTokens(tokenDto);
-
-        ApiResponse<TokenDto> response = ApiResponse.success(OK, "토큰이 재발급 되었습니다.", tokens);
-        return ResponseEntity.status(OK).body(response);
+        return createResponse(OK, "토큰이 재발급 되었습니다.", tokens);
     }
 
     @PostMapping("/oauth")
     public ResponseEntity<ApiResponse<TokenDto>> getOAuthAccessToken(@RequestBody OAuthDto oAuthDto) throws Exception {
         TokenDto tokens = authService.oAuthSignupAndLogin(oAuthDto);
+        return createResponse(OK, "로그인 되었습니다.", tokens);
+    }
 
-        ApiResponse<TokenDto> response = ApiResponse.success(OK, "로그인 되었습니다.", tokens);
-        return ResponseEntity.status(OK).body(response);
+    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message) {
+        ApiResponse<T> response = ApiResponse.success(status, message);
+        return ResponseEntity.status(status).body(response);
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message, T data) {
+        ApiResponse<T> response = ApiResponse.success(status, message, data);
+        return ResponseEntity.status(status).body(response);
     }
 }

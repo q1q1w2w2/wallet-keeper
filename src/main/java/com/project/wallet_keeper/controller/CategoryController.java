@@ -9,10 +9,10 @@ import com.project.wallet_keeper.service.CategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -28,48 +28,46 @@ public class CategoryController {
     @PostMapping("/income")
     public ResponseEntity<ApiResponse<IncomeCategory>> createIncomeCategory(@Valid @RequestBody CreateCategoryDto categoryDto) {
         IncomeCategory category = categoryService.createIncomeCategory(categoryDto);
-
-        ApiResponse<IncomeCategory> response = ApiResponse.success(CREATED, category);
-        return ResponseEntity.status(CREATED).body(response);
+        return createResponse(CREATED, category);
     }
 
     @PostMapping("/expense")
     public ResponseEntity<ApiResponse<ExpenseCategory>> createExpenseCategory(@Valid @RequestBody CreateCategoryDto categoryDto) {
         ExpenseCategory category = categoryService.createExpenseCategory(categoryDto);
-
-        ApiResponse<ExpenseCategory> response = ApiResponse.success(CREATED, category);
-        return ResponseEntity.status(CREATED).body(response);
+        return createResponse(CREATED, category);
     }
 
     @GetMapping("/income")
     public ResponseEntity<ApiResponse<List<CategoryResponseDto>>> getIncomeCategoryList() {
         List<CategoryResponseDto> incomeCategories = categoryService.getIncomeCategories();
-
-        ApiResponse<List<CategoryResponseDto>> response = ApiResponse.success(OK, incomeCategories);
-        return ResponseEntity.status(OK).body(response);
+        return createResponse(OK, incomeCategories);
     }
 
     @GetMapping("/expense")
     public ResponseEntity<ApiResponse<List<CategoryResponseDto>>> getExpenseCategoryList() {
         List<CategoryResponseDto> expenseCategories = categoryService.getExpenseCategories();
-
-        ApiResponse<List<CategoryResponseDto>> response = ApiResponse.success(OK, expenseCategories);
-        return ResponseEntity.status(OK).body(response);
+        return createResponse(OK, expenseCategories);
     }
 
     @PatchMapping("/income/{categoryId}")
     public ResponseEntity<ApiResponse<Object>> deleteIncomeCategory(@PathVariable Long categoryId) {
         categoryService.deleteIncomeCategory(categoryId);
-
-        ApiResponse<Object> response = ApiResponse.success(NO_CONTENT);
-        return ResponseEntity.status(OK).body(response);
+        return createResponse(NO_CONTENT);
     }
 
     @PatchMapping("/expense/{categoryId}")
     public ResponseEntity<ApiResponse<Object>> deleteExpenseCategory(@PathVariable Long categoryId) {
         categoryService.deleteExpenseCategory(categoryId);
+        return createResponse(NO_CONTENT);
+    }
 
-        ApiResponse<Object> response = ApiResponse.success(NO_CONTENT);
-        return ResponseEntity.status(OK).body(response);
+    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status) {
+        ApiResponse<T> response = ApiResponse.success(status);
+        return ResponseEntity.status(status).body(response);
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {
+        ApiResponse<T> response = ApiResponse.success(status, data);
+        return ResponseEntity.status(status).body(response);
     }
 }
