@@ -1,7 +1,7 @@
 package com.project.wallet_keeper.util.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.wallet_keeper.dto.common.ApiResponse;
+import com.project.wallet_keeper.util.common.ApiResponse;
 import com.project.wallet_keeper.util.auth.CustomAuthenticationEntryPoint;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;

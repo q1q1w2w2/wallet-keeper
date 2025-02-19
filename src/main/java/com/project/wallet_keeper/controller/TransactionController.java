@@ -5,12 +5,12 @@ import com.project.wallet_keeper.entity.Income;
 import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.transaction.AnnualSummary;
 import com.project.wallet_keeper.dto.transaction.ExpenseSummary;
-import com.project.wallet_keeper.dto.common.ApiResponse;
+import com.project.wallet_keeper.util.common.ApiResponse;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
 import com.project.wallet_keeper.service.TransactionService;
-import com.project.wallet_keeper.service.UserService;
-import com.project.wallet_keeper.util.auth.LoginUser;
+import com.project.wallet_keeper.util.common.ApiResponseUtil;
+import com.project.wallet_keeper.util.common.LoginUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.project.wallet_keeper.util.common.ApiResponseUtil.*;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -115,15 +116,5 @@ public class TransactionController {
     public ResponseEntity<ApiResponse<AnnualSummary>> getAnnualSummary(@RequestParam int year, @LoginUser User user) {
         AnnualSummary annualSummary = transactionService.getAnnualSummary(user, year);
         return createResponse(OK, annualSummary);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {
-        ApiResponse<T> response = ApiResponse.success(status, data);
-        return ResponseEntity.status(status).body(response);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status) {
-        ApiResponse<T> response = ApiResponse.success(status);
-        return ResponseEntity.status(status).body(response);
     }
 }

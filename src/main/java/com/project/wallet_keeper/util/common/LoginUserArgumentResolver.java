@@ -1,12 +1,9 @@
-package com.project.wallet_keeper.util.auth;
+package com.project.wallet_keeper.util.common;
 
 import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;

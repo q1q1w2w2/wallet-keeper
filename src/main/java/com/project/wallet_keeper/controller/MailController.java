@@ -2,8 +2,9 @@ package com.project.wallet_keeper.controller;
 
 import com.project.wallet_keeper.dto.mail.EmailDto;
 import com.project.wallet_keeper.dto.mail.VerifyCodeDto;
-import com.project.wallet_keeper.dto.common.ApiResponse;
+import com.project.wallet_keeper.util.common.ApiResponse;
 import com.project.wallet_keeper.service.MailService;
+import com.project.wallet_keeper.util.common.ApiResponseUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.project.wallet_keeper.util.common.ApiResponseUtil.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Tag(name = "MailController", description = "메일 컨트롤러 API")
@@ -35,10 +37,5 @@ public class MailController {
     public ResponseEntity<ApiResponse<Object>> verifyCode(@Valid @RequestBody VerifyCodeDto verifyCodeDto) {
         mailService.verifyCode(verifyCodeDto.getEmail(), verifyCodeDto.getCode());
         return createResponse(OK, "인증이 완료되었습니다.");
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message) {
-        ApiResponse<T> response = ApiResponse.success(status, message);
-        return ResponseEntity.status(status).body(response);
     }
 }

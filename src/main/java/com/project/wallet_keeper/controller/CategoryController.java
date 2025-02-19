@@ -4,8 +4,9 @@ import com.project.wallet_keeper.entity.ExpenseCategory;
 import com.project.wallet_keeper.entity.IncomeCategory;
 import com.project.wallet_keeper.dto.category.CategoryResponseDto;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
-import com.project.wallet_keeper.dto.common.ApiResponse;
+import com.project.wallet_keeper.util.common.ApiResponse;
 import com.project.wallet_keeper.service.CategoryService;
+import com.project.wallet_keeper.util.common.ApiResponseUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.project.wallet_keeper.util.common.ApiResponseUtil.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Tag(name = "CategoryController", description = "카테고리 컨트롤러 API")
@@ -59,15 +61,5 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<Object>> deleteExpenseCategory(@PathVariable Long categoryId) {
         categoryService.deleteExpenseCategory(categoryId);
         return createResponse(NO_CONTENT);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status) {
-        ApiResponse<T> response = ApiResponse.success(status);
-        return ResponseEntity.status(status).body(response);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {
-        ApiResponse<T> response = ApiResponse.success(status, data);
-        return ResponseEntity.status(status).body(response);
     }
 }

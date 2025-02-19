@@ -2,9 +2,10 @@ package com.project.wallet_keeper.controller;
 
 import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.user.*;
-import com.project.wallet_keeper.dto.common.ApiResponse;
+import com.project.wallet_keeper.util.common.ApiResponse;
 import com.project.wallet_keeper.service.UserService;
-import com.project.wallet_keeper.util.auth.LoginUser;
+import com.project.wallet_keeper.util.common.ApiResponseUtil;
+import com.project.wallet_keeper.util.common.LoginUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.project.wallet_keeper.util.common.ApiResponseUtil.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Tag(name = "UserController", description = "사용자 컨트롤러 API")
@@ -55,20 +57,5 @@ public class UserController {
     public ResponseEntity resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) {
         userService.resetPassword(resetPasswordDto);
         return createResponse(OK, "비밀번호가 변경되었습니다.");
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message, T data) {
-        ApiResponse<T> response = ApiResponse.success(status, message, data);
-        return ResponseEntity.status(status).body(response);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message) {
-        ApiResponse<T> response = ApiResponse.success(status, message);
-        return ResponseEntity.status(status).body(response);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, T data) {
-        ApiResponse<T> response = ApiResponse.success(status, data);
-        return ResponseEntity.status(status).body(response);
     }
 }

@@ -1,8 +1,9 @@
 package com.project.wallet_keeper.controller;
 
 import com.project.wallet_keeper.dto.auth.*;
-import com.project.wallet_keeper.dto.common.ApiResponse;
+import com.project.wallet_keeper.util.common.ApiResponse;
 import com.project.wallet_keeper.service.AuthService;
+import com.project.wallet_keeper.util.common.ApiResponseUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.project.wallet_keeper.util.common.ApiResponseUtil.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Tag(name = "AuthController", description = "인증 컨트롤러 API")
@@ -44,15 +46,5 @@ public class AuthController {
     public ResponseEntity<ApiResponse<TokenDto>> getOAuthAccessToken(@RequestBody OAuthDto oAuthDto) throws Exception {
         TokenDto tokens = authService.oAuthSignupAndLogin(oAuthDto);
         return createResponse(OK, "로그인 되었습니다.", tokens);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message) {
-        ApiResponse<T> response = ApiResponse.success(status, message);
-        return ResponseEntity.status(status).body(response);
-    }
-
-    private <T> ResponseEntity<ApiResponse<T>> createResponse(HttpStatus status, String message, T data) {
-        ApiResponse<T> response = ApiResponse.success(status, message, data);
-        return ResponseEntity.status(status).body(response);
     }
 }

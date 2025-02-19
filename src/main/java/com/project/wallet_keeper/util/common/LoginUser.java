@@ -1,4 +1,4 @@
-package com.project.wallet_keeper.util.auth;
+package com.project.wallet_keeper.util.common;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

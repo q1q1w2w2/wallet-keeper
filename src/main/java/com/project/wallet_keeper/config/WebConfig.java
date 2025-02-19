@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.config;
 
-import com.project.wallet_keeper.util.auth.LoginUserArgumentResolver;
+import com.project.wallet_keeper.util.common.LoginUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

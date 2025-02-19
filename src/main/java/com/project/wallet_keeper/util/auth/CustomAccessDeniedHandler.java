@@ -1,7 +1,7 @@
 package com.project.wallet_keeper.util.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.wallet_keeper.dto.common.ApiResponse;
+import com.project.wallet_keeper.util.common.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

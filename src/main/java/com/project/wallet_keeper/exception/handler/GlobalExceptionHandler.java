@@ -1,6 +1,6 @@
 package com.project.wallet_keeper.exception.handler;
 
-import com.project.wallet_keeper.dto.common.ApiResponse;
+import com.project.wallet_keeper.util.common.ApiResponse;
 import com.project.wallet_keeper.exception.auth.OAuthUserException;
 import com.project.wallet_keeper.exception.auth.TokenValidationException;
 import com.project.wallet_keeper.exception.auth.VerificationCodeMismatchException;
@@ -13,7 +13,6 @@ import com.project.wallet_keeper.exception.transaction.TransactionNotFoundExcept
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
 import com.project.wallet_keeper.exception.user.UserNotActiveException;
 import com.project.wallet_keeper.exception.user.UserNotFoundException;
-import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -21,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
