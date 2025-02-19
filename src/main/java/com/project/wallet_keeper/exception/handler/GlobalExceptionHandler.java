@@ -16,7 +16,6 @@ import com.project.wallet_keeper.exception.user.UserNotFoundException;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static com.project.wallet_keeper.exception.messages.ErrorMessages.*;
+import static com.project.wallet_keeper.util.common.ApiResponseUtil.*;
 import static org.springframework.http.HttpStatus.*;
 
 //@Hidden
@@ -121,11 +121,5 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse(e.getMessage());
         return createErrorResponse(e, BAD_REQUEST, message);
-    }
-
-    private ResponseEntity<ApiResponse<Object>> createErrorResponse(Exception e, HttpStatus status, String message) {
-        log.error("[{}] 발생: {}", e.getClass().getSimpleName(), message);
-        ApiResponse<Object> response = ApiResponse.error(status, message);
-        return ResponseEntity.status(status).body(response);
     }
 }
