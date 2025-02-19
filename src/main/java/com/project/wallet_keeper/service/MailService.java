@@ -26,7 +26,6 @@ public class MailService {
 
     private static final String AUTH_CODE_PREFIX = "authCode:";
 
-    @Transactional
     public void sendMailForSignup(String email) throws MessagingException {
         String randomNumber = generateNumber();
         String sender = "xmrrhdwjdqls@gmail.com";
