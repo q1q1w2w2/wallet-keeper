@@ -331,7 +331,7 @@ class TransactionSchedulerTest {
         transactionScheduler.saveRegularIncomes();
 
         // then
-        verify(incomeRepository, times(2)).save(any(Income.class));
+        verify(incomeRepository, times(1)).saveAll(any(List.class));
     }
 
     @Test
@@ -349,7 +349,7 @@ class TransactionSchedulerTest {
         transactionScheduler.saveRegularExpenses();
 
         // then
-        verify(expenseRepository, times(2)).save(any(Expense.class));
+        verify(expenseRepository, times(1)).saveAll(any(List.class));
     }
 
     private RegularIncome createRegularIncome() {

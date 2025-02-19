@@ -1,6 +1,7 @@
 package com.project.wallet_keeper.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.wallet_keeper.config.WebConfig;
 import com.project.wallet_keeper.dto.auth.LoginDto;
 import com.project.wallet_keeper.dto.auth.OAuthDto;
 import com.project.wallet_keeper.dto.auth.RefreshTokenDto;
@@ -8,6 +9,7 @@ import com.project.wallet_keeper.dto.auth.TokenDto;
 import com.project.wallet_keeper.exception.auth.OAuthUserException;
 import com.project.wallet_keeper.exception.auth.TokenValidationException;
 import com.project.wallet_keeper.exception.user.UserAlreadyExistException;
+import com.project.wallet_keeper.service.UserService;
 import com.project.wallet_keeper.util.auth.CustomAuthenticationEntryPoint;
 import com.project.wallet_keeper.util.jwt.TokenProvider;
 import com.project.wallet_keeper.service.AuthService;
@@ -50,6 +52,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+    @MockitoBean
+    private UserService userService;
 
     private static String email = "test@email.com";
     private static String password = "test";
@@ -174,7 +179,7 @@ class AuthControllerTest {
     void refreshTokenFail() throws Exception {
         // given
         RefreshTokenDto refreshTokenDto = new RefreshTokenDto(refreshToken);
-        given(authService.generateNewAccessTokens(any())).willThrow(TokenValidationException.class);
+        given(authService.generateNewTokens(any())).willThrow(TokenValidationException.class);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/auth/token/refresh")

@@ -6,6 +6,7 @@ import com.project.wallet_keeper.entity.ExpenseCategory;
 import com.project.wallet_keeper.entity.IncomeCategory;
 import com.project.wallet_keeper.dto.category.CreateCategoryDto;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
+import com.project.wallet_keeper.service.UserService;
 import com.project.wallet_keeper.util.auth.CustomAuthenticationEntryPoint;
 import com.project.wallet_keeper.util.jwt.TokenProvider;
 import com.project.wallet_keeper.service.CategoryService;
@@ -50,6 +51,9 @@ class CategoryControllerTest {
 
     @MockitoBean
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @MockitoBean
+    private UserService userService;
 
     private static String categoryName = "카테고리";
 
@@ -175,7 +179,7 @@ class CategoryControllerTest {
         );
 
         // then
-        result.andExpect(status().isOk());
+        result.andExpect(status().isNoContent());
 
         verify(categoryService).deleteIncomeCategory(any());
     }
@@ -209,7 +213,7 @@ class CategoryControllerTest {
         );
 
         // then
-        result.andExpect(status().isOk());
+        result.andExpect(status().isNoContent());
 
         verify(categoryService).deleteExpenseCategory(any());
     }
