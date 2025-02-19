@@ -1,5 +1,6 @@
 package com.project.wallet_keeper.service;
 
+import com.project.wallet_keeper.dto.budget.BudgetReport;
 import com.project.wallet_keeper.entity.Budget;
 import com.project.wallet_keeper.entity.User;
 import com.project.wallet_keeper.dto.budget.BudgetDto;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -95,5 +97,22 @@ class BudgetServiceTest {
         assertThat(findBudget.getAmount()).isEqualTo(amount);
         assertThat(findBudget.getYear()).isEqualTo(year);
         assertThat(findBudget.getMonth()).isEqualTo(month);
+    }
+
+    @Test
+    @DisplayName("예산 요약 반환 성공")
+    void report() {
+        // given
+        Budget budget = new Budget(100000, 2025, 2, user);
+        given(budgetRepository.findByUserAndYearAndMonth(user, 2025, 2))
+                .willReturn(Optional.of(budget));
+        given(transactionService.getExpenseList(any(), any(), any()))
+                .willReturn(List.of());
+
+        // when
+        BudgetReport report = budgetService.report(user, 2025, 2);
+
+        // then
+        assertThat(report.getBudget()).isEqualTo(100000);
     }
 }

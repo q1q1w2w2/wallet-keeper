@@ -1,5 +1,7 @@
 package com.project.wallet_keeper.service;
 
+import com.project.wallet_keeper.dto.transaction.AnnualSummary;
+import com.project.wallet_keeper.dto.transaction.ExpenseSummary;
 import com.project.wallet_keeper.entity.*;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.dto.transaction.TransactionResponseDto;
@@ -16,7 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -171,6 +175,43 @@ class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("기간별 거래 내역 조회 성공")
+    void getTransactionListWithPeriod() {
+        // given
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate endDate = LocalDate.of(2024, 1, 31);
+
+        Income income = Income.builder()
+                .detail(DETAIL)
+                .amount(AMOUNT)
+                .user(user)
+                .incomeAt(startDate.atStartOfDay())
+                .description(DESCRIPTION)
+                .incomeCategory(incomeCategory)
+                .build();
+        Expense expense = Expense.builder()
+                .detail(DETAIL)
+                .amount(AMOUNT)
+                .user(user)
+                .expenseAt(startDate.atStartOfDay())
+                .description(DESCRIPTION)
+                .expenseCategory(expenseCategory)
+                .build();
+
+        given(incomeRepository.findByUserAndIncomeAtBetween(any(), any(), any()))
+                .willReturn(List.of(income));
+        given(expenseRepository.findByUserAndExpenseAtBetween(any(), any(), any()))
+                .willReturn(List.of(expense));
+
+        // when
+        List<TransactionResponseDto> transactionList = transactionService.getTransactionList(user, startDate, endDate);
+
+        // then
+        assertThat(transactionList).hasSize(2);
+    }
+
+
+    @Test
     @DisplayName("지출 목록 조회 성공")
     void getExpenseList() {
         // given
@@ -192,6 +233,32 @@ class TransactionServiceTest {
         assertThat(expenseList).isNotNull();
         assertThat(expenseList.size()).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("기간별 지출 내역 조회 성공")
+    void getExpenseListWithPeriod() {
+        // given
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate endDate = LocalDate.of(2024, 1, 31);
+        Expense expense = Expense.builder()
+                .detail(DETAIL)
+                .amount(AMOUNT)
+                .user(user)
+                .expenseAt(startDate.atStartOfDay())
+                .description(DESCRIPTION)
+                .expenseCategory(expenseCategory)
+                .build();
+
+        given(expenseRepository.findByUserAndExpenseAtBetween(any(), any(), any()))
+                .willReturn(List.of(expense));
+
+        // when
+        List<TransactionResponseDto> expenseList = transactionService.getExpenseList(user, startDate, endDate);
+
+        // then
+        assertThat(expenseList).hasSize(1);
+    }
+
 
     @Test
     @DisplayName("수입 항목 조회 성공")
@@ -459,4 +526,48 @@ class TransactionServiceTest {
         assertThatThrownBy(() -> transactionService.deleteExpense(ID, otherUser))
                 .isInstanceOf(InvalidTransactionOwnerException.class);
     }
+
+    @Test
+    @DisplayName("카테고리별 지출 합계 계산")
+    void getExpenseSummary() {
+        // given
+        Expense expense1 = Expense.builder().expenseCategory(expenseCategory).amount(5000).build();
+        Expense expense2 = Expense.builder().expenseCategory(expenseCategory).amount(3000).build();
+
+        given(expenseRepository.findByUserAndExpenseAtBetween(any(), any(), any()))
+                .willReturn(List.of(expense1, expense2));
+
+        given(expenseCategory.getId()).willReturn(1L);
+        given(expenseCategory.getCategoryName()).willReturn("식비");
+        given(expenseCategoryRepository.findAllByIsDeletedFalse()).willReturn(List.of(expenseCategory));
+
+        // when
+        List<ExpenseSummary> summaryList = transactionService.getExpenseSummary(user, LocalDate.now(), LocalDate.now());
+
+        // then
+        assertThat(summaryList).hasSize(1);
+        assertThat(summaryList.get(0).getAmount()).isEqualTo(8000);
+    }
+
+    @Test
+    @DisplayName("연간 수입/지출 요약 계산")
+    void getAnnualSummary() {
+        // given
+        Income income = Income.builder().amount(10000).incomeAt(LocalDateTime.of(2024, 1, 1, 0, 0)).build();
+        Expense expense = Expense.builder().amount(5000).expenseAt(LocalDateTime.of(2024, 2, 1, 0, 0)).build();
+
+        given(incomeRepository.findByUserAndIncomeAtBetween(any(), any(), any()))
+                .willReturn(List.of(income));
+        given(expenseRepository.findByUserAndExpenseAtBetween(any(), any(), any()))
+                .willReturn(List.of(expense));
+
+        // when
+        AnnualSummary summary = transactionService.getAnnualSummary(user, 2024);
+
+        // then
+        assertThat(summary.getTotalIncome()).isEqualTo(10000);
+        assertThat(summary.getTotalExpense()).isEqualTo(5000);
+        assertThat(summary.getTotal()).isEqualTo(5000);
+    }
+
 }
