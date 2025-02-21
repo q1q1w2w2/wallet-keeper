@@ -6,7 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
@@ -25,26 +29,20 @@ public class BatchInsertRepository {
         String sql = "INSERT INTO income (detail, amount, description, user_id, income_at, income_category_id, created_at, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try {
-            jdbcTemplate.batchUpdate(sql, incomes, incomes.size(),
-                    (PreparedStatement ps, Income income) -> {
-                        LocalDateTime now = LocalDateTime.now();
+        jdbcTemplate.batchUpdate(sql, incomes, incomes.size(),
+                (PreparedStatement ps, Income income) -> {
+                    LocalDateTime now = LocalDateTime.now();
 
-                        ps.setString(1, income.getDetail());
-                        ps.setInt(2, income.getAmount());
-                        ps.setString(3, income.getDescription());
-                        ps.setLong(4, income.getUser().getId());
-                        ps.setTimestamp(5, Timestamp.valueOf(income.getIncomeAt()));
-                        ps.setLong(6, income.getIncomeCategory().getId());
-                        ps.setTimestamp(7, Timestamp.valueOf(now));
-                        ps.setTimestamp(8, Timestamp.valueOf(now));
-                    }
-            );
-            log.info("[Batch Insert 완료] Income 저장 완료!");
-        } catch (Exception e) {
-            log.error("Batch Insert 중 예외 발생: {}", e);
-            throw e;
-        }
+                    ps.setString(1, income.getDetail());
+                    ps.setInt(2, income.getAmount());
+                    ps.setString(3, income.getDescription());
+                    ps.setLong(4, income.getUser().getId());
+                    ps.setTimestamp(5, Timestamp.valueOf(income.getIncomeAt()));
+                    ps.setLong(6, income.getIncomeCategory().getId());
+                    ps.setTimestamp(7, Timestamp.valueOf(now));
+                    ps.setTimestamp(8, Timestamp.valueOf(now));
+                }
+        );
     }
 
     public void saveExpenses(List<Expense> expenses) {
@@ -66,6 +64,5 @@ public class BatchInsertRepository {
                     ps.setTimestamp(8, Timestamp.valueOf(now));
                 }
         );
-        log.info("[Batch Insert 완료] Expense 저장 완료!");
     }
 }

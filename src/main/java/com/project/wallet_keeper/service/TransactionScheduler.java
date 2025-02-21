@@ -3,17 +3,14 @@ package com.project.wallet_keeper.service;
 import com.project.wallet_keeper.entity.*;
 import com.project.wallet_keeper.dto.transaction.RegularTransactionResponseDto;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
-import com.project.wallet_keeper.exception.scheduler.SchedulerExecutionException;
 import com.project.wallet_keeper.exception.transaction.InvalidTransactionOwnerException;
 import com.project.wallet_keeper.exception.transaction.TransactionCategoryNotFoundException;
 import com.project.wallet_keeper.exception.transaction.TransactionNotFoundException;
 import com.project.wallet_keeper.repository.*;
-import com.project.wallet_keeper.util.websocket.NotificationWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,14 +21,13 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class TransactionScheduler {
 
     private final IncomeCategoryRepository incomeCategoryRepository;
     private final ExpenseCategoryRepository expenseCategoryRepository;
     private final RegularIncomeRepository regularIncomeRepository;
     private final RegularExpenseRepository regularExpenseRepository;
-    private final NotificationWebSocketHandler notificationWebSocketHandler;
     private final BatchInsertRepository batchInsertRepository;
 
     @Transactional
@@ -136,7 +132,7 @@ public class TransactionScheduler {
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveRegularIncomes() {
         log.info("Saving regular incomes 스케줄러 실행 중...");
         List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
@@ -160,10 +156,10 @@ public class TransactionScheduler {
             incomesToSave.add(income);
         }
         batchInsertRepository.saveIncomes(incomesToSave);
-        log.info("Saving regular incomes 스케줄러 실행 완료");
+        throw new RuntimeException("강제 오류 발생, 롤백");
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveRegularExpenses() {
         List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
         LocalDate now = LocalDate.now();
@@ -188,28 +184,28 @@ public class TransactionScheduler {
         batchInsertRepository.saveExpenses(expensesToSave);
     }
 
+//    @Transactional
 //    @Scheduled(cron = "0 0 4 1 * ?")
-    @Scheduled(fixedRate = 5000)
-    public void saveRegularTransactions() {
-        try {
-            saveRegularIncomes();
-            saveRegularExpenses();
-
-            List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
-            List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
-
-            log.info("정기 거래 저장 스케줄러 실행됨: {}", LocalDateTime.now());
-
-            Set<Long> userIds = new HashSet<>();
-
-            regularIncomes.forEach(income -> userIds.add(income.getUser().getId()));
-            regularExpenses.forEach(expense -> userIds.add(expense.getUser().getId()));
-
-            for (Long userId : userIds) {
-                notificationWebSocketHandler.sendNotification("정기 거래가 저장되었습니다. 새로고침 해주세요.", userId);
-            }
-        } catch (Exception e) {
-            throw new SchedulerExecutionException("정기 거래 저장 스케줄러 실행 중 오류 발생");
-        }
-    }
+//    public void saveRegularTransactions() {
+//        try {
+//            saveRegularExpenses();
+//            saveRegularIncomes();
+//
+//            List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
+//            List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
+//
+//            log.info("정기 거래 저장 스케줄러 실행됨: {}", LocalDateTime.now());
+//
+//            Set<Long> userIds = new HashSet<>();
+//
+//            regularIncomes.forEach(income -> userIds.add(income.getUser().getId()));
+//            regularExpenses.forEach(expense -> userIds.add(expense.getUser().getId()));
+//
+//            for (Long userId : userIds) {
+//                notificationWebSocketHandler.sendNotification("정기 거래가 저장되었습니다. 새로고침 해주세요.", userId);
+//            }
+//        } catch (Exception e) {
+//            throw new SchedulerExecutionException("정기 거래 저장 스케줄러 실행 중 오류 발생");
+//        }
+//    }
 }
