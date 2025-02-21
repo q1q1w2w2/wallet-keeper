@@ -24,16 +24,15 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public class TransactionScheduler {
 
-    private final IncomeRepository incomeRepository;
     private final IncomeCategoryRepository incomeCategoryRepository;
-    private final ExpenseRepository expenseRepository;
     private final ExpenseCategoryRepository expenseCategoryRepository;
     private final RegularIncomeRepository regularIncomeRepository;
     private final RegularExpenseRepository regularExpenseRepository;
     private final NotificationWebSocketHandler notificationWebSocketHandler;
+    private final BatchInsertRepository batchInsertRepository;
 
     @Transactional
     public RegularIncome saveRegularIncome(User user, TransactionDto transactionDto) {
@@ -137,7 +136,9 @@ public class TransactionScheduler {
         }
     }
 
-    public List<Income> saveRegularIncomes() {
+    @Transactional
+    public void saveRegularIncomes() {
+        log.info("Saving regular incomes 스케줄러 실행 중...");
         List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
         LocalDate now = LocalDate.now();
 
@@ -158,10 +159,12 @@ public class TransactionScheduler {
                     .build();
             incomesToSave.add(income);
         }
-        return incomeRepository.saveAll(incomesToSave);
+        batchInsertRepository.saveIncomes(incomesToSave);
+        log.info("Saving regular incomes 스케줄러 실행 완료");
     }
 
-    public List<Expense> saveRegularExpenses() {
+    @Transactional
+    public void saveRegularExpenses() {
         List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
         LocalDate now = LocalDate.now();
 
@@ -182,22 +185,25 @@ public class TransactionScheduler {
                     .build();
             expensesToSave.add(expense);
         }
-        return expenseRepository.saveAll(expensesToSave);
+        batchInsertRepository.saveExpenses(expensesToSave);
     }
 
-    @Transactional
-    @Scheduled(cron = "0 0 4 1 * ?")
+//    @Scheduled(cron = "0 0 4 1 * ?")
+    @Scheduled(fixedRate = 5000)
     public void saveRegularTransactions() {
         try {
-            List<Income> savedIncomes = saveRegularIncomes();
-            List<Expense> savedExpenses = saveRegularExpenses();
+            saveRegularIncomes();
+            saveRegularExpenses();
+
+            List<RegularIncome> regularIncomes = regularIncomeRepository.findAll();
+            List<RegularExpense> regularExpenses = regularExpenseRepository.findAll();
 
             log.info("정기 거래 저장 스케줄러 실행됨: {}", LocalDateTime.now());
 
             Set<Long> userIds = new HashSet<>();
 
-            savedIncomes.forEach(income -> userIds.add(income.getUser().getId()));
-            savedExpenses.forEach(expense -> userIds.add(expense.getUser().getId()));
+            regularIncomes.forEach(income -> userIds.add(income.getUser().getId()));
+            regularExpenses.forEach(expense -> userIds.add(expense.getUser().getId()));
 
             for (Long userId : userIds) {
                 notificationWebSocketHandler.sendNotification("정기 거래가 저장되었습니다. 새로고침 해주세요.", userId);

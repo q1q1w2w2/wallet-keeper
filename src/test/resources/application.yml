@@ -4,6 +4,9 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+#     url: jdbc:mysql://localhost:3306/wallet_recode?useSSL=false&serverTimezone=Asia/Seoul&rewriteBatchedStatements=true
+#     username: root
+#     password: 1234
 
   h2:
     console:
@@ -17,6 +20,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+#      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -27,8 +31,8 @@ spring:
       org.hibernate.sql: debug
       org.hibernate.orm.jdbc.bind: trace
 
-#  profiles:
-#    include: email, jwt, oauth
+  profiles:
+    include: email, jwt, oauth
 
 server:
   error:
