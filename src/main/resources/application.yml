@@ -1,8 +1,5 @@
 spring:
   datasource:
-#    url: jdbc:mysql://localhost:3306/wallet_recode?useSSL=false&serverTimezone=Asia/Seoul&rewriteBatchedStatements=true
-#    username: root
-#    password: 1234
     url: ${RDS_JDBC}
     username: ${RDS_USERNAME}
     password: ${RDS_PASSWORD}
@@ -48,7 +45,7 @@ app:
   base-url: http://localhost:${server.port}
 
 springdoc:
-  packages-to-scan: com.project.wallet_keeper.web
+  packages-to-scan: com.project.wallet_keeper.controller
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:

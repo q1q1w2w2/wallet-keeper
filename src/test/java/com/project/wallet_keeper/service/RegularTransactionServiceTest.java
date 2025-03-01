@@ -23,10 +23,10 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TransactionSchedulerTest {
+class RegularTransactionServiceTest {
 
     @InjectMocks
-    private TransactionScheduler transactionScheduler;
+    private RegularTransactionService regularTransactionService;
 
     @Mock
     private IncomeRepository incomeRepository;
@@ -45,6 +45,9 @@ class TransactionSchedulerTest {
 
     @Mock
     private RegularExpenseRepository regularExpenseRepository;
+
+    @Mock
+    private BatchInsertRepository batchInsertRepository;
 
     @Mock
     private User user;
@@ -66,7 +69,7 @@ class TransactionSchedulerTest {
         given(regularIncomeRepository.save(any())).willReturn(regularIncome);
 
         // when
-        RegularIncome saveRegularIncome = transactionScheduler.saveRegularIncome(user, transactionDto);
+        RegularIncome saveRegularIncome = regularTransactionService.saveRegularIncome(user, transactionDto);
 
         // then
         assertThat(saveRegularIncome).isNotNull();
@@ -82,7 +85,7 @@ class TransactionSchedulerTest {
         given(incomeCategoryRepository.findById(any())).willThrow(TransactionCategoryNotFoundException.class);
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.saveRegularIncome(user, transactionDto))
+        assertThatThrownBy(() -> regularTransactionService.saveRegularIncome(user, transactionDto))
                 .isInstanceOf(TransactionCategoryNotFoundException.class);
     }
 
@@ -98,7 +101,7 @@ class TransactionSchedulerTest {
         given(regularExpenseRepository.save(any())).willReturn(regularExpense);
 
         // when
-        RegularExpense saveRegularExpense = transactionScheduler.saveRegularExpense(user, transactionDto);
+        RegularExpense saveRegularExpense = regularTransactionService.saveRegularExpense(user, transactionDto);
 
         // then
         assertThat(saveRegularExpense).isNotNull();
@@ -114,7 +117,7 @@ class TransactionSchedulerTest {
         given(expenseCategoryRepository.findById(any())).willThrow(TransactionCategoryNotFoundException.class);
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.saveRegularExpense(user, transactionDto))
+        assertThatThrownBy(() -> regularTransactionService.saveRegularExpense(user, transactionDto))
                 .isInstanceOf(TransactionCategoryNotFoundException.class);
     }
 
@@ -131,7 +134,7 @@ class TransactionSchedulerTest {
         given(regularExpenseRepository.findAllByUser(any())).willReturn(regularExpenses);
 
         // when
-        List<RegularTransactionResponseDto> regularTransactions = transactionScheduler.getRegularTransactions(user);
+        List<RegularTransactionResponseDto> regularTransactions = regularTransactionService.getRegularTransactions(user);
 
         // then
         assertThat(regularTransactions).isNotNull();
@@ -148,7 +151,7 @@ class TransactionSchedulerTest {
         doNothing().when(regularIncomeRepository).delete(any());
 
         // when
-        transactionScheduler.deleteRegularIncome(user, regularIncome.getId());
+        regularTransactionService.deleteRegularIncome(user, regularIncome.getId());
 
         // then
         verify(regularIncomeRepository).delete(regularIncome);
@@ -161,7 +164,7 @@ class TransactionSchedulerTest {
         given(regularIncomeRepository.findById(any())).willThrow(TransactionNotFoundException.class);
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.deleteRegularIncome(user, any()))
+        assertThatThrownBy(() -> regularTransactionService.deleteRegularIncome(user, any()))
                 .isInstanceOf(TransactionNotFoundException.class);
     }
 
@@ -176,7 +179,7 @@ class TransactionSchedulerTest {
         given(regularIncomeRepository.findById(any())).willReturn(Optional.of(regularIncome));
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.deleteRegularIncome(user, 1L))
+        assertThatThrownBy(() -> regularTransactionService.deleteRegularIncome(user, 1L))
                 .isInstanceOf(InvalidTransactionOwnerException.class);
     }
 
@@ -190,7 +193,7 @@ class TransactionSchedulerTest {
         doNothing().when(regularExpenseRepository).delete(any());
 
         // when
-        transactionScheduler.deleteRegularExpense(user, regularExpense.getId());
+        regularTransactionService.deleteRegularExpense(user, regularExpense.getId());
 
         // then
         verify(regularExpenseRepository).delete(regularExpense);
@@ -203,7 +206,7 @@ class TransactionSchedulerTest {
         given(regularExpenseRepository.findById(any())).willThrow(TransactionNotFoundException.class);
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.deleteRegularExpense(user, any()))
+        assertThatThrownBy(() -> regularTransactionService.deleteRegularExpense(user, any()))
                 .isInstanceOf(TransactionNotFoundException.class);
     }
 
@@ -218,7 +221,7 @@ class TransactionSchedulerTest {
         given(regularExpenseRepository.findById(any())).willReturn(Optional.of(regularExpense));
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.deleteRegularExpense(user, 1L))
+        assertThatThrownBy(() -> regularTransactionService.deleteRegularExpense(user, 1L))
                 .isInstanceOf(InvalidTransactionOwnerException.class);
     }
 
@@ -234,7 +237,7 @@ class TransactionSchedulerTest {
         given(incomeCategoryRepository.findById(any())).willReturn(Optional.of(incomeCategory));
 
         // when
-        RegularIncome updateRegularIncome = transactionScheduler.updateRegularIncome(user, 1L, transactionDto);
+        RegularIncome updateRegularIncome = regularTransactionService.updateRegularIncome(user, 1L, transactionDto);
 
         // then
         assertThat(updateRegularIncome).isNotNull();
@@ -250,7 +253,7 @@ class TransactionSchedulerTest {
         given(regularIncomeRepository.findById(any())).willThrow(TransactionNotFoundException.class);
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.updateRegularIncome(user, 1L, transactionDto))
+        assertThatThrownBy(() -> regularTransactionService.updateRegularIncome(user, 1L, transactionDto))
                 .isInstanceOf(TransactionNotFoundException.class);
     }
 
@@ -265,7 +268,7 @@ class TransactionSchedulerTest {
         given(incomeCategoryRepository.findById(any())).willThrow(TransactionCategoryNotFoundException.class);
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.updateRegularIncome(user, 1L, transactionDto))
+        assertThatThrownBy(() -> regularTransactionService.updateRegularIncome(user, 1L, transactionDto))
                 .isInstanceOf(TransactionCategoryNotFoundException.class);
     }
 
@@ -281,7 +284,7 @@ class TransactionSchedulerTest {
         given(expenseCategoryRepository.findById(any())).willReturn(Optional.of(expenseCategory));
 
         // when
-        RegularExpense updateRegularExpense = transactionScheduler.updateRegularExpense(user, 1L, transactionDto);
+        RegularExpense updateRegularExpense = regularTransactionService.updateRegularExpense(user, 1L, transactionDto);
 
         // then
         assertThat(updateRegularExpense).isNotNull();
@@ -297,7 +300,7 @@ class TransactionSchedulerTest {
         given(regularExpenseRepository.findById(any())).willThrow(TransactionNotFoundException.class);
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.updateRegularExpense(user, 1L, transactionDto))
+        assertThatThrownBy(() -> regularTransactionService.updateRegularExpense(user, 1L, transactionDto))
                 .isInstanceOf(TransactionNotFoundException.class);
     }
 
@@ -312,7 +315,7 @@ class TransactionSchedulerTest {
         given(expenseCategoryRepository.findById(any())).willThrow(TransactionCategoryNotFoundException.class);
 
         // when & then
-        assertThatThrownBy(() -> transactionScheduler.updateRegularExpense(user, 1L, transactionDto))
+        assertThatThrownBy(() -> regularTransactionService.updateRegularExpense(user, 1L, transactionDto))
                 .isInstanceOf(TransactionCategoryNotFoundException.class);
     }
 
@@ -328,10 +331,10 @@ class TransactionSchedulerTest {
         given(regularIncomeRepository.findAll()).willReturn(regularIncomes);
 
         // when
-        transactionScheduler.saveRegularIncomes();
+        regularTransactionService.saveRegularIncomes();
 
         // then
-        verify(incomeRepository, times(1)).saveAll(any(List.class));
+        verify(batchInsertRepository, times(1)).saveIncomes(any(List.class));
     }
 
     @Test
@@ -346,10 +349,10 @@ class TransactionSchedulerTest {
         given(regularExpenseRepository.findAll()).willReturn(regularExpenses);
 
         // when
-        transactionScheduler.saveRegularExpenses();
+        regularTransactionService.saveRegularExpenses();
 
         // then
-        verify(expenseRepository, times(1)).saveAll(any(List.class));
+        verify(batchInsertRepository, times(1)).saveExpenses(any(List.class));
     }
 
     private RegularIncome createRegularIncome() {

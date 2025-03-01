@@ -11,7 +11,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@DisplayName("ExpenseCategoryRepository 테스트")
 class ExpenseCategoryRepositoryTest {
 
     @Autowired

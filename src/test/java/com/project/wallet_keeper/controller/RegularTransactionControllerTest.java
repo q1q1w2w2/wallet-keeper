@@ -6,7 +6,7 @@ import com.project.wallet_keeper.dto.transaction.RegularTransactionResponseDto;
 import com.project.wallet_keeper.dto.transaction.TransactionDto;
 import com.project.wallet_keeper.util.auth.CustomAuthenticationEntryPoint;
 import com.project.wallet_keeper.util.jwt.TokenProvider;
-import com.project.wallet_keeper.service.TransactionScheduler;
+import com.project.wallet_keeper.service.RegularTransactionService;
 import com.project.wallet_keeper.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class RegularTransactionControllerTest {
     private RegularTransactionController regularTransactionController;
 
     @MockitoBean
-    private TransactionScheduler transactionScheduler;
+    private RegularTransactionService regularTransactionService;
 
     @MockitoBean
     private UserService userService;
@@ -67,7 +67,7 @@ class RegularTransactionControllerTest {
         TransactionDto transactionDto = new TransactionDto(detail, amount, null, date, categoryId);
 
         given(userService.getCurrentUser()).willReturn(user);
-        given(transactionScheduler.saveRegularIncome(any(), any())).willReturn(regularIncome);
+        given(regularTransactionService.saveRegularIncome(any(), any())).willReturn(regularIncome);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/transaction/scheduler/income")
@@ -88,7 +88,7 @@ class RegularTransactionControllerTest {
         TransactionDto transactionDto = new TransactionDto(detail, amount, null, date, categoryId);
 
         given(userService.getCurrentUser()).willReturn(user);
-        given(transactionScheduler.saveRegularExpense(any(), any())).willReturn(regularExpense);
+        given(regularTransactionService.saveRegularExpense(any(), any())).willReturn(regularExpense);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/transaction/scheduler/expense")
@@ -108,7 +108,7 @@ class RegularTransactionControllerTest {
         ArrayList<RegularTransactionResponseDto> list = new ArrayList<>();
 
         given(userService.getCurrentUser()).willReturn(user);
-        given(transactionScheduler.getRegularTransactions(any())).willReturn(list);
+        given(regularTransactionService.getRegularTransactions(any())).willReturn(list);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/transaction/scheduler"));
@@ -125,7 +125,7 @@ class RegularTransactionControllerTest {
         TransactionDto transactionDto = new TransactionDto(detail, amount, null, date, categoryId);
 
         given(userService.getCurrentUser()).willReturn(user);
-        given(transactionScheduler.updateRegularIncome(any(), any(), any())).willReturn(regularIncome);
+        given(regularTransactionService.updateRegularIncome(any(), any(), any())).willReturn(regularIncome);
 
         // when
         ResultActions result = mockMvc.perform(patch("/api/transaction/scheduler/income/{incomeId}", 1L)
@@ -146,7 +146,7 @@ class RegularTransactionControllerTest {
         TransactionDto transactionDto = new TransactionDto(detail, amount, null, date, categoryId);
 
         given(userService.getCurrentUser()).willReturn(user);
-        given(transactionScheduler.updateRegularExpense(any(), any(), any())).willReturn(regularExpense);
+        given(regularTransactionService.updateRegularExpense(any(), any(), any())).willReturn(regularExpense);
 
         // when
         ResultActions result = mockMvc.perform(patch("/api/transaction/scheduler/expense/{expenseId}", 1L)
@@ -164,7 +164,7 @@ class RegularTransactionControllerTest {
     void deleteRegularIncome() throws Exception {
         // given
         given(userService.getCurrentUser()).willReturn(user);
-        doNothing().when(transactionScheduler).deleteRegularIncome(any(), any());
+        doNothing().when(regularTransactionService).deleteRegularIncome(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(delete("/api/transaction/scheduler/income/{incomeId}", 1L)
@@ -180,7 +180,7 @@ class RegularTransactionControllerTest {
     void deleteRegularExpense() throws Exception {
         // given
         given(userService.getCurrentUser()).willReturn(user);
-        doNothing().when(transactionScheduler).deleteRegularExpense(any(), any());
+        doNothing().when(regularTransactionService).deleteRegularExpense(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(delete("/api/transaction/scheduler/expense/{expenseId}", 1L)

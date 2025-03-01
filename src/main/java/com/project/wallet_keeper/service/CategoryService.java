@@ -14,7 +14,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,26 +61,16 @@ public class CategoryService {
 
     @Cacheable(value = "incomeCategories")
     public List<CategoryResponseDto> getIncomeCategories() {
-        ArrayList<CategoryResponseDto> response = new ArrayList<>();
-
-        List<IncomeCategory> categoryList = incomeCategoryRepository.findAllByIsDeletedFalse();
-        for (IncomeCategory incomeCategory : categoryList) {
-            response.add(new CategoryResponseDto(incomeCategory));
-        }
-
-        return response;
+        return incomeCategoryRepository.findAllByIsDeletedFalse().stream()
+                .map(CategoryResponseDto::new)
+                .toList();
     }
 
     @Cacheable(value = "expenseCategories")
     public List<CategoryResponseDto> getExpenseCategories() {
-        ArrayList<CategoryResponseDto> response = new ArrayList<>();
-
-        List<ExpenseCategory> categoryList = expenseCategoryRepository.findAllByIsDeletedFalse();
-        for (ExpenseCategory expenseCategory : categoryList) {
-            response.add(new CategoryResponseDto(expenseCategory));
-        }
-
-        return response;
+        return expenseCategoryRepository.findAllByIsDeletedFalse().stream()
+                .map(CategoryResponseDto::new)
+                .toList();
     }
 
     @Transactional

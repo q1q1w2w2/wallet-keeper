@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BudgetController.class)
 @WithMockUser
-@DisplayName("BudgetController 테스트")
 class BudgetControllerTest {
 
     @Autowired

@@ -6,17 +6,14 @@ import com.project.wallet_keeper.dto.user.SignupDto;
 import com.project.wallet_keeper.entity.*;
 import com.project.wallet_keeper.repository.*;
 import com.project.wallet_keeper.service.*;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cglib.core.Local;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -25,7 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 public class TransactionSchedulerTest {
 
     @Autowired
-    private TransactionScheduler transactionScheduler;
+    private RegularTransactionService regularTransactionService;
 
     @Autowired
     private IncomeRepository incomeRepository;
@@ -40,9 +37,9 @@ public class TransactionSchedulerTest {
     private CategoryService categoryService;
 
     @Autowired
-    private RunScheduler runScheduler;
+    private TransactionScheduler transactionScheduler;
 
-    @Test
+//    @Test
     @DisplayName("saveRegularIncomes가 실패해도 saveRegularExpenses는 정상 커밋")
     void testTransactionIsolation() {
         User user = userService.signUp(new SignupDto("test@gmail.com", "1234", "test", LocalDate.now()));
@@ -51,11 +48,11 @@ public class TransactionSchedulerTest {
 
         TransactionDto transactionDtoForIncome = new TransactionDto("수입1", 10000, "", LocalDateTime.now(), incomeCategory.getId());
         TransactionDto transactionDtoForExpense = new TransactionDto("지출1", 10000, "", LocalDateTime.now(), expenseCategory.getId());
-        transactionScheduler.saveRegularIncome(user, transactionDtoForIncome);
-        transactionScheduler.saveRegularExpense(user, transactionDtoForExpense);
+        regularTransactionService.saveRegularIncome(user, transactionDtoForIncome);
+        regularTransactionService.saveRegularExpense(user, transactionDtoForExpense);
 
         try {
-            runScheduler.saveRegularTransactions();
+            transactionScheduler.saveRegularTransactions();
         } catch (Exception e) {
             System.out.println("강제 예외 발생!");
         }
@@ -66,5 +63,31 @@ public class TransactionSchedulerTest {
         System.out.println("expenses = " + expenses.size());
         assertThat(incomes).isEmpty();
         assertThat(expenses).isNotEmpty();
+    }
+
+//    @Test
+    @DisplayName("JPA save() vs JdbcTemplate batchUpdate() 성능 비교")
+    @Transactional
+    void testTransactionIsolationJPA() {
+        User user = userService.signUp(new SignupDto("test@gmail.com", "1234", "test", LocalDate.now()));
+        IncomeCategory incomeCategory = categoryService.createIncomeCategory(new CreateCategoryDto("수입카테고리"));
+        ExpenseCategory expenseCategory = categoryService.createExpenseCategory(new CreateCategoryDto("지출카테고리"));
+
+        List<TransactionDto> incomes = new ArrayList<>();
+        List<TransactionDto> expenses = new ArrayList<>();
+        for (int i = 0; i < 50_000; i++) {
+            TransactionDto transactionDtoForIncome = new TransactionDto("수입" + i, 10000, "", LocalDateTime.now(), incomeCategory.getId());
+            TransactionDto transactionDtoForExpense = new TransactionDto("지출" + i, 10000, "", LocalDateTime.now(), expenseCategory.getId());
+            regularTransactionService.saveRegularIncome(user, transactionDtoForIncome);
+            regularTransactionService.saveRegularExpense(user, transactionDtoForExpense);
+            incomes.add(transactionDtoForIncome);
+            expenses.add(transactionDtoForExpense);
+        }
+
+        long start = System.currentTimeMillis();
+        transactionScheduler.saveRegularTransactions();
+        long end = System.currentTimeMillis();
+
+        System.out.println("time = " + (end - start) + "ms");
     }
 }

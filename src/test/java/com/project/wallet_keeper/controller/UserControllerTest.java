@@ -30,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @WithMockUser
-@DisplayName("UserController 테스트")
 class UserControllerTest {
 
     @Autowired

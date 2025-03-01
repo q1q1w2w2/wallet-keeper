@@ -25,7 +25,6 @@ public class BatchInsertRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public void saveIncomes(List<Income> incomes) {
-        log.info("[Batch Insert 시작] {}개의 Income 저장 중...", incomes.size());
         String sql = "INSERT INTO income (detail, amount, description, user_id, income_at, income_category_id, created_at, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -46,7 +45,6 @@ public class BatchInsertRepository {
     }
 
     public void saveExpenses(List<Expense> expenses) {
-        log.info("[Batch Insert 시작] {}개의 Expense 저장 중...", expenses.size());
         String sql = "INSERT INTO expense (detail, amount, description, user_id, expense_at, expense_category_id, created_at, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 

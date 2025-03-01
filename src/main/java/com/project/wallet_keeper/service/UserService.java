@@ -47,7 +47,6 @@ public class UserService {
                 .birth(signupDto.getBirth())
                 .role(ROLE_USER)
                 .build();
-
         return userRepository.save(user);
     }
 
@@ -62,11 +61,6 @@ public class UserService {
     public void deleteUser(User user, String reason) {
         user.deleteUser();
         reasonRepository.save(new Reason(reason));
-    }
-
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
     }
 
     @Cacheable(value = "user", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
@@ -99,24 +93,17 @@ public class UserService {
     @Transactional
     @CacheEvict(value = "user", key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public void updatePassword(User user, UpdatePasswordDto passwordDto) {
-        String oldPassword = passwordDto.getOldPassword();
-        String newPassword = passwordDto.getNewPassword();
-
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+        if (!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
-
-        user.updatePassword(passwordEncoder.encode(newPassword));
+        user.updatePassword(passwordEncoder.encode(passwordDto.getNewPassword()));
     }
 
     @Transactional
     public boolean resetPassword(ResetPasswordDto passwordDto) {
-        String email = passwordDto.getEmail();
-        String password = passwordDto.getPassword();
-
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(passwordDto.getEmail())
                 .orElseThrow(UserNotFoundException::new);
-        user.updatePassword(passwordEncoder.encode(password));
+        user.updatePassword(passwordEncoder.encode(passwordDto.getPassword()));
         return true;
     }
 }

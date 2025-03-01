@@ -14,13 +14,13 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -32,9 +32,8 @@ public class TransactionService {
     private final IncomeCategoryRepository incomeCategoryRepository;
     private final ExpenseRepository expenseRepository;
     private final ExpenseCategoryRepository expenseCategoryRepository;
-
-    private final NotificationWebSocketHandler notificationWebSocketHandler;
     private final BudgetRepository budgetRepository;
+    private final NotificationWebSocketHandler notificationWebSocketHandler;
 
     @Transactional
     @CacheEvict(value = "annualSummary", allEntries = true)
@@ -154,12 +153,10 @@ public class TransactionService {
     @CacheEvict(value = "annualSummary", allEntries = true)
     public Income updateIncome(Long incomeId, TransactionDto incomeDto, User user) {
         Income income = getIncome(incomeId);
-
         checkTransactionOwnership(income, user);
 
         IncomeCategory category = incomeCategoryRepository.findById(incomeDto.getTransactionCategoryId())
                 .orElseThrow(TransactionCategoryNotFoundException::new);
-
         return income.update(incomeDto.getDetail(), incomeDto.getAmount(), incomeDto.getDescription(), incomeDto.getTransactionAt(), category);
     }
 
@@ -167,12 +164,10 @@ public class TransactionService {
     @CacheEvict(value = "annualSummary", allEntries = true)
     public Expense updateExpense(Long expenseId, TransactionDto expenseDto, User user) {
         Expense expense = getExpense(expenseId);
-
         checkTransactionOwnership(expense, user);
 
         ExpenseCategory category = expenseCategoryRepository.findById(expenseDto.getTransactionCategoryId())
                 .orElseThrow(TransactionCategoryNotFoundException::new);
-
         return expense.update(expenseDto.getDetail(), expenseDto.getAmount(), expenseDto.getDescription(), expenseDto.getTransactionAt(), category);
     }
 
@@ -206,34 +201,23 @@ public class TransactionService {
         List<Expense> expenseList = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
         List<ExpenseCategory> expenseCategories = expenseCategoryRepository.findAllByIsDeletedFalse();
 
-        Map<ExpenseCategory, Integer> categoryMap = new HashMap<>();
-        expenseCategories.forEach(category -> categoryMap.put(category, 0));
+        Map<ExpenseCategory, Integer> categoryMap = expenseCategories.stream()
+                .collect(Collectors.toMap(category -> category, category -> 0));
 
-        for (Expense expense : expenseList) {
-            ExpenseCategory category = expense.getExpenseCategory();
-            Integer totalAmount = categoryMap.get(category);
-            if (totalAmount != null) {
-                categoryMap.put(category, totalAmount + expense.getAmount());
-            }
-        }
+        expenseList.forEach(expense ->
+                categoryMap.merge(expense.getExpenseCategory(), expense.getAmount(), Integer::sum)
+        );
 
         int totalSpentAmount = categoryMap.values().stream().mapToInt(Integer::intValue).sum();
-        List<ExpenseSummary> summaryList = new ArrayList<>();
-        for (Map.Entry<ExpenseCategory, Integer> entry : categoryMap.entrySet()) {
-            if (entry.getValue() > 0) {
-                ExpenseSummary summary = new ExpenseSummary();
-                summary.setCategoryId(entry.getKey().getId());
-                summary.setCategoryName(entry.getKey().getCategoryName());
-                summary.setAmount(entry.getValue());
-
-                int percent = (int) ((entry.getValue() / (double) totalSpentAmount) * 100);
-                summary.setPercent(percent);
-
-                summaryList.add(summary);
-            }
-        }
-
-        return summaryList;
+        return categoryMap.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .map(entry -> new ExpenseSummary(
+                        entry.getKey().getId(),
+                        entry.getKey().getCategoryName(),
+                        entry.getValue(),
+                        (int) ((entry.getValue() / (double) totalSpentAmount) * 100))
+                )
+                .toList();
     }
 
     @Cacheable(value = "annualSummary", key = "#user.getEmail() + ':' + #year")
@@ -244,43 +228,26 @@ public class TransactionService {
         List<Income> incomeList = incomeRepository.findByUserAndIncomeAtBetween(user, startDateTime, endDateTime);
         List<Expense> expenseList = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
 
-        String[] monthly = {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
-        Map<String, MonthlySummary> monthlySummaryMap = new LinkedHashMap<>();
+        Map<String, MonthlySummary> monthlySummaryMap = Arrays.stream(Month.values())
+                .collect(Collectors.toMap(Enum::toString, month -> new MonthlySummary(), (a, b) -> b, LinkedHashMap::new));
 
-        int totalIncome = 0;
-        int totalExpense = 0;
+        incomeList.forEach(income ->
+                monthlySummaryMap.get(income.getIncomeAt().getMonth().toString())
+                        .setIncome(monthlySummaryMap.get(income.getIncomeAt().getMonth().toString()).getIncome() + income.getAmount())
+        );
 
-        for (String month : monthly) {
-            monthlySummaryMap.put(month, new MonthlySummary());
-        }
+        expenseList.forEach(expense ->
+                monthlySummaryMap.get(expense.getExpenseAt().getMonth().toString())
+                        .setExpense(monthlySummaryMap.get(expense.getExpenseAt().getMonth().toString()).getExpense() + expense.getAmount())
+        );
 
-        for (Income income : incomeList) {
-            String month = income.getIncomeAt().getMonth().toString();
-            MonthlySummary summary = monthlySummaryMap.get(month);
-            summary.setIncome(summary.getIncome() + income.getAmount());
-        }
+        int totalIncome = monthlySummaryMap.values().stream().mapToInt(MonthlySummary::getIncome).sum();
+        int totalExpense = monthlySummaryMap.values().stream().mapToInt(MonthlySummary::getExpense).sum();
+        monthlySummaryMap.values().forEach(summary ->
+                summary.setTotal(summary.getIncome() - summary.getExpense())
+        );
 
-        for (Expense expense : expenseList) {
-            String month = expense.getExpenseAt().getMonth().toString();
-            MonthlySummary summary = monthlySummaryMap.get(month);
-            summary.setExpense(summary.getExpense() + expense.getAmount());
-        }
-
-        for (String month : monthly) {
-            MonthlySummary summary = monthlySummaryMap.get(month);
-            summary.setTotal(summary.getIncome() - summary.getExpense());
-            totalIncome += summary.getIncome();
-            totalExpense += summary.getExpense();
-        }
-
-        AnnualSummary annualSummary = new AnnualSummary();
-        annualSummary.setYear(year);
-        annualSummary.setTotalIncome(totalIncome);
-        annualSummary.setTotalExpense(totalExpense);
-        annualSummary.setTotal(totalIncome - totalExpense);
-        annualSummary.setMonthly(monthlySummaryMap);
-
-        return annualSummary;
+        return new AnnualSummary(year, totalIncome, totalExpense, totalIncome - totalExpense, monthlySummaryMap);
     }
 
     public void generateExcelForTransaction(User user, LocalDate startDate, LocalDate endDate, HttpServletResponse response) throws IOException {

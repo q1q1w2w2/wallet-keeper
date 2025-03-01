@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("BudgetService 테스트")
 class BudgetServiceTest {
 
     @InjectMocks

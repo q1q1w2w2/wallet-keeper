@@ -17,7 +17,6 @@ import static com.project.wallet_keeper.entity.Role.*;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-@DisplayName("IncomeRepository 테스트")
 class IncomeRepositoryTest {
 
     @Autowired

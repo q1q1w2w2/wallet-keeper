@@ -8,12 +8,10 @@ import com.project.wallet_keeper.dto.budget.BudgetResponseDto;
 import com.project.wallet_keeper.dto.budget.BudgetResultDto;
 import com.project.wallet_keeper.util.common.ApiResponse;
 import com.project.wallet_keeper.service.BudgetService;
-import com.project.wallet_keeper.util.common.ApiResponseUtil;
 import com.project.wallet_keeper.util.common.LoginUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

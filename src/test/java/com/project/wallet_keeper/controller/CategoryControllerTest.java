@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CategoryController.class)
 @WithMockUser
-@DisplayName("CategoryController 테스트")
 class CategoryControllerTest {
 
     @Autowired
