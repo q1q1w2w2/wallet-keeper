@@ -15,8 +15,8 @@ import java.util.Map;
 public class AnnualSummary implements Serializable {
 
     private int year;
-    private int totalIncome;
-    private int totalExpense;
-    private int total;
+    private long totalIncome;
+    private long totalExpense;
+    private long total;
     private Map<String, MonthlySummary> monthly;
 }

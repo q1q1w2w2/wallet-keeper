@@ -1,5 +1,6 @@
 package com.project.wallet_keeper.repository;
 
+import com.project.wallet_keeper.dto.transaction.MonthlyExpenseSummary;
 import com.project.wallet_keeper.entity.Expense;
 import com.project.wallet_keeper.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,11 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Query("select coalesce(sum(e.amount), 0) from Expense e where e.user = :user and e.expenseAt between :start and :end")
     int getTotalAmountByUserAndDate(@Param("user") User user, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT new com.project.wallet_keeper.dto.transaction.MonthlyExpenseSummary(FUNCTION('DATE_FORMAT', e.expenseAt, '%M'), SUM(e.amount)) " +
+            "FROM Expense e " +
+            "WHERE e.expenseAt BETWEEN :startDate AND :endDate AND e.user = :user " +
+            "GROUP BY FUNCTION('DATE_FORMAT', e.expenseAt, '%M')"
+    )
+    List<MonthlyExpenseSummary> getMonthlyExpenseSummary(@Param("user") User user, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }
