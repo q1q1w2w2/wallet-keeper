@@ -20,10 +20,10 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     @Query("select coalesce(sum(e.amount), 0) from Expense e where e.user = :user and e.expenseAt between :start and :end")
     int getTotalAmountByUserAndDate(@Param("user") User user, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    @Query("SELECT new com.project.wallet_keeper.dto.transaction.MonthlyExpenseSummary(FUNCTION('DATE_FORMAT', e.expenseAt, '%M'), SUM(e.amount)) " +
+    @Query("SELECT new com.project.wallet_keeper.dto.transaction.MonthlyExpenseSummary(MONTH(e.expenseAt), SUM(e.amount)) " +
             "FROM Expense e " +
             "WHERE e.expenseAt BETWEEN :startDate AND :endDate AND e.user = :user " +
-            "GROUP BY FUNCTION('DATE_FORMAT', e.expenseAt, '%M')"
+            "GROUP BY MONTH(e.expenseAt)"
     )
     List<MonthlyExpenseSummary> getMonthlyExpenseSummary(@Param("user") User user, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

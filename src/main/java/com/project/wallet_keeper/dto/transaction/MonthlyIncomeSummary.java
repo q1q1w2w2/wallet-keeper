@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MonthlyIncomeSummary {
-    private Object month;
+    private Integer month;
     private Long totalIncome;
 }

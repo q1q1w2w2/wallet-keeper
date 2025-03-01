@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MonthlyExpenseSummary {
-    private Object month;
+    private Integer month;
     private Long totalExpense;
 }

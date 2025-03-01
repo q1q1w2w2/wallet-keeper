@@ -220,39 +220,28 @@ public class TransactionService {
                 .toList();
     }
 
-//    @Cacheable(value = "annualSummary", key = "#user.getEmail() + ':' + #year")
+    @Cacheable(value = "annualSummary", key = "#user.getEmail() + ':' + #year")
     public AnnualSummary getAnnualSummary(User user, int year) {
         LocalDateTime startDateTime = LocalDateTime.of(year, 1, 1, 0, 0);
         LocalDateTime endDateTime = LocalDateTime.of(year, 12, 31, 23, 59);
 
-//        List<Income> incomeList = incomeRepository.findByUserAndIncomeAtBetween(user, startDateTime, endDateTime);
-//        List<Expense> expenseList = expenseRepository.findByUserAndExpenseAtBetween(user, startDateTime, endDateTime);
-//        log.info("income.size(): {}", incomeList.size());
-//        log.info("expense.size(): {}", expenseList.size());
-
         List<MonthlyIncomeSummary> incomeSummaryList = incomeRepository.getMonthlyIncomeSummary(user, startDateTime, endDateTime);
         List<MonthlyExpenseSummary> expenseSummaryList = expenseRepository.getMonthlyExpenseSummary(user, startDateTime, endDateTime);
 
-        Map<String, MonthlySummary> monthlySummaryMap = Arrays.stream(Month.values())
-                .collect(Collectors.toMap(Enum::toString, month -> new MonthlySummary(), (a, b) -> b, LinkedHashMap::new));
+        Map<String, MonthlySummary> monthlySummaryMap = Arrays.stream(MonthName.values())
+                .collect(Collectors.toMap(MonthName::getName, month -> new MonthlySummary(), (a, b) -> b, LinkedHashMap::new));
 
-        incomeSummaryList.forEach(income ->
-                monthlySummaryMap.get(String.valueOf(income.getMonth()).toUpperCase()).setIncome(income.getTotalIncome())
+        incomeSummaryList.forEach(income -> {
+                    String monthKey = MonthName.getMonthName(income.getMonth());
+                    monthlySummaryMap.get(monthKey).setIncome(income.getTotalIncome());
+                }
         );
 
-        expenseSummaryList.forEach(expense ->
-                monthlySummaryMap.get(String.valueOf(expense.getMonth()).toUpperCase()).setExpense(expense.getTotalExpense())
+        expenseSummaryList.forEach(expense -> {
+                    String monthKey = MonthName.getMonthName(expense.getMonth());
+                    monthlySummaryMap.get(monthKey).setExpense(expense.getTotalExpense());
+                }
         );
-
-//        incomeList.forEach(income ->
-//                monthlySummaryMap.get(income.getIncomeAt().getMonth().toString())
-//                        .setIncome(monthlySummaryMap.get(income.getIncomeAt().getMonth().toString()).getIncome() + income.getAmount())
-//        );
-//
-//        expenseList.forEach(expense ->
-//                monthlySummaryMap.get(expense.getExpenseAt().getMonth().toString())
-//                        .setExpense(monthlySummaryMap.get(expense.getExpenseAt().getMonth().toString()).getExpense() + expense.getAmount())
-//        );
 
         long totalIncome = monthlySummaryMap.values().stream().mapToLong(MonthlySummary::getIncome).sum();
         long totalExpense = monthlySummaryMap.values().stream().mapToLong(MonthlySummary::getExpense).sum();
